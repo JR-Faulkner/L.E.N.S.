@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>LENS</title><style>
+body{font-family:sans-serif;margin:0;padding:20px}
+.option{cursor:pointer;padding:8px;border:1px solid #ccc;margin:4px 0;transition:.2s}
+.option.open{max-height:500px}
+.option.selected.blue{background:#007BFF;color:#fff}
+.option.selected.green{background:#28A745;color:#fff}
+</style></head><body>
+<div class="option" data-color="blue">Option One (Blue)</div>
+<div class="option" data-color="green">Option Two (Green)</div>
+<div class="option" data-color="blue">Option Three (Blue)</div>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll(".option").forEach(function(opt){
+    opt.addEventListener("click",function(){
+      document.querySelectorAll(".option").forEach(function(o){o.classList.remove("selected","blue","green","open")});
+      opt.classList.add("selected",opt.dataset.color,"open");
+    });
+  });
+});
+</script>
+</body></html>

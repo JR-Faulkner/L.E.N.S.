@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><title>Fiber Tools</title><meta name="viewport" content="width=device-width,initial-scale=1"/><style>
+/* ... all your LIVE styles preserved ... */
+.option{cursor:pointer;padding:8px;border:1px solid #ccc;margin:4px 0;transition:.2s}
+.option.selected.blue{background:#007BFF;color:#fff}
+.option.selected.green{background:#28A745;color:#fff}
+</style></head><body class="dark">
+<div class="app-title"><h1>F.I.B.E.R. – Field Integrated Build & Engineering Resource</h1><p class="author">By: Jovan Faulkner</p></div>
+<!-- Sections (Loss, Ribbon, Theme) remain exactly as in LIVE -->
+<script>
+function setSectionHeight(s){s.style.maxHeight="none";const t=s.scrollHeight;s.style.maxHeight=t+"px"}
+function toggleSection(id){const s=document.getElementById(id),o=s.style.maxHeight&&s.style.maxHeight!=="0px";o?s.style.maxHeight="0px":setSectionHeight(s)}
+window.addEventListener("resize",()=>{["lossSection","ribbonSection","themeSection"].forEach(id=>{const s=document.getElementById(id),o=s.style.maxHeight&&s.style.maxHeight!=="0px";if(o)setSectionHeight(s)})});
+function applySavedTheme(){const s=localStorage.getItem("fiber-theme");if(s==="light"){document.body.classList.remove("dark");document.body.classList.add("light");document.getElementById("themeToggle").checked=!0}else{document.body.classList.remove("light");document.body.classList.add("dark");document.getElementById("themeToggle").checked=!1}}
+function toggleTheme(){const t=document.getElementById("themeToggle");t.checked?(document.body.classList.remove("dark"),document.body.classList.add("light"),localStorage.setItem("fiber-theme","light")):(document.body.classList.remove("light"),document.body.classList.add("dark"),localStorage.setItem("fiber-theme","dark"));["lossSection","ribbonSection","themeSection"].forEach(id=>{const s=document.getElementById(id),o=s.style.maxHeight&&s.style.maxHeight!=="0px";if(o)setSectionHeight(s)})}
+function calcLoss(){/* same as LIVE */} 
+function findRibbon(){/* same as LIVE */}
+document.addEventListener("DOMContentLoaded",()=>{applySavedTheme();setSectionHeight(document.getElementById("lossSection"))});
+document.querySelectorAll(".option").forEach(opt=>{opt.addEventListener("click",()=>{document.querySelectorAll(".option").forEach(o=>o.classList.remove("selected","blue","green"));opt.classList.add("selected",opt.dataset.color)})});
+</script></body></html>

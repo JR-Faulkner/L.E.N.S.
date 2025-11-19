@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>L.E.N.S. – Loss Estimator & Network Solver</title>
+  <style>
+    :root{
+      --bg-dark:#000;
+      --fg-dark:#f00;
+      --accent-dark:#0bf;
+      --bg-light:#fff;
+      --fg-light:#000;
+      --accent-light:#07c;
+      --transition:.35s ease;
+      --radius:6px;
+      --input-w:160px;
+    }
+    html,body{height:100%}
+    body{
+      font-family:Arial, sans-serif;
+      margin:0;
+      padding:20px;
+      transition:background-color var(--transition), color var(--transition);
+      text-align:center;
+    }
+    .app-title{margin-bottom:20px}
+    .app-title h1{
+      font-size:2.2em;
+      color:var(--fg-dark);
+      text-shadow:0 0 10px var(--fg-dark),0 0 20px #f60;
+      margin:0 0 6px 0;
+    }
+    .author{
+      font-style:italic;
+      font-size:1.05em;
+      text-align:right;
+      margin-right:20px;
+      color:var(--accent-dark);
+      animation:lightning 2s infinite;
+    }
+    @keyframes lightning{
+      0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px var(--accent-dark),0 0 15px #0ff,0 0 25px var(--accent-dark);color:#0ff}
+      20%,24%,55%{text-shadow:none;color:var(--accent-dark)}
+    }
+    h2{
+      margin:0;
+      padding:15px;
+      font-size:1.2em;
+      cursor:pointer;
+      background:linear-gradient(90deg,#f00,#0f0,#0bf);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      -webkit-text-fill-color:transparent;
+      transition:transform .25s ease;
+      user-select:none;
+    }
+    h2:hover{transform:scale(1.03)}
+    .section{
+      max-height:0;
+      overflow:hidden;
+      transition:max-height var(--transition);
+      will-change:max-height;
+      border-top:1px solid rgba(0,0,0,0.05);
+      margin-bottom:12px;
+    }
+    .section-inner{padding:12px 10px 18px 10px}
+    label,select,input{font-size:1.05em;margin:8px;padding:6px 8px;border-radius:var(--radius)}
+    input[type=number]{width:var(--input-w);box-sizing:border-box}
+    .controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:6px}
+    button{padding:10px 18px;margin-top:12px;border-radius:var(--radius);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,border .18s ease;border:1px solid transparent}
+    button:hover{transform:scale(1.03);box-shadow:0 0 10px rgba(0,255,0,.12)}
+    #result,#ribbonResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease;white-space:pre-line}
+    #result.show,#ribbonResult.show{opacity:1;transform:translateY(0)}
+    .switch{position:relative;display:inline-block;width:60px;height:34px}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.4s;border-radius:34px}
+    .slider:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:#fff;transition:.4s;border-radius:50%}
+    input:checked+.slider{background-color:#2196F3}
+    input:checked+.slider:before{transform:translateX(26px)}
+
+    /* Themes */
+    body.dark{background-color:var(--bg-dark);color:var(--fg-dark)}
+    body.dark input,body.dark select{background-color:#111;color:var(--fg-dark);border:1px solid var(--fg-dark)}
+    body.dark button{background-color:#111;color:#0f0;border:1px solid #0f0}
+    body.dark button:hover{background-color:#0f0;color:#000}
+    body.dark #result,body.dark #ribbonResult{color:var(--accent-dark)}
+
+    body.light{background-color:var(--bg-light);color:var(--fg-light)}
+    body.light input,body.light select{background-color:#f0f0f0;color:var(--fg-light);border:1px solid #000}
+    body.light button{background-color:#eee;color:#000;border:1px solid #000}
+    body.light button:hover{background-color:#000;color:#fff}
+    body.light #result,body.light #ribbonResult{color:var(--accent-light)}
+
+    /* small screens */
+    @media (max-width:520px){
+      .controls{flex-direction:column}
+      input[type=number]{width:100%}
+    }
+  </style>
+</head>
+<body class="dark" data-theme="dark">
+  <div class="app-title" role="banner">
+    <h1>L.E.N.S. – Loss Estimator & Network Solver</h1>
+    <p class="author">By: Jovan Faulkner</p>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:8px">
+    <label style="display:flex;align-items:center;gap:8px">
+      <span style="font-weight:700">Theme</span>
+      <label class="switch" aria-label="Toggle theme">
+        <input id="themeToggle" type="checkbox" aria-checked="true" />
+        <span class="slider" title="Toggle theme"></span>
+      </label>
+    </label>
+    <button id="resetBtn" title="Reset inputs">Reset</button>
+  </div>
+
+  <h2 id="lossTitle" onclick="toggleSection('lossSection')">Fiber Loss Calculator ▼</h2>
+  <div id="lossSection" class="section" aria-hidden="false">
+    <div class="section-inner" role="region" aria-labelledby="lossTitle">
+      <div class="controls" role="group" aria-label="Fiber loss inputs">
+        <label for="distance">Distance:
+          <input id="distance" type="number" inputmode="decimal" placeholder="Enter value" aria-label="Distance value" />
+        </label>
+
+        <label for="unit">Unit:
+          <select id="unit" aria-label="Distance unit">
+            <option value="km">km</option>
+            <option value="m">m</option>
+            <option value="ft">feet</option>
+          </select>
+        </label>
+
+        <label for="wavelength">Wavelength:
+          <select id="wavelength" aria-label="Wavelength">
+            <option value="850">850 nm</option>
+            <option value="1310">1310 nm</option>
+            <option value="1490">1490 nm</option>
+            <option value="1550" selected>1550 nm</option>
+          </select>
+        </label>
+
+        <label for="fiberType">Fiber Type:
+          <select id="fiberType" aria-label="Fiber type">
+            <option value="sm">Singlemode</option>
+            <option value="mm">Multimode</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="controls" style="margin-top:8px">
+        <label for="connectors">Connector count:
+          <input id="connectors" type="number" min="0" step="1" value="2" aria-label="Connector count" />
+        </label>
+        <label for="splices">Splices:
+          <input id="splices" type="number" min="0" step="1" value="0" aria-label="Splices count" />
+        </label>
+
+        <button id="calcBtn" title="Calculate loss">Calculate Loss</button>
+      </div>
+
+      <div id="result" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <h2 id="ribbonTitle" onclick="toggleSection('ribbonSection')">Ribbon Cable Loss Estimator ▼</h2>
+  <div id="ribbonSection" class="section" aria-hidden="true">
+    <div class="section-inner" role="region" aria-labelledby="ribbonTitle">
+      <div class="controls" role="group" aria-label="Ribbon loss inputs">
+        <label for="ribbonDistance">Distance:
+          <input id="ribbonDistance" type="number" inputmode="decimal" placeholder="Enter value" />
+        </label>
+        <label for="ribbonUnit">Unit:
+          <select id="ribbonUnit">
+            <option value="m">m</option>
+            <option value="km">km</option>
+            <option value="ft">feet</option>
+          </select>
+        </label>
+        <label for="ribbonCount">Fibers per ribbon:
+          <input id="ribbonCount" type="number" min="1" step="1" value="12" />
+        </label>
+      </div>
+
+      <div style="margin-top:10px">
+        <button id="ribbonCalc">Estimate Ribbon Loss</button>
+      </div>
+
+      <div id="ribbonResult" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script>
+    // Utility helpers
+    function $(id){return document.getElementById(id)}
+    function toMeters(value, unit){
+      if (isNaN(value) || value === null) return 0
+      const v = Number(value)
+      switch(unit){
+        case 'km': return v * 1000
+        case 'm': return v
+        case 'ft': return v * 0.3048
+        default: return v
+      }
+    }
+
+    // Loss coefficients (typical approximate values in dB/km)
+    const lossTable = {
+      sm: { '1310': 0.35, '1490': 0.25, '1550': 0.2, '850': 3.0 },
+      mm: { '850': 2.5, '1310': 1.0, '1490': 1.0, '1550': 1.0 }
+    }
+
+    // Connector and splice typical losses (dB each)
+    const connectorLoss = 0.5 // per connector (can be adjusted)
+    const spliceLoss = 0.1 // per splice (fusion)
+
+    // Accordion toggle with accessible max-height expansion
+    function toggleSection(id){
+      const el = $(id)
+      const isOpen = el.style.maxHeight && el.style.maxHeight !== '0px'
+      if (isOpen){
+        el.style.maxHeight = '0'
+        el.setAttribute('aria-hidden','true')
+      } else {
+        // measure content height then set
+        el.style.maxHeight = el.scrollHeight + 'px'
+        el.setAttribute('aria-hidden','false')
+      }
+    }
+
+    // Theme toggle (persists temporarily via data-theme attribute)
+    const themeToggle = $('themeToggle')
+    themeToggle.addEventListener('change', ()=> {
+      const usingDark = themeToggle.checked
+      const body = document.body
+      if(usingDark){
+        body.classList.remove('light')
+        body.classList.add('dark')
+        body.setAttribute('data-theme','dark')
+      } else {
+        body.classList.remove('dark')
+        body.classList.add('light')
+        body.setAttribute('data-theme','light')
+      }
+    })
+    // initialize checkbox state to match initial class
+    themeToggle.checked = document.body.classList.contains('dark')
+
+    // Calculation logic
+    function calculateLoss(){
+      const distanceVal = Number($('distance').value)
+      const unit = $('unit').value
+      if (!distanceVal || distanceVal <= 0){
+        showResult('Please enter a positive distance value.')
+        return
+      }
+      const wavelength = $('wavelength').value
+      const fiberType = $('fiberType').value
+      const connectors = Math.max(0, Math.floor(Number($('connectors').value) || 0))
+      const splices = Math.max(0, Math.floor(Number($('splices').value) || 0))
+
+      const meters = toMeters(distanceVal, unit)
+      const km = meters / 1000
+
+      // pick loss per km; fallback if wavelength not found
+      const perKm = (lossTable[fiberType] && lossTable[fiberType][wavelength]) ? lossTable[fiberType][wavelength] : 0.35
+
+      // basic fiber attenuation
+      const fiberLoss = perKm * km
+
+      // connector and splice loss totals
+      const connLossTotal = connectors * connectorLoss
+      const spliceLossTotal = splices * spliceLoss
+
+      // rounding helper
+      const round = (n, d=3) => Math.round(n * Math.pow(10,d)) / Math.pow(10,d)
+
+      const totalLoss = round(fiberLoss + connLossTotal + spliceLossTotal, 3)
+
+      const lines = [
+        `Distance: ${distanceVal} ${unit} (${round(km,5)} km)`,
+        `Fiber type: ${fiberType === 'sm' ? 'Singlemode' : 'Multimode'}`,
+        `Wavelength: ${wavelength} nm`,
+        `Attenuation: ${perKm} dB/km`,
+        `Fiber loss: ${round(fiberLoss,3)} dB`,
+        `Connector loss (${connectors} @ ${connectorLoss} dB): ${round(connLossTotal,3)} dB`,
+        `Splice loss (${splices} @ ${spliceLoss} dB): ${round(spliceLossTotal,3)} dB`,
+        `Total estimated loss: ${totalLoss} dB`
+      ]
+
+      showResult(lines.join('\n'))
+    }
+
+    // Ribbon estimation (example: compute total loss for many fibers, highlight per-fiber)
+    function estimateRibbon(){
+      const distVal = Number($('ribbonDistance').value)
+      const unit = $('ribbonUnit').value
+      const fibers = Math.max(1, Math.floor(Number($('ribbonCount').value) || 12))
+      if (!distVal || distVal <= 0){
+        showRibbon('Please enter a positive ribbon distance.')
+        return
+      }
+      const meters = toMeters(distVal, unit)
+      const km = meters / 1000
+      // assume singlemode 1550 typical for ribbon plant; per-km loss
+      const perKm = 0.2
+      const fiberLoss = perKm * km
+      const perFiber = Math.round(fiberLoss * 100000)/100000
+      const totalBundleLoss = Math.round(perFiber * fibers * 100000)/100000
+
+      const lines = [
+        `Ribbon distance: ${distVal} ${unit} (${Math.round(km*100000)/100000} km)`,
+        `Fibers in ribbon: ${fibers}`,
+        `Per-fiber loss (estimate at ${perKm} dB/km): ${perFiber} dB`,
+        `Sum of per-fiber losses (for reference): ${totalBundleLoss} dB`
+      ]
+
+      showRibbon(lines.join('\n'))
+    }
+
+    // UI result presentation
+    function showResult(text){
+      const el = $('result')
+      el.textContent = text
+      el.classList.add('show')
+      // ensure section open
+      const sec = $('lossSection')
+      sec.style.maxHeight = sec.scrollHeight + 'px'
+      sec.setAttribute('aria-hidden','false')
+    }
+    function showRibbon(text){
+      const el = $('ribbonResult')
+      el.textContent = text
+      el.classList.add('show')
+      const sec = $('ribbonSection')
+      sec.style.maxHeight = sec.scrollHeight + 'px'
+      sec.setAttribute('aria-hidden','false')
+    }
+
+    // Event bindings
+    $('calcBtn').addEventListener('click', calculateLoss)
+    $('ribbonCalc').addEventListener('click', estimateRibbon)
+    $('resetBtn').addEventListener('click', ()=>{
+      $('distance').value = ''
+      $('unit').value = 'km'
+      $('wavelength').value = '1550'
+      $('fiberType').value = 'sm'
+      $('connectors').value = 2
+      $('splices').value = 0
+      $('result').textContent = ''
+      $('result').classList.remove('show')
+      $('ribbonDistance').value = ''
+      $('ribbonUnit').value = 'm'
+      $('ribbonCount').value = 12
+      $('ribbonResult').textContent = ''
+      $('ribbonResult').classList.remove('show')
+    })
+
+    // Initialize: expand lossSection by default (matching original)
+    window.addEventListener('load', ()=> {
+      const lossSec = $('lossSection')
+      lossSec.style.maxHeight = lossSec.scrollHeight + 'px'
+      lossSec.setAttribute('aria-hidden','false')
+      // collapse ribbon initially
+      const ribbonSec = $('ribbonSection')
+      ribbonSec.style.maxHeight = '0'
+      ribbonSec.setAttribute('aria-hidden','true')
+    })
+
+    // Make Enter key trigger calculation when inside relevant inputs
+    ['distance','unit','wavelength','fiberType','connectors','splices'].forEach(id=>{
+      const el = $(id)
+      if(el){
+        el.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter'){ e.preventDefault(); calculateLoss() }
+        })
+      }
+    })
+  </script>
+</body>
+</html>

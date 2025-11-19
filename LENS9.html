@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>L.E.N.S. – Loss Estimator & Network Solver</title>
+<style>
+:root{--bg-dark:#000;--fg-dark:#f00;--accent-dark:#0bf;--bg-light:#fff;--fg-light:#000;--accent-light:#07c;--transition:.35s;--radius:6px;--input-w:160px}
+html,body{height:100%}body{font-family:Arial,sans-serif;margin:0;padding:18px;transition:background-color var(--transition),color var(--transition);text-align:center}
+.app-title{margin-bottom:16px}.app-title h1{font-size:2.05rem;color:var(--fg-dark);text-shadow:0 0 10px var(--fg-dark);margin:0}.author{font-style:italic;font-size:1rem;text-align:right;margin-right:18px;color:var(--accent-dark);animation:lightning 2s infinite}
+@keyframes lightning{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px var(--accent-dark),0 0 15px #0ff;color:#0ff}20%,24%,55%{text-shadow:none;color:var(--accent-dark)}}
+h2{margin:0;padding:12px;font-size:1.12rem;cursor:pointer;background:linear-gradient(90deg,#f00,#0f0,#0bf);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:transform .22s;user-select:none}
+h2:hover{transform:scale(1.03)}.section{max-height:0;overflow:hidden;transition:max-height var(--transition);will-change:max-height;margin-bottom:10px}
+.section-inner{padding:10px}label,select,input{font-size:1rem;margin:6px;padding:6px 8px;border-radius:var(--radius)}input[type=number]{width:var(--input-w);box-sizing:border-box}.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:6px}
+button{padding:8px 14px;margin-top:8px;border-radius:var(--radius);cursor:pointer;transition:transform .16s,box-shadow .16s;border:1px solid transparent}button:hover{transform:scale(1.03);box-shadow:0 0 8px rgba(0,255,0,.12)}
+#result,#ribbonResult,#thenResult{margin-top:12px;font-size:0.98rem;font-weight:700;opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s;white-space:pre-line}
+#result.show,#ribbonResult.show,#thenResult.show{opacity:1;transform:translateY(0)}
+.switch{position:relative;display:inline-block;width:56px;height:30px}.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:30px}
+.slider:before{position:absolute;content:"";height:22px;width:22px;left:4px;bottom:4px;background-color:#fff;transition:.3s;border-radius:50%}
+input:checked+.slider{background-color:#2196F3}input:checked+.slider:before{transform:translateX(26px)}
+/* themes */
+body.dark{background:var(--bg-dark);color:var(--fg-dark)}body.dark input,body.dark select{background:#111;color:var(--fg-dark);border:1px solid var(--fg-dark)}body.dark button{background:#111;color:#0f0;border:1px solid #0f0}body.dark button:hover{background:#0f0;color:#000}body.dark #result,body.dark #ribbonResult,body.dark #thenResult{color:var(--accent-dark)}
+body.light{background:var(--bg-light);color:var(--fg-light)}body.light input,body.light select{background:#f3f3f3;color:var(--fg-light);border:1px solid #000}body.light button{background:#eee;color:#000;border:1px solid #000}body.light button:hover{background:#000;color:#fff}body.light #result,body.light #ribbonResult,body.light #thenResult{color:var(--accent-light)}
+/* then mode compact */
+.then-block{font-size:0.86rem;padding:8px;border-radius:6px;border:1px dashed rgba(0,0,0,.08);max-width:760px;margin:10px auto 0;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.then-controls{display:flex;gap:8px;align-items:center}
+.then-controls label{margin:0;font-size:0.9rem}
+.then-toggle{padding:6px 10px;border-radius:6px}
+@media (max-width:520px){.controls{flex-direction:column}input[type=number]{width:100%}.then-block{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body class="dark" data-theme="dark">
+  <div class="app-title" role="banner">
+    <h1>L.E.N.S. – Loss Estimator & Network Solver</h1>
+    <p class="author">By: Jovan Faulkner</p>
+  </div>
+
+  <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:8px">
+    <label style="display:flex;align-items:center;gap:8px"><strong>Theme</strong>
+      <label class="switch" aria-label="Toggle theme">
+        <input id="themeToggle" type="checkbox" aria-checked="true" />
+        <span class="slider" title="Toggle theme"></span>
+      </label>
+    </label>
+    <button id="resetBtn" title="Reset inputs">Reset</button>
+  </div>
+
+  <h2 id="lossTitle" onclick="toggleSection('lossSection')">Fiber Loss Calculator ▼</h2>
+  <div id="lossSection" class="section" aria-hidden="false">
+    <div class="section-inner" role="region" aria-labelledby="lossTitle">
+      <div class="controls" role="group" aria-label="Fiber loss inputs">
+        <label for="distance">Distance:
+          <input id="distance" type="number" inputmode="decimal" placeholder="Enter value" aria-label="Distance value" />
+        </label>
+        <label for="unit">Unit:
+          <select id="unit" aria-label="Distance unit"><option value="km">km</option><option value="m">m</option><option value="ft">feet</option></select>
+        </label>
+        <label for="wavelength">Wavelength:
+          <select id="wavelength" aria-label="Wavelength"><option value="850">850 nm</option><option value="1310">1310 nm</option><option value="1490">1490 nm</option><option value="1550" selected>1550 nm</option></select>
+        </label>
+        <label for="fiberType">Fiber Type:
+          <select id="fiberType" aria-label="Fiber type"><option value="sm">Singlemode</option><option value="mm">Multimode</option></select>
+        </label>
+      </div>
+
+      <div class="controls" style="margin-top:8px">
+        <label for="connectors">Connector count:
+          <input id="connectors" type="number" min="0" step="1" value="2" aria-label="Connector count" />
+        </label>
+        <label for="splices">Splices:
+          <input id="splices" type="number" min="0" step="1" value="0" aria-label="Splices count" />
+        </label>
+        <button id="calcBtn" title="Calculate loss">Calculate Loss</button>
+      </div>
+
+      <div id="result" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <h2 id="ribbonTitle" onclick="toggleSection('ribbonSection')">Ribbon Cable Loss Estimator ▼</h2>
+  <div id="ribbonSection" class="section" aria-hidden="true">
+    <div class="section-inner" role="region" aria-labelledby="ribbonTitle">
+      <div class="controls" role="group" aria-label="Ribbon loss inputs">
+        <label for="ribbonDistance">Distance:
+          <input id="ribbonDistance" type="number" inputmode="decimal" placeholder="Enter value" />
+        </label>
+        <label for="ribbonUnit">Unit:
+          <select id="ribbonUnit"><option value="m">m</option><option value="km">km</option><option value="ft">feet</option></select>
+        </label>
+        <label for="ribbonCount">Fibers per ribbon:
+          <input id="ribbonCount" type="number" min="1" step="1" value="12" />
+        </label>
+      </div>
+      <div style="margin-top:8px"><button id="ribbonCalc">Estimate Ribbon Loss</button></div>
+      <div id="ribbonResult" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- Compact THEN mode (near bottom, small) -->
+  <div class="then-block" id="thenBlock" aria-hidden="false">
+    <div style="flex:1">
+      <strong>Then Mode</strong>
+      <div style="font-size:0.86rem;color:inherit;margin-top:6px" id="thenSummary">Quick chain actions: calculate -> ribbon -> summarize</div>
+    </div>
+    <div class="then-controls">
+      <label for="thenAction">Action:</label>
+      <select id="thenAction" class="then-toggle" title="Then action">
+        <option value="none">none</option>
+        <option value="calcThenRibbon">Calc then Ribbon</option>
+        <option value="calcThenSummary">Calc then Summary</option>
+        <option value="ribbonThenSummary">Ribbon then Summary</option>
+      </select>
+      <button id="thenRun" class="then-toggle" title="Run then action">Run</button>
+    </div>
+  </div>
+  <div id="thenResult" role="status" aria-live="polite"></div>
+
+<script>
+/* helpers */
+function $(id){return document.getElementById(id)}
+function toMeters(v,u){if(isNaN(v)||v===null) return 0;const n=Number(v);switch(u){case'km':return n*1000;case'm':return n;case'ft':return n*0.3048;default:return n}}
+const lossTable={sm:{'1310':0.35,'1490':0.25,'1550':0.2,'850':3.0},mm:{'850':2.5,'1310':1.0,'1490':1.0,'1550':1.0}}
+const connectorLoss=0.5,spliceLoss=0.1
+
+/* accordion */
+function toggleSection(id){const el=$(id);const open=el.style.maxHeight&&el.style.maxHeight!=='0px';if(open){el.style.maxHeight='0';el.setAttribute('aria-hidden','true')}else{el.style.maxHeight=el.scrollHeight+'px';el.setAttribute('aria-hidden','false')}}
+
+/* theme */
+const themeToggle=$('themeToggle')
+themeToggle.addEventListener('change',()=>{const useDark=themeToggle.checked;const b=document.body;if(useDark){b.classList.remove('light');b.classList.add('dark');b.setAttribute('data-theme','dark')}else{b.classList.remove('dark');b.classList.add('light');b.setAttribute('data-theme','light')}})
+themeToggle.checked=document.body.classList.contains('dark')
+
+/* calculations */
+function round(n,d=3){return Math.round(n*Math.pow(10,d))/Math.pow(10,d)}
+function calculateLoss(){const distanceVal=Number($('distance').value);const unit=$('unit').value;if(!distanceVal||distanceVal<=0){showResult('Please enter a positive distance value.');return}
+const wavelength=$('wavelength').value;const fiberType=$('fiberType').value;const connectors=Math.max(0,Math.floor(Number($('connectors').value)||0));const splices=Math.max(0,Math.floor(Number($('splices').value)||0))
+const meters=toMeters(distanceVal,unit);const km=meters/1000;const perKm=(lossTable[fiberType]&&lossTable[fiberType][wavelength])?lossTable[fiberType][wavelength]:0.35
+const fiberLoss=perKm*km;const connLossTotal=connectors*connectorLoss;const spliceLossTotal=splices*spliceLoss;const totalLoss=round(fiberLoss+connLossTotal+spliceLossTotal,3)
+const lines=[
+`Distance: ${distanceVal} ${unit} (${round(km,5)} km)`,
+`Fiber type: ${fiberType==='sm'?'Singlemode':'Multimode'}`,
+`Wavelength: ${wavelength} nm`,
+`Attenuation: ${perKm} dB/km`,
+`Fiber loss: ${round(fiberLoss,3)} dB`,
+`Connector loss (${connectors} @ ${connectorLoss} dB): ${round(connLossTotal,3)} dB`,
+`Splice loss (${splices} @ ${spliceLoss} dB): ${round(spliceLossTotal,3)} dB`,
+`Total estimated loss: ${totalLoss} dB`
+]
+showResult(lines.join('\n'));return {totalLoss,perKm,km,fiberLoss,connLossTotal,spliceLossTotal}
+}
+
+function estimateRibbon(){const distVal=Number($('ribbonDistance').value);const unit=$('ribbonUnit').value;const fibers=Math.max(1,Math.floor(Number($('ribbonCount').value)||12));if(!distVal||distVal<=0){showRibbon('Please enter a positive ribbon distance.');return}
+const meters=toMeters(distVal,unit);const km=meters/1000;const perKm=0.2;const fiberLoss=perKm*km;const perFiber=round(fiberLoss,5);const totalBundleLoss=round(perFiber*fibers,5)
+const lines=[
+`Ribbon distance: ${distVal} ${unit} (${round(km,5)} km)`,
+`Fibers in ribbon: ${fibers}`,
+`Per-fiber loss (est @ ${perKm} dB/km): ${perFiber} dB`,
+`Sum of per-fiber losses: ${totalBundleLoss} dB`
+]
+showRibbon(lines.join('\n'));return {perFiber,totalBundleLoss,fibers,km}
+}
+
+/* UI helpers */
+function showResult(txt){const el=$('result');el.textContent=txt;el.classList.add('show');const sec=$('lossSection');sec.style.maxHeight=sec.scrollHeight+'px';sec.setAttribute('aria-hidden','false')}
+function showRibbon(txt){const el=$('ribbonResult');el.textContent=txt;el.classList.add('show');const sec=$('ribbonSection');sec.style.maxHeight=sec.scrollHeight+'px';sec.setAttribute('aria-hidden','false')}
+function showThen(txt){const el=$('thenResult');el.textContent=txt;el.classList.add('show')}
+
+/* bindings */
+$('calcBtn').addEventListener('click',()=>{calculateLoss()})
+$('ribbonCalc').addEventListener('click',()=>{estimateRibbon()})
+$('resetBtn').addEventListener('click',()=>{$('distance').value='';$('unit').value='km';$('wavelength').value='1550';$('fiberType').value='sm';$('connectors').value=2;$('splices').value=0;$('result').textContent='';$('result').classList.remove('show');$('ribbonDistance').value='';$('ribbonUnit').value='m';$('ribbonCount').value=12;$('ribbonResult').textContent='';$('ribbonResult').classList.remove('show');$('thenResult').textContent='';$('thenResult').classList.remove('show')})
+
+/* THEN mode runner (compact behavior) */
+$('thenRun').addEventListener('click',()=>{
+  const action=$('thenAction').value
+  if(action==='none'){showThen('No action selected');return}
+  if(action==='calcThenRibbon'){
+    const calc=calculateLoss()
+    const ribbon=estimateRibbon()
+    showThen(`Chained: calc total ${calc?calc.totalLoss:'n/a'} dB; ribbon per-fiber ${ribbon? ribbon.perFiber : 'n/a'} dB`)
+  } else if(action==='calcThenSummary'){
+    const calc=calculateLoss()
+    showThen(calc?`Summary: total loss ${calc.totalLoss} dB at ${calc.perKm} dB/km`:'Calculation failed')
+  } else if(action==='ribbonThenSummary'){
+    const ribbon=estimateRibbon()
+    showThen(ribbon?`Ribbon summary: ${ribbon.fibers} fibers; per-fiber ${ribbon.perFiber} dB`:'Ribbon failed')
+  } else {showThen('Unknown action')}
+})
+
+/* Enter triggers for key inputs */
+['distance','unit','wavelength','fiberType','connectors','splices'].forEach(id=>{const e=$(id);if(e) e.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();calculateLoss()}})})
+
+/* init */
+window.addEventListener('load',()=>{
+  const lossSec=$('lossSection');lossSec.style.maxHeight=lossSec.scrollHeight+'px';lossSec.setAttribute('aria-hidden','false')
+  const ribbonSec=$('ribbonSection');ribbonSec.style.maxHeight='0';ribbonSec.setAttribute('aria-hidden','true')
+})
+</script>
+</body>
+</html>
