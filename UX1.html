@@ -34,21 +34,21 @@ button{padding:10px 18px;margin-top:12px;border-radius:var(--radius);cursor:poin
 button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.12)}
 button:focus{outline: none; box-shadow: var(--focus); }
 button[disabled]{opacity:0.5;cursor:not-allowed;transform:none}
-#result,#ribbonResult,#spliceCustomResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
-#result.show,#ribbonResult.show,#spliceCustomResult.show{opacity:1;transform:translateY(0)}
+#result,#ribbonResult,#spliceCustomResult,#convertResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
+#result.show,#ribbonResult.show,#spliceCustomResult.show,#convertResult.show{opacity:1;transform:translateY(0)}
 /* Dark theme */
 body.dark{background-color:var(--bg-dark);color:var(--accent-red)}
 body.dark input,body.dark select{background-color:#111;color:var(--accent-red);border:1px solid var(--accent-red)}
 body.dark button{background-color:#111;color:var(--accent-green);border:1px solid var(--accent-green)}
 body.dark button:hover{background-color:var(--accent-green);color:#000}
-body.dark #result,body.dark #ribbonResult,body.dark #spliceCustomResult{color:var(--result-dark-blue)}
+body.dark #result,body.dark #ribbonResult,body.dark #spliceCustomResult,body.dark #convertResult{color:var(--result-dark-blue)}
 body.dark label{color:var(--label-dark-blue)}
 /* Light theme */
 body.light{background-color:var(--bg-light);color:#000}
 body.light input,body.light select{background-color:#f0f0f0;color:#000;border:1px solid #000}
 body.light button{background-color:#eee;color:#000;border:1px solid #000}
 body.light button:hover{background-color:#000;color:#fff}
-body.light #result,body.light #ribbonResult,body.light #spliceCustomResult{color:var(--result-light-blue)}
+body.light #result,body.light #ribbonResult,body.light #spliceCustomResult,body.light #convertResult{color:var(--result-light-blue)}
 body.light label{color:var(--label-light-blue)}
 /* Toggle */
 .switch{position:relative;display:inline-block;width:48px;height:26px}
@@ -95,7 +95,12 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
       <input id="distance" type="number" placeholder="Enter value" aria-label="Distance value">
     </label>
     <label for="unit">Unit:
-      <select id="unit" aria-label="Distance unit"><option value="km">km</option><option value="ft">feet</option></select>
+      <select id="unit" aria-label="Distance unit">
+        <option value="km">km</option>
+        <option value="mi">miles</option>
+        <option value="kft">kilofeet</option>
+        <option value="ft">feet</option>
+      </select>
     </label><br>
 
     <label for="wavelength">Wavelength:
@@ -161,6 +166,38 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
   </div>
 </div>
 
+<h2 onclick="toggleSection('converterSection')">Distance Converter ▼</h2>
+<div id="converterSection" class="section">
+  <div class="section-inner">
+    <label for="convValue">Value:
+      <input id="convValue" type="number" placeholder="Enter value" aria-label="Value to convert">
+    </label>
+    <label for="convFrom">From:
+      <select id="convFrom" aria-label="Convert from">
+        <option value="km">Kilometers (km)</option>
+        <option value="mi">Miles (mi)</option>
+        <option value="kft">Kilofeet (kft)</option>
+        <option value="ft">Feet (ft)</option>
+      </select>
+    </label>
+    <label for="convTo">To:
+      <select id="convTo" aria-label="Convert to">
+        <option value="km">Kilometers (km)</option>
+        <option value="mi">Miles (mi)</option>
+        <option value="kft">Kilofeet (kft)</option>
+        <option value="ft">Feet (ft)</option>
+      </select>
+    </label><br>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
+      <button id="convertBtn" type="button">Convert</button>
+      <button id="copyConvBtn" type="button">Copy Result</button>
+      <button id="applyToCalcBtn" type="button">Use in Calculator</button>
+    </div>
+    <p id="convertResult" aria-live="polite"></p>
+    <p class="small-note">Tip: use <strong>Use in Calculator</strong> to populate the calculator distance and unit directly.</p>
+  </div>
+</div>
+
 <h2 onclick="toggleSection('ribbonSection')">Fiber Ribbon Finder ▼</h2>
 <div id="ribbonSection" class="section">
   <div class="section-inner">
@@ -186,7 +223,9 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
 <script>
 (function(){
   // Constants and helpers
-  const FT_TO_KM = 0.0003048;
+  const FT_TO_KM = 0.0003048;        // 1 ft = 0.0003048 km
+  const KFT_TO_KM = 0.3048;         // 1 kft = 1000 ft = 0.3048 km
+  const MI_TO_KM = 1.60934;         // 1 mile = 1.60934 km
   const ATTENUATION = { '850':2.5, '1310':0.35, '1490':0.25, '1550':0.20, '1625':0.30 };
   const $ = id => document.getElementById(id);
   const clampInt = (v, min=0) => { const n = parseInt(v, 10); return Number.isFinite(n) ? Math.max(min, n) : min; };
@@ -308,10 +347,32 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
     setSectionHeight($('lossSection'));
   }
 
+  // Unit conversion helpers
+  function toKm(value, unit){
+    const v = Number(value) || 0;
+    switch(unit){
+      case 'km': return v;
+      case 'mi': return v * MI_TO_KM;
+      case 'kft': return v * KFT_TO_KM;
+      case 'ft': return v * FT_TO_KM;
+      default: return v;
+    }
+  }
+  function fromKm(kmValue, unit){
+    const v = Number(kmValue) || 0;
+    switch(unit){
+      case 'km': return v;
+      case 'mi': return v / MI_TO_KM;
+      case 'kft': return v / KFT_TO_KM;
+      case 'ft': return v / FT_TO_KM;
+      default: return v;
+    }
+  }
+
   // Calculation logic (pure)
   function computeTotalLoss({ distance=0, unit='km', wavelength='1550', connectors=0, connectorLoss=0, splices=0, spliceLoss=0, customSplices=[] }){
     const dist = Number(distance) || 0;
-    const distanceKm = unit === 'ft' ? dist * FT_TO_KM : dist;
+    const distanceKm = toKm(dist, unit);
     const attenuation = ATTENUATION[wavelength] ?? 0.2;
     const fiberLoss = attenuation * distanceKm;
     const totalConnectorLoss = Number(connectors) * Number(connectorLoss);
@@ -371,6 +432,42 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
     setSectionHeight($('lossSection'));
   }
 
+  // Converter logic
+  function convertDistance(){
+    const val = clampFloat($('convValue').value || 0, 0);
+    const from = $('convFrom').value || 'km';
+    const to = $('convTo').value || 'km';
+    const km = toKm(val, from);
+    const converted = fromKm(km, to);
+    const out = $('convertResult');
+    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (${km.toFixed(6)} km)`);
+    setSectionHeight($('converterSection'));
+  }
+
+  function copyConvertResult(){
+    const out = $('convertResult');
+    if(!out || !out.textContent) return;
+    navigator.clipboard?.writeText(out.textContent).then(()=> {
+      const prev = out.textContent;
+      out.textContent = 'Copied to clipboard';
+      setTimeout(()=> out.textContent = prev, 1200);
+    }).catch(()=> {
+      out.textContent = 'Unable to copy';
+      setTimeout(()=> out.textContent = '', 1200);
+    });
+  }
+
+  function applyConvertedToCalculator(){
+    const val = clampFloat($('convValue').value || 0, 0);
+    const from = $('convFrom').value || 'km';
+    // set calculator distance and unit to the converter inputs
+    $('distance').value = val;
+    $('unit').value = from;
+    // open calculator section and recalc
+    setSectionHeight($('lossSection'));
+    calcLoss();
+  }
+
   // Ribbon finder
   function findRibbon(e){
     if(e && e.preventDefault) e.preventDefault();
@@ -409,7 +506,7 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
     } else {
       document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark');
     }
-    ['lossSection','ribbonSection','themeSection'].forEach(id => {
+    ['lossSection','converterSection','ribbonSection','themeSection'].forEach(id => {
       const s = $(id);
       if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s);
     });
@@ -420,6 +517,7 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
     // ensure result containers are announced to screen readers
     const r = $('result'); if(r) r.setAttribute('aria-live','polite');
     const rr = $('ribbonResult'); if(rr) rr.setAttribute('aria-live','polite');
+    const cr = $('convertResult'); if(cr) cr.setAttribute('aria-live','polite');
 
     applySavedTheme();
     setSectionHeight($('lossSection'));
@@ -427,12 +525,13 @@ input:focus, select:focus { box-shadow: var(--focus); outline: none; }
     // attach buttons
     const addBtn = $('addSpliceBtn'); if(addBtn) addBtn.addEventListener('click', addCustomSplice);
     const clearBtn = $('clearCustomBtn'); if(clearBtn) clearBtn.addEventListener('click', clearCustomSplices);
+    const calcBtn = $('calcBtn'); if(calcBtn) calcBtn.addEventListener('click', calcLoss);
+    const findBtn = $('findBtn'); if(findBtn) findBtn.addEventListener('click', findRibbon);
 
-    // attach calc/find (also compatible with inline onclick)
-    const calcBtn = $('calcBtn');
-    if(calcBtn) { calcBtn.addEventListener('click', calcLoss); }
-    const findBtn = $('findBtn');
-    if(findBtn) { findBtn.addEventListener('click', findRibbon); }
+    // converter buttons
+    const convertBtn = $('convertBtn'); if(convertBtn) convertBtn.addEventListener('click', convertDistance);
+    const copyConvBtn = $('copyConvBtn'); if(copyConvBtn) copyConvBtn.addEventListener('click', copyConvertResult);
+    const applyToCalcBtn = $('applyToCalcBtn'); if(applyToCalcBtn) applyToCalcBtn.addEventListener('click', applyConvertedToCalculator);
 
     // ensure all other buttons are type="button" to avoid accidental submits
     document.querySelectorAll('button').forEach(b => { if(!b.hasAttribute('type')) b.setAttribute('type','button'); });
