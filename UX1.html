@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="utf-8"/>
 <title>L.E.N.S. – Loss Estimator & Network Solver</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
 :root{
   --label-dark-blue:#0099cc;
@@ -32,27 +32,28 @@ h2:hover{transform:scale(1.03)}
 .section-inner{padding:12px 10px 18px 10px}
 .form-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0}
 label{display:inline-flex;align-items:center;gap:8px;color:var(--label-dark-blue);font-weight:700;font-size:1.05em}
-input,select{font-size:1.05em;margin:0;padding:6px 8px;border-radius:var(--radius);border:1px solid rgba(0,0,0,0.08)}
+input,select,textarea{font-size:1.05em;margin:0;padding:6px 8px;border-radius:var(--radius);border:1px solid rgba(0,0,0,0.08)}
+textarea{min-height:120px;max-width:100%;width:100%;box-sizing:border-box}
 input[type=number]{width:var(--input-w);box-sizing:border-box}
 button{padding:10px 18px;margin-top:12px;border-radius:var(--radius);cursor:pointer;transition:all .18s ease;border:1px solid transparent;background:#eee;color:#000}
 button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.12)}
 button:focus{outline: none; box-shadow: var(--focus); }
 button[disabled]{opacity:0.5;cursor:not-allowed;transform:none}
-#result,#ribbonResult,#spliceCustomResult,#convertResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
-#result.show,#ribbonResult.show,#spliceCustomResult.show,#convertResult.show{opacity:1;transform:translateY(0)}
+#result,#ribbonResult,#spliceCustomResult,#convertResult,#jobNoteResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
+#result.show,#ribbonResult.show,#spliceCustomResult.show,#convertResult.show,#jobNoteResult.show{opacity:1;transform:translateY(0)}
 /* Dark theme */
 body.dark{background-color:var(--bg-dark);color:var(--accent-red)}
-body.dark input,body.dark select{background-color:#111;color:var(--accent-red);border:1px solid var(--accent-red)}
+body.dark input,body.dark select,body.dark textarea{background-color:#111;color:var(--accent-red);border:1px solid var(--accent-red)}
 body.dark button{background-color:#111;color:var(--accent-green);border:1px solid var(--accent-green)}
 body.dark button:hover{background-color:var(--accent-green);color:#000}
-body.dark #result,body.dark #ribbonResult,body.dark #spliceCustomResult,body.dark #convertResult{color:var(--result-dark-blue)}
+body.dark #result,body.dark #ribbonResult,body.dark #spliceCustomResult,body.dark #convertResult,body.dark #jobNoteResult{color:var(--result-dark-blue)}
 body.dark label{color:var(--label-dark-blue)}
 /* Light theme */
 body.light{background-color:var(--bg-light);color:#000}
-body.light input,body.light select{background-color:#f0f0f0;color:#000;border:1px solid #000}
+body.light input,body.light select,body.light textarea{background-color:#f0f0f0;color:#000;border:1px solid #000}
 body.light button{background-color:#eee;color:#000;border:1px solid #000}
 body.light button:hover{background-color:#000;color:#fff}
-body.light #result,body.light #ribbonResult,body.light #spliceCustomResult,body.light #convertResult{color:var(--result-light-blue)}
+body.light #result,body.light #ribbonResult,body.light #spliceCustomResult,body.light #convertResult,body.light #jobNoteResult{color:var(--result-light-blue)}
 body.light label{color:var(--label-light-blue)}
 /* Toggle */
 .switch{position:relative;display:inline-block;width:48px;height:26px}
@@ -78,7 +79,7 @@ input:checked+.slider:before{transform:translateX(22px)}
 .splice-list-row .col.actions{width:140px;text-align:left}
 .splice-editing{background:rgba(0,191,255,0.03);border:1px dashed rgba(0,191,255,0.06)}
 /* Focus ring for inputs */
-input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline: none; }
+input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline: none; }
 
 /* Tooltip for unit-aware conversions */
 .km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:var(--tooltip-bg);color:var(--tooltip-color);font-size:0.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease}
@@ -226,6 +227,64 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
   </div>
 </div>
 
+<h2 onclick="toggleSection('jobSection')">Jobs Info Creator ▼</h2>
+<div id="jobSection" class="section">
+  <div class="section-inner">
+    <div class="form-row">
+      <label for="jobCode">Job Code:
+        <input id="jobCode" type="text" placeholder="e.g., LG15" aria-label="Job code">
+      </label>
+      <label for="projectCode">Project Code:
+        <input id="projectCode" type="text" placeholder="Project/ID" aria-label="Project code">
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label for="cableName">Cable Name:
+        <input id="cableName" type="text" placeholder="e.g., LG15->193-204" aria-label="Cable name">
+      </label>
+      <label for="countsNote">Counts / Primary:
+        <input id="countsNote" type="text" placeholder="e.g., 193-204 (193-194 Primary)" aria-label="Counts and primary note">
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label for="coInfo">From C.O. (location / post):
+        <input id="coInfo" type="text" placeholder="e.g., BP (Binging Post) (49,60)" aria-label="CO info">
+      </label>
+      <label for="jumpers">Jumpers (Tone first):
+        <input id="jumpers" type="text" placeholder="e.g., Tone: 49,60; Jumpers: n/a" aria-label="Jumpers and tone positions">
+      </label>
+    </div>
+
+    <div style="margin-top:8px;text-align:left;max-width:760px;margin-left:auto;margin-right:auto">
+      <strong>OTDR Results</strong>
+      <div id="otdrList" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:8px">
+        <input id="newOtdrCount" type="text" placeholder="Count (e.g., 193)" aria-label="OTDR count" style="width:120px"/>
+        <input id="newOtdrValue" type="text" placeholder="Value (e.g., 24534 ft)" aria-label="OTDR value" style="width:160px"/>
+        <button id="addOtdrBtn" type="button">Add OTDR</button>
+        <button id="clearOtdrBtn" type="button">Clear OTDRs</button>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+      <label for="jobNotes">Additional Notes:
+        <textarea id="jobNotes" placeholder="Any extra notes for the job (optional)" aria-label="Additional job notes"></textarea>
+      </label>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:12px">
+      <button id="generateJobBtn" type="button">Generate Job Note</button>
+      <button id="copyJobBtn" type="button">Copy Job Note</button>
+      <button id="clearJobBtn" type="button">Clear Form</button>
+    </div>
+
+    <p id="jobNoteResult" aria-live="polite"></p>
+    <p class="small-note">Tip: after copying, open Notes on your iPhone and paste the text into a new note.</p>
+  </div>
+</div>
+
 <h2 onclick="toggleSection('ribbonSection')">Fiber Ribbon Finder ▼</h2>
 <div id="ribbonSection" class="section">
   <div class="section-inner">
@@ -254,9 +313,9 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
 <script>
 (function(){
   // Constants and helpers
-  const FT_TO_KM = 0.0003048;        // 1 ft = 0.0003048 km
-  const KFT_TO_KM = 0.3048;         // 1 kft = 1000 ft = 0.3048 km
-  const MI_TO_KM = 1.60934;         // 1 mile = 1.60934 km
+  const FT_TO_KM = 0.0003048;
+  const KFT_TO_KM = 0.3048;
+  const MI_TO_KM = 1.60934;
   const ATTENUATION = { '850':2.5, '1310':0.35, '1490':0.25, '1550':0.20, '1625':0.30 };
   const $ = id => document.getElementById(id);
   const clampInt = (v, min=0) => { const n = parseInt(v, 10); return Number.isFinite(n) ? Math.max(min, n) : min; };
@@ -266,20 +325,8 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
   function hideText(el){ if(!el) return; el.classList.remove('show'); }
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  // Tooltip management for unit-aware conversions
+  // Tooltip management
   const tooltip = $('kmTooltip');
-  function toKm(value, unit){
-    const v = Number(value) || 0;
-    switch(unit){
-      case 'km': return v;
-      case 'mi': return v * MI_TO_KM;
-      case 'kft': return v * KFT_TO_KM;
-      case 'ft': return v * FT_TO_KM;
-      default: return v;
-    }
-  }
-  function formatKm(km){ return `${Number(km).toFixed(6)} km`; }
-
   function showKmTooltipAt(x, y, text){
     tooltip.textContent = text;
     tooltip.style.left = x + 'px';
@@ -291,8 +338,6 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
     tooltip.classList.remove('show');
     tooltip.setAttribute('aria-hidden','true');
   }
-
-  // Attach hover listeners to elements that should show km equivalents
   function attachKmHover(el, getKmText){
     if(!el) return;
     el.addEventListener('mouseenter', (ev) => {
@@ -309,7 +354,6 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
       if(text) showKmTooltipAt(x, y, text);
     });
     el.addEventListener('mouseleave', hideKmTooltip);
-    // keyboard focus accessibility
     el.addEventListener('focus', (ev) => {
       const rect = el.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
@@ -320,298 +364,7 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
     el.addEventListener('blur', hideKmTooltip);
   }
 
-  // Splice store and rendering with inline edit
-  const spliceStore = [];
-  let spliceId = 1;
-
-  function renderSpliceList(){
-    const list = $('spliceList');
-    list.innerHTML = '';
-    const summary = $('spliceCustomResult');
-    if(spliceStore.length === 0){
-      summary.textContent = 'No custom splices added';
-      summary.classList.remove('show');
-    } else {
-      summary.textContent = `${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;
-      summary.classList.add('show');
-    }
-
-    spliceStore.forEach(s => {
-      const row = document.createElement('div');
-      row.className = 'splice-list-row';
-      row.setAttribute('data-id', s.id);
-      row.innerHTML = `
-        <div class="col label">${escapeHtml(s.label)}</div>
-        <div class="col count">${s.count}</div>
-        <div class="col loss">${Number(s.loss).toFixed(3)}</div>
-        <div class="col actions">
-          <button type="button" class="editSplice" aria-label="Edit ${escapeHtml(s.label)}">Edit</button>
-          <button type="button" class="removeSplice" aria-label="Remove ${escapeHtml(s.label)}">Remove</button>
-        </div>
-      `;
-      list.appendChild(row);
-    });
-
-    // handlers
-    list.querySelectorAll('.removeSplice').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
-        removeSplice(id);
-      });
-    });
-    list.querySelectorAll('.editSplice').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
-        openInlineEdit(id);
-      });
-    });
-  }
-
-  function addCustomSplice(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const label = ($('newSpliceLabel').value || '').trim() || `Splice ${spliceId}`;
-    const count = clampInt($('newSpliceCount').value || 1, 0);
-    const loss = clampFloat($('newSpliceLoss').value || 0, 0);
-    spliceStore.push({ id: spliceId++, label, count, loss });
-    // reset inputs
-    $('newSpliceLabel').value = '';
-    $('newSpliceCount').value = 1;
-    $('newSpliceLoss').value = 0.05;
-    renderSpliceList();
-    setSectionHeight($('lossSection'));
-  }
-
-  function removeSplice(id){
-    const idx = spliceStore.findIndex(s => s.id === id);
-    if(idx > -1) spliceStore.splice(idx, 1);
-    renderSpliceList();
-    setSectionHeight($('lossSection'));
-  }
-
-  // Inline edit: replace row with inputs and Save/Cancel
-  function openInlineEdit(id){
-    const list = $('spliceList');
-    const row = list.querySelector(`.splice-list-row[data-id="${id}"]`);
-    if(!row) return;
-    const s = spliceStore.find(x => x.id === id);
-    if(!s) return;
-    row.classList.add('splice-editing');
-    row.innerHTML = `
-      <div class="col label"><input aria-label="Edit label" class="edit-label" type="text" value="${escapeHtml(s.label)}"></div>
-      <div class="col count"><input aria-label="Edit count" class="edit-count" type="number" min="0" value="${s.count}"></div>
-      <div class="col loss"><input aria-label="Edit loss" class="edit-loss" type="number" step="0.001" min="0" value="${s.loss}"></div>
-      <div class="col actions">
-        <button type="button" class="saveSplice">Save</button>
-        <button type="button" class="cancelSplice">Cancel</button>
-      </div>
-    `;
-    // handlers
-    row.querySelector('.saveSplice').addEventListener('click', () => {
-      const newLabel = row.querySelector('.edit-label').value.trim() || s.label;
-      const newCount = clampInt(row.querySelector('.edit-count').value || 0, 0);
-      const newLoss = clampFloat(row.querySelector('.edit-loss').value || 0, 0);
-      s.label = newLabel;
-      s.count = newCount;
-      s.loss = newLoss;
-      renderSpliceList();
-      setSectionHeight($('lossSection'));
-    });
-    row.querySelector('.cancelSplice').addEventListener('click', () => {
-      renderSpliceList();
-      setSectionHeight($('lossSection'));
-    });
-    // focus first input for keyboard users
-    const firstInput = row.querySelector('.edit-label');
-    if(firstInput) firstInput.focus();
-  }
-
-  function clearCustomSplices(e){
-    if(e && e.preventDefault) e.preventDefault();
-    spliceStore.length = 0;
-    renderSpliceList();
-    setSectionHeight($('lossSection'));
-  }
-
-  // Calculation logic (pure)
-  function computeTotalLoss({ distance=0, unit='km', wavelength='1550', connectors=0, connectorLoss=0, splices=0, spliceLoss=0, customSplices=[] }){
-    const dist = Number(distance) || 0;
-    const distanceKm = toKm(dist, unit);
-    const attenuation = ATTENUATION[wavelength] ?? 0.2;
-    const fiberLoss = attenuation * distanceKm;
-    const totalConnectorLoss = Number(connectors) * Number(connectorLoss);
-    const totalSpliceFromInput = Number(splices) * Number(spliceLoss);
-    const customTotal = (customSplices || []).reduce((acc, s) => acc + (Number(s.count) * Number(s.loss)), 0);
-    const total = fiberLoss + totalConnectorLoss + totalSpliceFromInput + customTotal;
-    return {
-      distanceKm,
-      fiberLoss,
-      totalConnectorLoss,
-      totalSpliceFromInput,
-      customTotal,
-      total
-    };
-  }
-
-  function calcLoss(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const dist = clampFloat($('distance').value || 0, 0);
-    const unit = $('unit').value || 'km';
-    const wl = $('wavelength').value || '1550';
-    const connectors = clampInt($('connectors').value || 0, 0);
-    const connectorLoss = clampFloat($('connectorLoss').value || 0, 0);
-    const splices = clampInt($('splices').value || 0, 0);
-    const spliceLoss = clampFloat($('spliceLoss').value || 0, 0);
-
-    const res = computeTotalLoss({
-      distance: dist,
-      unit,
-      wavelength: wl,
-      connectors,
-      connectorLoss,
-      splices,
-      spliceLoss,
-      customSplices: spliceStore
-    });
-
-    const resultEl = $('result');
-    const lines = [];
-    // distance line includes a span that will show km on hover
-    lines.push(`Distance: ${dist} ${unit} (km: ${res.distanceKm.toFixed(6)})`);
-    lines.push(`Wavelength: ${wl} nm`);
-    lines.push(`Fiber attenuation: ${ATTENUATION[wl] ?? 0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`);
-    lines.push(`Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`);
-    lines.push(`Splices (input): ${splices} × ${spliceLoss.toFixed(3)} dB → ${res.totalSpliceFromInput.toFixed(3)} dB`);
-    if(spliceStore.length > 0){
-      lines.push(`Custom splices (${spliceStore.length} entries):`);
-      spliceStore.forEach(s => {
-        lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count * s.loss).toFixed(3)} dB`);
-      });
-      lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);
-    } else {
-      lines.push(`Custom splices total: 0.000 dB`);
-    }
-    lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
-
-    // Render result lines but wrap the distance line in a hoverable element for tooltip
-    resultEl.innerHTML = '';
-    lines.forEach((ln, idx) => {
-      const p = document.createElement('div');
-      p.style.margin = '6px 0';
-      if(idx === 0){
-        // Distance line: extract km value and create hoverable span
-        const match = ln.match(/\(km:\s*([0-9.\-]+)\)/);
-        const kmVal = match ? match[1] : '';
-        const displayText = ln.replace(/\s*\(km:\s*[0-9.\-]+\)/, '');
-        const span = document.createElement('span');
-        span.textContent = displayText;
-        span.tabIndex = 0;
-        span.className = 'show-km';
-        span.setAttribute('data-km', kmVal);
-        span.style.cursor = 'help';
-        p.appendChild(span);
-      } else {
-        p.textContent = ln;
-      }
-      resultEl.appendChild(p);
-    });
-    resultEl.classList.add('show');
-
-    // Attach hover behavior to the distance span
-    const distSpan = resultEl.querySelector('.show-km');
-    if(distSpan){
-      attachKmHover(distSpan, () => {
-        const km = distSpan.getAttribute('data-km') || '';
-        return km ? `≈ ${Number(km).toFixed(6)} km` : '';
-      });
-    }
-
-    setSectionHeight($('lossSection'));
-  }
-
-  // Converter logic
-  function convertDistance(){
-    const val = clampFloat($('convValue').value || 0, 0);
-    const from = $('convFrom').value || 'km';
-    const to = $('convTo').value || 'km';
-    const km = toKm(val, from);
-    const converted = fromKm(km, to);
-    const out = $('convertResult');
-    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (≈ ${km.toFixed(6)} km)`);
-    setSectionHeight($('converterSection'));
-
-    // attach hover to the convertResult element to show km on hover
-    attachKmHover(out, () => km ? `≈ ${km.toFixed(6)} km` : '');
-  }
-
-  function copyConvertResult(){
-    const out = $('convertResult');
-    if(!out || !out.textContent) return;
-    navigator.clipboard?.writeText(out.textContent).then(()=> {
-      const prev = out.textContent;
-      out.textContent = 'Copied to clipboard';
-      setTimeout(()=> out.textContent = prev, 1200);
-    }).catch(()=> {
-      out.textContent = 'Unable to copy';
-      setTimeout(()=> out.textContent = '', 1200);
-    });
-  }
-
-  function applyConvertedToCalculator(){
-    const val = clampFloat($('convValue').value || 0, 0);
-    const from = $('convFrom').value || 'km';
-    // set calculator distance and unit to the converter inputs
-    $('distance').value = val;
-    $('unit').value = from;
-    // open calculator section and recalc
-    setSectionHeight($('lossSection'));
-    calcLoss();
-  }
-
-  // Ribbon finder
-  function findRibbon(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const n = clampInt($('strand').value || 0, 0);
-    const out = $('ribbonResult');
-    if(!n || n < 1){
-      showText(out, 'Enter a valid strand number (≥ 1).');
-      setSectionHeight($('ribbonSection'));
-      return;
-    }
-    const colors12 = ['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
-    const position = ((n - 1) % 12) + 1;
-    const ribbon = Math.floor((n - 1) / 12) + 1;
-    const color = colors12[position - 1] || 'Unknown';
-    showText(out, `Strand: ${n}\nRibbon: ${ribbon}\nPosition in ribbon: ${position}\nColor: ${color}`);
-    setSectionHeight($('ribbonSection'));
-  }
-
-  // Theme and section toggles
-  function applySavedTheme(){
-    const saved = localStorage.getItem('lens-theme');
-    if(saved === 'light'){
-      document.body.classList.remove('dark');
-      document.body.classList.add('light');
-      const t = $('themeToggle'); if(t) t.checked = true;
-    } else {
-      document.body.classList.remove('light');
-      document.body.classList.add('dark');
-      const t = $('themeToggle'); if(t) t.checked = false;
-    }
-  }
-  function toggleTheme(){
-    const t = $('themeToggle');
-    if(t && t.checked){
-      document.body.classList.remove('dark'); document.body.classList.add('light'); localStorage.setItem('lens-theme','light');
-    } else {
-      document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark');
-    }
-    ['lossSection','converterSection','ribbonSection','themeSection'].forEach(id => {
-      const s = $(id);
-      if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s);
-    });
-  }
-
-  // Utility conversions used by both converter and calculator
+  // Unit conversion helpers
   function toKm(value, unit){
     const v = Number(value) || 0;
     switch(unit){
@@ -633,80 +386,337 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
     }
   }
 
-  // Update small inline hint next to distance input (shows km equivalent)
+  // Splice store (unchanged)
+  const spliceStore = [];
+  let spliceId = 1;
+  function renderSpliceList(){
+    const list = $('spliceList');
+    list.innerHTML = '';
+    const summary = $('spliceCustomResult');
+    if(spliceStore.length === 0){
+      summary.textContent = 'No custom splices added';
+      summary.classList.remove('show');
+    } else {
+      summary.textContent = `${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;
+      summary.classList.add('show');
+    }
+    spliceStore.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'splice-list-row';
+      row.setAttribute('data-id', s.id);
+      row.innerHTML = `
+        <div class="col label">${escapeHtml(s.label)}</div>
+        <div class="col count">${s.count}</div>
+        <div class="col loss">${Number(s.loss).toFixed(3)}</div>
+        <div class="col actions">
+          <button type="button" class="editSplice" aria-label="Edit ${escapeHtml(s.label)}">Edit</button>
+          <button type="button" class="removeSplice" aria-label="Remove ${escapeHtml(s.label)}">Remove</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+    list.querySelectorAll('.removeSplice').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
+        removeSplice(id);
+      });
+    });
+    list.querySelectorAll('.editSplice').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
+        openInlineEdit(id);
+      });
+    });
+  }
+  function addCustomSplice(e){
+    if(e && e.preventDefault) e.preventDefault();
+    const label = ($('newSpliceLabel').value || '').trim() || `Splice ${spliceId}`;
+    const count = clampInt($('newSpliceCount').value || 1, 0);
+    const loss = clampFloat($('newSpliceLoss').value || 0, 0);
+    spliceStore.push({ id: spliceId++, label, count, loss });
+    $('newSpliceLabel').value = '';
+    $('newSpliceCount').value = 1;
+    $('newSpliceLoss').value = 0.05;
+    renderSpliceList();
+    setSectionHeight($('lossSection'));
+  }
+  function removeSplice(id){
+    const idx = spliceStore.findIndex(s => s.id === id);
+    if(idx > -1) spliceStore.splice(idx, 1);
+    renderSpliceList();
+    setSectionHeight($('lossSection'));
+  }
+  function openInlineEdit(id){
+    const list = $('spliceList');
+    const row = list.querySelector(`.splice-list-row[data-id="${id}"]`);
+    if(!row) return;
+    const s = spliceStore.find(x => x.id === id);
+    if(!s) return;
+    row.classList.add('splice-editing');
+    row.innerHTML = `
+      <div class="col label"><input aria-label="Edit label" class="edit-label" type="text" value="${escapeHtml(s.label)}"></div>
+      <div class="col count"><input aria-label="Edit count" class="edit-count" type="number" min="0" value="${s.count}"></div>
+      <div class="col loss"><input aria-label="Edit loss" class="edit-loss" type="number" step="0.001" min="0" value="${s.loss}"></div>
+      <div class="col actions">
+        <button type="button" class="saveSplice">Save</button>
+        <button type="button" class="cancelSplice">Cancel</button>
+      </div>
+    `;
+    row.querySelector('.saveSplice').addEventListener('click', () => {
+      const newLabel = row.querySelector('.edit-label').value.trim() || s.label;
+      const newCount = clampInt(row.querySelector('.edit-count').value || 0, 0);
+      const newLoss = clampFloat(row.querySelector('.edit-loss').value || 0, 0);
+      s.label = newLabel; s.count = newCount; s.loss = newLoss;
+      renderSpliceList(); setSectionHeight($('lossSection'));
+    });
+    row.querySelector('.cancelSplice').addEventListener('click', () => { renderSpliceList(); setSectionHeight($('lossSection')); });
+    const firstInput = row.querySelector('.edit-label'); if(firstInput) firstInput.focus();
+  }
+  function clearCustomSplices(e){ if(e && e.preventDefault) e.preventDefault(); spliceStore.length = 0; renderSpliceList(); setSectionHeight($('lossSection')); }
+
+  // Calculation logic
+  function computeTotalLoss({ distance=0, unit='km', wavelength='1550', connectors=0, connectorLoss=0, splices=0, spliceLoss=0, customSplices=[] }){
+    const dist = Number(distance) || 0;
+    const distanceKm = toKm(dist, unit);
+    const attenuation = ATTENUATION[wavelength] ?? 0.2;
+    const fiberLoss = attenuation * distanceKm;
+    const totalConnectorLoss = Number(connectors) * Number(connectorLoss);
+    const totalSpliceFromInput = Number(splices) * Number(spliceLoss);
+    const customTotal = (customSplices || []).reduce((acc, s) => acc + (Number(s.count) * Number(s.loss)), 0);
+    const total = fiberLoss + totalConnectorLoss + totalSpliceFromInput + customTotal;
+    return { distanceKm, fiberLoss, totalConnectorLoss, totalSpliceFromInput, customTotal, total };
+  }
+  function calcLoss(e){
+    if(e && e.preventDefault) e.preventDefault();
+    const dist = clampFloat($('distance').value || 0, 0);
+    const unit = $('unit').value || 'km';
+    const wl = $('wavelength').value || '1550';
+    const connectors = clampInt($('connectors').value || 0, 0);
+    const connectorLoss = clampFloat($('connectorLoss').value || 0, 0);
+    const splices = clampInt($('splices').value || 0, 0);
+    const spliceLoss = clampFloat($('spliceLoss').value || 0, 0);
+    const res = computeTotalLoss({ distance: dist, unit, wavelength: wl, connectors, connectorLoss, splices, spliceLoss, customSplices: spliceStore });
+    const resultEl = $('result');
+    const lines = [];
+    lines.push(`Distance: ${dist} ${unit} (km: ${res.distanceKm.toFixed(6)})`);
+    lines.push(`Wavelength: ${wl} nm`);
+    lines.push(`Fiber attenuation: ${ATTENUATION[wl] ?? 0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`);
+    lines.push(`Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`);
+    lines.push(`Splices (input): ${splices} × ${spliceLoss.toFixed(3)} dB → ${res.totalSpliceFromInput.toFixed(3)} dB`);
+    if(spliceStore.length > 0){
+      lines.push(`Custom splices (${spliceStore.length} entries):`);
+      spliceStore.forEach(s => { lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count * s.loss).toFixed(3)} dB`); });
+      lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);
+    } else { lines.push(`Custom splices total: 0.000 dB`); }
+    lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
+    resultEl.innerHTML = '';
+    lines.forEach((ln, idx) => {
+      const p = document.createElement('div'); p.style.margin = '6px 0';
+      if(idx === 0){
+        const match = ln.match(/\(km:\s*([0-9.\-]+)\)/);
+        const kmVal = match ? match[1] : '';
+        const displayText = ln.replace(/\s*\(km:\s*[0-9.\-]+\)/, '');
+        const span = document.createElement('span');
+        span.textContent = displayText;
+        span.tabIndex = 0;
+        span.className = 'show-km';
+        span.setAttribute('data-km', kmVal);
+        span.style.cursor = 'help';
+        p.appendChild(span);
+      } else { p.textContent = ln; }
+      resultEl.appendChild(p);
+    });
+    resultEl.classList.add('show');
+    const distSpan = resultEl.querySelector('.show-km');
+    if(distSpan){ attachKmHover(distSpan, () => { const km = distSpan.getAttribute('data-km') || ''; return km ? `≈ ${Number(km).toFixed(6)} km` : ''; }); }
+    setSectionHeight($('lossSection'));
+  }
+
+  // Converter logic
+  function convertDistance(){
+    const val = clampFloat($('convValue').value || 0, 0);
+    const from = $('convFrom').value || 'km';
+    const to = $('convTo').value || 'km';
+    const km = toKm(val, from);
+    const converted = fromKm(km, to);
+    const out = $('convertResult');
+    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (≈ ${km.toFixed(6)} km)`);
+    setSectionHeight($('converterSection'));
+    attachKmHover(out, () => km ? `≈ ${km.toFixed(6)} km` : '');
+  }
+  function copyConvertResult(){
+    const out = $('convertResult');
+    if(!out || !out.textContent) return;
+    navigator.clipboard?.writeText(out.textContent).then(()=> {
+      const prev = out.textContent; out.textContent = 'Copied to clipboard'; setTimeout(()=> out.textContent = prev, 1200);
+    }).catch(()=> { out.textContent = 'Unable to copy'; setTimeout(()=> out.textContent = '', 1200); });
+  }
+  function applyConvertedToCalculator(){
+    const val = clampFloat($('convValue').value || 0, 0);
+    const from = $('convFrom').value || 'km';
+    $('distance').value = val; $('unit').value = from; setSectionHeight($('lossSection')); calcLoss();
+  }
+
+  // OTDR / Jobs Info management
+  const otdrStore = [];
+  let otdrId = 1;
+  function renderOtdrList(){
+    const list = $('otdrList'); list.innerHTML = '';
+    if(otdrStore.length === 0){
+      const p = document.createElement('div'); p.className = 'small-note'; p.textContent = 'No OTDR entries';
+      list.appendChild(p);
+      return;
+    }
+    otdrStore.forEach(o => {
+      const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.alignItems='center'; row.style.justifyContent='center'; row.style.flexWrap='wrap';
+      const label = document.createElement('div'); label.textContent = `${o.count} = ${o.value}`; label.style.minWidth='160px'; label.style.textAlign='left';
+      const rem = document.createElement('button'); rem.type='button'; rem.textContent='Remove'; rem.addEventListener('click', ()=>{ removeOtdr(o.id); });
+      row.appendChild(label); row.appendChild(rem);
+      list.appendChild(row);
+    });
+  }
+  function addOtdr(){
+    const count = ($('newOtdrCount').value || '').trim();
+    const value = ($('newOtdrValue').value || '').trim();
+    if(!count || !value) return;
+    otdrStore.push({ id: otdrId++, count, value });
+    $('newOtdrCount').value=''; $('newOtdrValue').value='';
+    renderOtdrList(); setSectionHeight($('jobSection'));
+  }
+  function removeOtdr(id){ const idx = otdrStore.findIndex(x=>x.id===id); if(idx>-1) otdrStore.splice(idx,1); renderOtdrList(); setSectionHeight($('jobSection')); }
+  function clearOtdr(){ otdrStore.length=0; renderOtdrList(); setSectionHeight($('jobSection')); }
+
+  function generateJobNote(){
+    const jobCode = ($('jobCode').value || '').trim();
+    const projectCode = ($('projectCode').value || '').trim();
+    const cableName = ($('cableName').value || '').trim();
+    const countsNote = ($('countsNote').value || '').trim();
+    const coInfo = ($('coInfo').value || '').trim();
+    const jumpers = ($('jumpers').value || '').trim();
+    const notes = ($('jobNotes').value || '').trim();
+    // Build plain text note
+    const lines = [];
+    lines.push(`Job: ${jobCode}${projectCode ? ' / ' + projectCode : ''}`);
+    lines.push(`Cable: ${cableName}`);
+    if(countsNote) lines.push(`Counts: ${countsNote}`);
+    if(coInfo) lines.push(`From C.O.: ${coInfo}`);
+    if(jumpers) lines.push(`Jumpers (Tone first): ${jumpers}`);
+    if(otdrStore.length>0){
+      lines.push(`OTDR Results:`);
+      otdrStore.forEach(o => lines.push(` ${o.count} = ${o.value}`));
+    } else {
+      lines.push(`OTDR Results: n/a`);
+    }
+    if(notes) { lines.push(`Notes:`); lines.push(notes); }
+    lines.push(`---`);
+    lines.push(`Generated: ${new Date().toLocaleString()}`);
+    const text = lines.join('\n');
+    const out = $('jobNoteResult');
+    out.textContent = text;
+    out.classList.add('show');
+    setSectionHeight($('jobSection'));
+  }
+
+  function copyJobNote(){
+    const out = $('jobNoteResult');
+    if(!out || !out.textContent) return;
+    navigator.clipboard?.writeText(out.textContent).then(()=> {
+      const prev = out.textContent; out.textContent = 'Job note copied to clipboard'; setTimeout(()=> out.textContent = prev, 1200);
+    }).catch(()=> { out.textContent = 'Unable to copy'; setTimeout(()=> out.textContent = '', 1200); });
+  }
+
+  function clearJobForm(){
+    $('jobCode').value=''; $('projectCode').value=''; $('cableName').value=''; $('countsNote').value=''; $('coInfo').value=''; $('jumpers').value=''; $('jobNotes').value='';
+    clearOtdr(); $('jobNoteResult').textContent=''; $('jobNoteResult').classList.remove('show');
+    setSectionHeight($('jobSection'));
+  }
+
+  // Ribbon finder
+  function findRibbon(e){
+    if(e && e.preventDefault) e.preventDefault();
+    const n = clampInt($('strand').value || 0, 0);
+    const out = $('ribbonResult');
+    if(!n || n < 1){ showText(out, 'Enter a valid strand number (≥ 1).'); setSectionHeight($('ribbonSection')); return; }
+    const colors12 = ['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
+    const position = ((n - 1) % 12) + 1;
+    const ribbon = Math.floor((n - 1) / 12) + 1;
+    const color = colors12[position - 1] || 'Unknown';
+    showText(out, `Strand: ${n}\nRibbon: ${ribbon}\nPosition in ribbon: ${position}\nColor: ${color}`);
+    setSectionHeight($('ribbonSection'));
+  }
+
+  // Theme and section toggles
+  function applySavedTheme(){
+    const saved = localStorage.getItem('lens-theme');
+    if(saved === 'light'){ document.body.classList.remove('dark'); document.body.classList.add('light'); const t = $('themeToggle'); if(t) t.checked = true; }
+    else { document.body.classList.remove('light'); document.body.classList.add('dark'); const t = $('themeToggle'); if(t) t.checked = false; }
+  }
+  function toggleTheme(){
+    const t = $('themeToggle');
+    if(t && t.checked){ document.body.classList.remove('dark'); document.body.classList.add('light'); localStorage.setItem('lens-theme','light'); }
+    else { document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark'); }
+    ['lossSection','converterSection','jobSection','ribbonSection','themeSection'].forEach(id => { const s = $(id); if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s); });
+  }
+
+  // Update distance hint
   function updateDistanceHint(){
     const val = clampFloat($('distance').value || 0, 0);
     const unit = $('unit').value || 'km';
     const km = toKm(val, unit);
     const hint = $('distanceHint');
-    if(hint){
-      hint.textContent = `≈ ${km.toFixed(6)} km`;
-      hint.title = `${val} ${unit} ≈ ${km.toFixed(6)} km`;
-    }
+    if(hint){ hint.textContent = `≈ ${km.toFixed(6)} km`; hint.title = `${val} ${unit} ≈ ${km.toFixed(6)} km`; }
   }
 
   // Wire up on DOM ready
   document.addEventListener('DOMContentLoaded', () => {
-    // ensure result containers are announced to screen readers
     const r = $('result'); if(r) r.setAttribute('aria-live','polite');
     const rr = $('ribbonResult'); if(rr) rr.setAttribute('aria-live','polite');
     const cr = $('convertResult'); if(cr) cr.setAttribute('aria-live','polite');
+    const jr = $('jobNoteResult'); if(jr) jr.setAttribute('aria-live','polite');
 
     applySavedTheme();
     setSectionHeight($('lossSection'));
 
-    // attach buttons
+    // attach buttons and handlers
     const addBtn = $('addSpliceBtn'); if(addBtn) addBtn.addEventListener('click', addCustomSplice);
     const clearBtn = $('clearCustomBtn'); if(clearBtn) clearBtn.addEventListener('click', clearCustomSplices);
     const calcBtn = $('calcBtn'); if(calcBtn) calcBtn.addEventListener('click', calcLoss);
     const findBtn = $('findBtn'); if(findBtn) findBtn.addEventListener('click', findRibbon);
 
-    // converter buttons
     const convertBtn = $('convertBtn'); if(convertBtn) convertBtn.addEventListener('click', convertDistance);
     const copyConvBtn = $('copyConvBtn'); if(copyConvBtn) copyConvBtn.addEventListener('click', copyConvertResult);
     const applyToCalcBtn = $('applyToCalcBtn'); if(applyToCalcBtn) applyToCalcBtn.addEventListener('click', applyConvertedToCalculator);
 
-    // ensure all other buttons are type="button" to avoid accidental submits
+    // Jobs section handlers
+    const addOtdrBtn = $('addOtdrBtn'); if(addOtdrBtn) addOtdrBtn.addEventListener('click', addOtdr);
+    const clearOtdrBtn = $('clearOtdrBtn'); if(clearOtdrBtn) clearOtdrBtn.addEventListener('click', clearOtdr);
+    const genJobBtn = $('generateJobBtn'); if(genJobBtn) genJobBtn.addEventListener('click', generateJobNote);
+    const copyJobBtn = $('copyJobBtn'); if(copyJobBtn) copyJobBtn.addEventListener('click', copyJobNote);
+    const clearJobBtn = $('clearJobBtn'); if(clearJobBtn) clearJobBtn.addEventListener('click', clearJobForm);
+
+    // ensure all buttons have type=button
     document.querySelectorAll('button').forEach(b => { if(!b.hasAttribute('type')) b.setAttribute('type','button'); });
 
-    // update distance hint on input change and unit change
-    const distanceInput = $('distance');
-    const unitSelect = $('unit');
+    // distance hint and tooltip attachments
+    const distanceInput = $('distance'); const unitSelect = $('unit');
     if(distanceInput) distanceInput.addEventListener('input', updateDistanceHint);
     if(unitSelect) unitSelect.addEventListener('change', updateDistanceHint);
     updateDistanceHint();
-
-    // attach hover tooltip to distance input and converter value for quick preview
     attachKmHover(distanceInput, () => {
-      const v = clampFloat(distanceInput.value || 0, 0);
-      const u = unitSelect.value || 'km';
-      const km = toKm(v, u);
-      return v || v === 0 ? `≈ ${km.toFixed(6)} km` : '';
+      const v = clampFloat(distanceInput.value || 0, 0); const u = unitSelect.value || 'km'; const km = toKm(v, u);
+      return (v || v === 0) ? `≈ ${km.toFixed(6)} km` : '';
     });
-    const convValue = $('convValue');
-    const convFrom = $('convFrom');
+    const convValue = $('convValue'); const convFrom = $('convFrom');
     if(convValue && convFrom){
       attachKmHover(convValue, () => {
-        const v = clampFloat(convValue.value || 0, 0);
-        const u = convFrom.value || 'km';
-        const km = toKm(v, u);
-        return v || v === 0 ? `≈ ${km.toFixed(6)} km` : '';
+        const v = clampFloat(convValue.value || 0, 0); const u = convFrom.value || 'km'; const km = toKm(v, u);
+        return (v || v === 0) ? `≈ ${km.toFixed(6)} km` : '';
       });
-      convValue.addEventListener('input', () => {
-        // live update convertResult hint if visible
-        const crEl = $('convertResult');
-        if(crEl && crEl.classList.contains('show')) {
-          // re-run convert to refresh displayed km
-          // but don't change focus
-          convertDistance();
-        }
-      });
-      convFrom.addEventListener('change', () => {
-        if(convValue && convValue.value) convertDistance();
-      });
+      convValue.addEventListener('input', () => { const crEl = $('convertResult'); if(crEl && crEl.classList.contains('show')) convertDistance(); });
+      convFrom.addEventListener('change', () => { if(convValue && convValue.value) convertDistance(); });
     }
 
-    renderSpliceList();
+    renderSpliceList(); renderOtdrList();
   });
 
   // expose for compatibility
@@ -714,10 +724,7 @@ input:focus, select:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline:
   window.findRibbon = findRibbon;
   window.toggleTheme = toggleTheme;
   window.toggleSection = function(id){
-    const s = $(id);
-    if(!s) return;
-    const open = s.style.maxHeight && s.style.maxHeight !== '0px';
-    if(open) s.style.maxHeight = '0px'; else setSectionHeight(s);
+    const s = $(id); if(!s) return; const open = s.style.maxHeight && s.style.maxHeight !== '0px'; if(open) s.style.maxHeight = '0px'; else setSectionHeight(s);
   };
 })();
 </script>
