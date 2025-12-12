@@ -120,6 +120,16 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
           <option value="ft">feet</option>
         </select>
       </label>
+
+      <!-- Preview unit toggle (ft / km) -->
+      <label for="previewUnit" style="font-weight:600;font-size:0.95em">
+        Preview unit:
+        <select id="previewUnit" aria-label="Preview unit">
+          <option value="ft">feet (ft)</option>
+          <option value="km">kilometers (km)</option>
+        </select>
+      </label>
+
       <div class="small-note" id="distanceHint" aria-hidden="true" style="align-self:center"></div>
     </div>
 
@@ -316,7 +326,9 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
   const FT_TO_KM = 0.0003048;
   const KFT_TO_KM = 0.3048;
   const MI_TO_KM = 1.60934;
+  const KM_TO_FT = 3280.839895;
   const ATTENUATION = { '850':2.5, '1310':0.35, '1490':0.25, '1550':0.20, '1625':0.30 };
+  const PREVIEW_KEY = 'lens-preview-unit'; // 'ft' or 'km'
   const $ = id => document.getElementById(id);
   const clampInt = (v, min=0) => { const n = parseInt(v, 10); return Number.isFinite(n) ? Math.max(min, n) : min; };
   const clampFloat = (v, min=0) => { const n = parseFloat(v); return Number.isFinite(n) ? Math.max(min, n) : min; };
@@ -338,19 +350,19 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     tooltip.classList.remove('show');
     tooltip.setAttribute('aria-hidden','true');
   }
-  function attachKmHover(el, getKmText){
+  function attachKmHover(el, getText){
     if(!el) return;
     el.addEventListener('mouseenter', (ev) => {
       const rect = el.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top;
-      const text = getKmText();
+      const text = getText();
       if(text) showKmTooltipAt(x, y, text);
     });
     el.addEventListener('mousemove', (ev) => {
       const x = ev.clientX;
       const y = ev.clientY;
-      const text = getKmText();
+      const text = getText();
       if(text) showKmTooltipAt(x, y, text);
     });
     el.addEventListener('mouseleave', hideKmTooltip);
@@ -358,7 +370,7 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
       const rect = el.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top;
-      const text = getKmText();
+      const text = getText();
       if(text) showKmTooltipAt(x, y, text);
     });
     el.addEventListener('blur', hideKmTooltip);
@@ -385,8 +397,25 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
       default: return v;
     }
   }
+  function toFeet(value, unit){
+    const km = toKm(value, unit);
+    return km * KM_TO_FT;
+  }
 
-  // Splice store (unchanged)
+  // Preview unit persistence
+  function getPreviewUnit(){
+    const saved = localStorage.getItem(PREVIEW_KEY);
+    return (saved === 'ft' || saved === 'km') ? saved : 'ft';
+  }
+  function setPreviewUnit(u){
+    if(u !== 'ft' && u !== 'km') return;
+    localStorage.setItem(PREVIEW_KEY, u);
+    const sel = $('previewUnit');
+    if(sel) sel.value = u;
+    updateDistanceHint();
+  }
+
+  // Splice store and rendering with inline edit
   const spliceStore = [];
   let spliceId = 1;
   function renderSpliceList(){
@@ -496,9 +525,13 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const splices = clampInt($('splices').value || 0, 0);
     const spliceLoss = clampFloat($('spliceLoss').value || 0, 0);
     const res = computeTotalLoss({ distance: dist, unit, wavelength: wl, connectors, connectorLoss, splices, spliceLoss, customSplices: spliceStore });
+
+    const previewUnit = getPreviewUnit(); // 'ft' or 'km'
+    const previewValue = (previewUnit === 'ft') ? toFeet(dist, unit) : toKm(dist, unit);
+
     const resultEl = $('result');
     const lines = [];
-    lines.push(`Distance: ${dist} ${unit} (km: ${res.distanceKm.toFixed(6)})`);
+    lines.push(`Distance: ${dist} ${unit} (${previewUnit}: ${previewValue.toFixed(previewUnit === 'ft' ? 2 : 6)})`);
     lines.push(`Wavelength: ${wl} nm`);
     lines.push(`Fiber attenuation: ${ATTENUATION[wl] ?? 0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`);
     lines.push(`Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`);
@@ -509,26 +542,34 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
       lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);
     } else { lines.push(`Custom splices total: 0.000 dB`); }
     lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
+
     resultEl.innerHTML = '';
     lines.forEach((ln, idx) => {
       const p = document.createElement('div'); p.style.margin = '6px 0';
       if(idx === 0){
-        const match = ln.match(/\(km:\s*([0-9.\-]+)\)/);
-        const kmVal = match ? match[1] : '';
-        const displayText = ln.replace(/\s*\(km:\s*[0-9.\-]+\)/, '');
+        const match = ln.match(/\(([^)]+)\)$/);
+        const previewText = match ? match[1] : '';
+        const displayText = ln.replace(/\s*\([^)]+\)$/, '');
         const span = document.createElement('span');
         span.textContent = displayText;
         span.tabIndex = 0;
-        span.className = 'show-km';
-        span.setAttribute('data-km', kmVal);
+        span.className = 'show-preview';
+        span.setAttribute('data-preview', previewText);
         span.style.cursor = 'help';
         p.appendChild(span);
       } else { p.textContent = ln; }
       resultEl.appendChild(p);
     });
     resultEl.classList.add('show');
-    const distSpan = resultEl.querySelector('.show-km');
-    if(distSpan){ attachKmHover(distSpan, () => { const km = distSpan.getAttribute('data-km') || ''; return km ? `≈ ${Number(km).toFixed(6)} km` : ''; }); }
+
+    const previewSpan = resultEl.querySelector('.show-preview');
+    if(previewSpan){
+      attachKmHover(previewSpan, () => {
+        const txt = previewSpan.getAttribute('data-preview') || '';
+        return txt ? txt : '';
+      });
+    }
+
     setSectionHeight($('lossSection'));
   }
 
@@ -539,10 +580,12 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const to = $('convTo').value || 'km';
     const km = toKm(val, from);
     const converted = fromKm(km, to);
+    const previewUnit = getPreviewUnit();
+    const preview = (previewUnit === 'ft') ? (km * KM_TO_FT) : km;
     const out = $('convertResult');
-    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (≈ ${km.toFixed(6)} km)`);
+    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (≈ ${previewUnit === 'ft' ? preview.toFixed(2) + ' ft' : preview.toFixed(6) + ' km'})`);
     setSectionHeight($('converterSection'));
-    attachKmHover(out, () => km ? `≈ ${km.toFixed(6)} km` : '');
+    attachKmHover(out, () => previewUnit === 'ft' ? `≈ ${preview.toFixed(2)} ft` : `≈ ${preview.toFixed(6)} km`);
   }
   function copyConvertResult(){
     const out = $('convertResult');
@@ -564,15 +607,13 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const list = $('otdrList'); list.innerHTML = '';
     if(otdrStore.length === 0){
       const p = document.createElement('div'); p.className = 'small-note'; p.textContent = 'No OTDR entries';
-      list.appendChild(p);
-      return;
+      list.appendChild(p); return;
     }
     otdrStore.forEach(o => {
       const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.alignItems='center'; row.style.justifyContent='center'; row.style.flexWrap='wrap';
       const label = document.createElement('div'); label.textContent = `${o.count} = ${o.value}`; label.style.minWidth='160px'; label.style.textAlign='left';
       const rem = document.createElement('button'); rem.type='button'; rem.textContent='Remove'; rem.addEventListener('click', ()=>{ removeOtdr(o.id); });
-      row.appendChild(label); row.appendChild(rem);
-      list.appendChild(row);
+      row.appendChild(label); row.appendChild(rem); list.appendChild(row);
     });
   }
   function addOtdr(){
@@ -594,7 +635,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const coInfo = ($('coInfo').value || '').trim();
     const jumpers = ($('jumpers').value || '').trim();
     const notes = ($('jobNotes').value || '').trim();
-    // Build plain text note
     const lines = [];
     lines.push(`Job: ${jobCode}${projectCode ? ' / ' + projectCode : ''}`);
     lines.push(`Cable: ${cableName}`);
@@ -604,9 +644,7 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     if(otdrStore.length>0){
       lines.push(`OTDR Results:`);
       otdrStore.forEach(o => lines.push(` ${o.count} = ${o.value}`));
-    } else {
-      lines.push(`OTDR Results: n/a`);
-    }
+    } else { lines.push(`OTDR Results: n/a`); }
     if(notes) { lines.push(`Notes:`); lines.push(notes); }
     lines.push(`---`);
     lines.push(`Generated: ${new Date().toLocaleString()}`);
@@ -616,7 +654,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     out.classList.add('show');
     setSectionHeight($('jobSection'));
   }
-
   function copyJobNote(){
     const out = $('jobNoteResult');
     if(!out || !out.textContent) return;
@@ -624,7 +661,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
       const prev = out.textContent; out.textContent = 'Job note copied to clipboard'; setTimeout(()=> out.textContent = prev, 1200);
     }).catch(()=> { out.textContent = 'Unable to copy'; setTimeout(()=> out.textContent = '', 1200); });
   }
-
   function clearJobForm(){
     $('jobCode').value=''; $('projectCode').value=''; $('cableName').value=''; $('countsNote').value=''; $('coInfo').value=''; $('jumpers').value=''; $('jobNotes').value='';
     clearOtdr(); $('jobNoteResult').textContent=''; $('jobNoteResult').classList.remove('show');
@@ -645,26 +681,35 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     setSectionHeight($('ribbonSection'));
   }
 
-  // Theme and section toggles
-  function applySavedTheme(){
-    const saved = localStorage.getItem('lens-theme');
-    if(saved === 'light'){ document.body.classList.remove('dark'); document.body.classList.add('light'); const t = $('themeToggle'); if(t) t.checked = true; }
-    else { document.body.classList.remove('light'); document.body.classList.add('dark'); const t = $('themeToggle'); if(t) t.checked = false; }
-  }
-  function toggleTheme(){
-    const t = $('themeToggle');
-    if(t && t.checked){ document.body.classList.remove('dark'); document.body.classList.add('light'); localStorage.setItem('lens-theme','light'); }
-    else { document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark'); }
-    ['lossSection','converterSection','jobSection','ribbonSection','themeSection'].forEach(id => { const s = $(id); if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s); });
-  }
-
-  // Update distance hint
+  // Update distance hint (uses preview unit)
   function updateDistanceHint(){
     const val = clampFloat($('distance').value || 0, 0);
     const unit = $('unit').value || 'km';
-    const km = toKm(val, unit);
+    const previewUnit = getPreviewUnit();
     const hint = $('distanceHint');
-    if(hint){ hint.textContent = `≈ ${km.toFixed(6)} km`; hint.title = `${val} ${unit} ≈ ${km.toFixed(6)} km`; }
+    if(!hint) return;
+    if(previewUnit === 'ft'){
+      const feet = toFeet(val, unit);
+      hint.textContent = `≈ ${feet.toFixed(2)} ft`;
+      hint.title = `${val} ${unit} ≈ ${feet.toFixed(2)} ft`;
+    } else {
+      const km = toKm(val, unit);
+      hint.textContent = `≈ ${km.toFixed(6)} km`;
+      hint.title = `${val} ${unit} ≈ ${km.toFixed(6)} km`;
+    }
+  }
+
+  // Preview unit persistence helpers (defined earlier)
+  function getPreviewUnit(){
+    const saved = localStorage.getItem(PREVIEW_KEY);
+    return (saved === 'ft' || saved === 'km') ? saved : 'ft';
+  }
+  function setPreviewUnit(u){
+    if(u !== 'ft' && u !== 'km') return;
+    localStorage.setItem(PREVIEW_KEY, u);
+    const sel = $('previewUnit');
+    if(sel) sel.value = u;
+    updateDistanceHint();
   }
 
   // Wire up on DOM ready
@@ -673,6 +718,13 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const rr = $('ribbonResult'); if(rr) rr.setAttribute('aria-live','polite');
     const cr = $('convertResult'); if(cr) cr.setAttribute('aria-live','polite');
     const jr = $('jobNoteResult'); if(jr) jr.setAttribute('aria-live','polite');
+
+    // initialize preview unit select from localStorage
+    const previewSel = $('previewUnit');
+    if(previewSel){
+      previewSel.value = getPreviewUnit();
+      previewSel.addEventListener('change', (e) => { setPreviewUnit(e.target.value); });
+    }
 
     applySavedTheme();
     setSectionHeight($('lossSection'));
@@ -687,7 +739,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     const copyConvBtn = $('copyConvBtn'); if(copyConvBtn) copyConvBtn.addEventListener('click', copyConvertResult);
     const applyToCalcBtn = $('applyToCalcBtn'); if(applyToCalcBtn) applyToCalcBtn.addEventListener('click', applyConvertedToCalculator);
 
-    // Jobs section handlers
     const addOtdrBtn = $('addOtdrBtn'); if(addOtdrBtn) addOtdrBtn.addEventListener('click', addOtdr);
     const clearOtdrBtn = $('clearOtdrBtn'); if(clearOtdrBtn) clearOtdrBtn.addEventListener('click', clearOtdr);
     const genJobBtn = $('generateJobBtn'); if(genJobBtn) genJobBtn.addEventListener('click', generateJobNote);
@@ -702,15 +753,21 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
     if(distanceInput) distanceInput.addEventListener('input', updateDistanceHint);
     if(unitSelect) unitSelect.addEventListener('change', updateDistanceHint);
     updateDistanceHint();
+
     attachKmHover(distanceInput, () => {
-      const v = clampFloat(distanceInput.value || 0, 0); const u = unitSelect.value || 'km'; const km = toKm(v, u);
-      return (v || v === 0) ? `≈ ${km.toFixed(6)} km` : '';
+      const v = clampFloat(distanceInput.value || 0, 0); const u = unitSelect.value || 'km';
+      const previewUnit = getPreviewUnit();
+      if(previewUnit === 'ft') return `≈ ${toFeet(v, u).toFixed(2)} ft`;
+      return `≈ ${toKm(v, u).toFixed(6)} km`;
     });
+
     const convValue = $('convValue'); const convFrom = $('convFrom');
     if(convValue && convFrom){
       attachKmHover(convValue, () => {
-        const v = clampFloat(convValue.value || 0, 0); const u = convFrom.value || 'km'; const km = toKm(v, u);
-        return (v || v === 0) ? `≈ ${km.toFixed(6)} km` : '';
+        const v = clampFloat(convValue.value || 0, 0); const u = convFrom.value || 'km';
+        const previewUnit = getPreviewUnit();
+        if(previewUnit === 'ft') return `≈ ${toFeet(v, u).toFixed(2)} ft`;
+        return `≈ ${toKm(v, u).toFixed(6)} km`;
       });
       convValue.addEventListener('input', () => { const crEl = $('convertResult'); if(crEl && crEl.classList.contains('show')) convertDistance(); });
       convFrom.addEventListener('change', () => { if(convValue && convValue.value) convertDistance(); });
@@ -718,6 +775,19 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
 
     renderSpliceList(); renderOtdrList();
   });
+
+  // Theme helpers (unchanged)
+  function applySavedTheme(){
+    const saved = localStorage.getItem('lens-theme');
+    if(saved === 'light'){ document.body.classList.remove('dark'); document.body.classList.add('light'); const t = $('themeToggle'); if(t) t.checked = true; }
+    else { document.body.classList.remove('light'); document.body.classList.add('dark'); const t = $('themeToggle'); if(t) t.checked = false; }
+  }
+  function toggleTheme(){
+    const t = $('themeToggle');
+    if(t && t.checked){ document.body.classList.remove('dark'); document.body.classList.add('light'); localStorage.setItem('lens-theme','light'); }
+    else { document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark'); }
+    ['lossSection','converterSection','jobSection','ribbonSection','themeSection'].forEach(id => { const s = $(id); if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s); });
+  }
 
   // expose for compatibility
   window.calcLoss = calcLoss;
