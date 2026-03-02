@@ -16,15 +16,15 @@
   --bg-light:#fff;
   --radius:6px;
   --input-w:160px;
-  --focus: 3px rgba(0,191,255,0.18);
-  --tooltip-bg: rgba(0,0,0,0.85);
-  --tooltip-color: #fff;
+  --focus:0 0 0 3px rgba(0,191,255,0.28);
+  --tooltip-bg:rgba(0,0,0,0.85);
+  --tooltip-color:#fff;
 }
 *{box-sizing:border-box}
 body{font-family:Arial,sans-serif;text-align:center;padding:20px;transition:background-color .5s ease,color .5s ease;margin:0}
-.app-title{ text-align:center;margin-bottom:20px }
-.app-title h1{ font-size:2.2em;color:var(--accent-red);text-shadow:0 0 10px var(--accent-red),0 0 20px #ff6600;margin:0 0 5px 0 }
-.app-title .author{ font-style:italic;font-size:1.05em;text-align:right;margin-right:20px;color:#00bfff;animation:lightning 2s infinite }
+.app-title{text-align:center;margin-bottom:20px}
+.app-title h1{font-size:2.2em;color:var(--accent-red);text-shadow:0 0 10px var(--accent-red),0 0 20px #ff6600;margin:0 0 5px 0}
+.app-title .author{font-style:italic;font-size:1.05em;text-align:right;margin-right:20px;color:#00bfff;animation:lightning 2s infinite}
 @keyframes lightning{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px #00bfff,0 0 15px #00ffff,0 0 25px #00bfff;color:#00ffff}20%,24%,55%{text-shadow:none;color:#00bfff}}
 h2{margin:0;padding:15px;font-size:1.4em;cursor:pointer;background:linear-gradient(90deg,var(--accent-red),#00ff00,#00bfff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:transform .3s ease;user-select:none}
 h2:hover{transform:scale(1.03)}
@@ -37,40 +37,37 @@ textarea{min-height:120px;max-width:100%;width:100%;box-sizing:border-box}
 input[type=number]{width:var(--input-w);box-sizing:border-box}
 button{padding:10px 18px;margin-top:12px;border-radius:var(--radius);cursor:pointer;transition:all .18s ease;border:1px solid transparent;background:#eee;color:#000}
 button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.12)}
-button:focus{outline: none; box-shadow: var(--focus); }
+button:focus{outline:none;box-shadow:var(--focus)}
 button[disabled]{opacity:0.5;cursor:not-allowed;transform:none}
-#result,#ribbonResult,#spliceCustomResult,#convertResult,#jobNoteResult{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
-#result.show,#ribbonResult.show,#spliceCustomResult.show,#convertResult.show,#jobNoteResult.show{opacity:1;transform:translateY(0)}
-/* Dark theme */
+.result-out{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
+.result-out.show{opacity:1;transform:translateY(0)}
+.input-error{border:2px solid var(--accent-red)!important;animation:shake .25s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.error-msg{color:var(--accent-red);font-size:0.92em;margin-top:4px;font-weight:700}
 body.dark{background-color:var(--bg-dark);color:var(--accent-red)}
 body.dark input,body.dark select,body.dark textarea{background-color:#111;color:var(--accent-red);border:1px solid var(--accent-red)}
 body.dark button{background-color:#111;color:var(--accent-green);border:1px solid var(--accent-green)}
 body.dark button:hover{background-color:var(--accent-green);color:#000}
-body.dark #result,body.dark #ribbonResult,body.dark #spliceCustomResult,body.dark #convertResult,body.dark #jobNoteResult{color:var(--result-dark-blue)}
+body.dark .result-out{color:var(--result-dark-blue)}
 body.dark label{color:var(--label-dark-blue)}
-/* Light theme */
 body.light{background-color:var(--bg-light);color:#000}
 body.light input,body.light select,body.light textarea{background-color:#f0f0f0;color:#000;border:1px solid #000}
 body.light button{background-color:#eee;color:#000;border:1px solid #000}
 body.light button:hover{background-color:#000;color:#fff}
-body.light #result,body.light #ribbonResult,body.light #spliceCustomResult,body.light #convertResult,body.light #jobNoteResult{color:var(--result-light-blue)}
+body.light .result-out{color:var(--result-light-blue)}
 body.light label{color:var(--label-light-blue)}
-/* Toggle */
 .switch{position:relative;display:inline-block;width:48px;height:26px}
 .switch input{opacity:0;width:0;height:0}
 .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:26px}
 .slider:before{position:absolute;content:"";height:18px;width:18px;left:4px;bottom:4px;background-color:white;transition:.3s;border-radius:50%}
 input:checked+.slider{background-color:#2196F3}
 input:checked+.slider:before{transform:translateX(22px)}
-@media(max-width:520px){.switch{width:44px;height:24px}.slider:before{height:16px;width:16px;left:4px;bottom:4px}input:checked+.slider:before{transform:translateX(20px)}}
-/* Custom splices */
 .custom-splices{margin-top:8px;border-radius:6px;padding:10px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:8px;max-width:760px;margin-left:auto;margin-right:auto}
 .splice-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
 .splice-row input[type="text"]{width:200px}
 .splice-row input[type="number"]{width:110px}
 .splice-actions{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
 .small-note{font-size:0.9em;color:inherit;opacity:0.9}
-/* Splice list row styles */
 .splice-list-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:6px;border-radius:6px}
 .splice-list-row .col{padding:4px}
 .splice-list-row .col.label{width:200px;text-align:left}
@@ -78,15 +75,20 @@ input:checked+.slider:before{transform:translateX(22px)}
 .splice-list-row .col.loss{width:110px;text-align:left}
 .splice-list-row .col.actions{width:140px;text-align:left}
 .splice-editing{background:rgba(0,191,255,0.03);border:1px dashed rgba(0,191,255,0.06)}
-/* Focus ring for inputs */
-input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255,0.06); outline: none; }
-
-/* Tooltip for unit-aware conversions */
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,191,255,0.18);outline:none}
 .km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:var(--tooltip-bg);color:var(--tooltip-color);font-size:0.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease}
 .km-tooltip.show{opacity:1}
-
-/* Mobile layout tweaks: stack labels above inputs on narrow screens */
-@media (max-width:720px){
+.budget-pass{color:#00ff00;font-weight:700}
+.budget-fail{color:#ff0000;font-weight:700}
+.ribbon-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:14px;max-width:600px;margin-left:auto;margin-right:auto}
+.ribbon-swatch{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default}
+.ribbon-swatch .swatch-box{width:38px;height:38px;border-radius:6px;border:2px solid rgba(255,255,255,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.ribbon-swatch .swatch-label{font-size:0.7em;font-weight:700;text-align:center;max-width:42px;word-break:break-word;white-space:pre}
+.saved-note-item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;margin:4px 0;background:rgba(255,255,255,0.03);font-size:0.9em;text-align:left;flex-wrap:wrap}
+.saved-note-item .note-label{flex:1;min-width:100px;word-break:break-all}
+.saved-note-actions{display:flex;gap:6px}
+@media(max-width:520px){.switch{width:44px;height:24px}.slider:before{height:16px;width:16px}input:checked+.slider:before{transform:translateX(20px)}}
+@media(max-width:720px){
   .form-row{flex-direction:column;align-items:stretch}
   label{width:100%;justify-content:flex-start}
   input[type=number]{width:100%}
@@ -95,6 +97,7 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
   .splice-actions{flex-direction:column}
   .app-title .author{display:block;text-align:center;margin-right:0}
   h2{font-size:1.15em;padding:12px}
+  .ribbon-swatch .swatch-box{width:30px;height:30px}
 }
 </style>
 </head>
@@ -105,12 +108,12 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
   <p class="author">By: Jovan Faulkner</p>
 </div>
 
-<h2 onclick="toggleSection('lossSection')">Fiber Loss Calculator ▼</h2>
+<h2 id="lossHeader" tabindex="0" role="button" aria-expanded="true" aria-controls="lossSection">Fiber Loss Calculator ▼</h2>
 <div id="lossSection" class="section">
   <div class="section-inner">
     <div class="form-row">
       <label for="distance">Distance:
-        <input id="distance" type="number" placeholder="Enter value" aria-label="Distance value">
+        <input id="distance" type="number" placeholder="Enter value" min="0" aria-label="Distance value">
       </label>
       <label for="unit">Unit:
         <select id="unit" aria-label="Distance unit">
@@ -120,19 +123,15 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
           <option value="ft">feet</option>
         </select>
       </label>
-
-      <!-- Preview unit toggle (ft / km) -->
-      <label for="previewUnit" style="font-weight:600;font-size:0.95em">
-        Preview unit:
+      <label for="previewUnit" style="font-weight:600;font-size:0.95em">Preview unit:
         <select id="previewUnit" aria-label="Preview unit">
           <option value="ft">feet (ft)</option>
           <option value="km">kilometers (km)</option>
         </select>
       </label>
-
       <div class="small-note" id="distanceHint" aria-hidden="true" style="align-self:center"></div>
     </div>
-
+    <div id="distanceError" class="error-msg" style="display:none" aria-live="assertive"></div>
     <div class="form-row">
       <label for="wavelength">Wavelength:
         <select id="wavelength" aria-label="Wavelength">
@@ -144,7 +143,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         </select>
       </label>
     </div>
-
     <div class="form-row">
       <label for="connectors">Connectors:
         <input id="connectors" type="number" placeholder="0" min="0" aria-label="Number of connectors">
@@ -157,7 +155,6 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         </select>
       </label>
     </div>
-
     <div class="form-row">
       <label for="splices">Splices:
         <input id="splices" type="number" placeholder="0" min="0" aria-label="Number of splices">
@@ -170,39 +167,66 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         </select>
       </label>
     </div>
-
     <div class="custom-splices" id="customSplicesArea" aria-live="polite">
       <div class="splice-row">
         <strong>Custom Splices</strong>
         <span class="small-note">Add specific splice entries to override or add to the splice count total</span>
       </div>
-
       <div class="splice-row" style="font-weight:700">
         <div style="width:200px;text-align:left">Label</div>
         <div style="width:110px;text-align:left">Count</div>
         <div style="width:110px;text-align:left">Loss (dB)</div>
         <div style="width:140px;text-align:left">Action</div>
       </div>
-
       <div id="spliceList" style="display:flex;flex-direction:column;gap:6px" aria-live="polite"></div>
-
       <div class="splice-actions">
-        <input id="newSpliceLabel" type="text" placeholder="Name (e.g., #1, Splice-1, etc.)" aria-label="New splice label"/>
+        <input id="newSpliceLabel" type="text" placeholder="Name (e.g., #1, Splice-1)" aria-label="New splice label"/>
         <input id="newSpliceCount" type="number" min="0" step="1" value="1" aria-label="New splice count"/>
         <input id="newSpliceLoss" type="number" min="0" step="0.01" value="0.05" aria-label="New splice loss"/>
         <button id="addSpliceBtn" type="button">Add Splice</button>
         <button id="clearCustomBtn" type="button">Clear Custom</button>
       </div>
-
-      <div id="spliceCustomResult" class="small-note" style="text-align:center"></div>
+      <div id="spliceCustomResult" class="small-note result-out" style="text-align:center"></div>
     </div>
-
-    <button id="calcBtn" type="button" onclick="calcLoss()">Calculate Total Loss</button>
-    <p id="result" aria-live="polite"></p>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
+      <button id="calcBtn" type="button">Calculate Total Loss</button>
+      <button id="resetLossBtn" type="button">Reset Fields</button>
+    </div>
+    <p id="result" class="result-out" aria-live="polite"></p>
   </div>
 </div>
 
-<h2 onclick="toggleSection('converterSection')">Distance Converter ▼</h2>
+<h2 id="budgetHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="budgetSection">Power Budget Calculator ▼</h2>
+<div id="budgetSection" class="section">
+  <div class="section-inner">
+    <p class="small-note" style="margin-bottom:10px">Enter TX power, RX sensitivity, and expected loss to check if the link budget passes.</p>
+    <div class="form-row">
+      <label for="txPower">TX Power (dBm):
+        <input id="txPower" type="number" step="0.1" placeholder="e.g. 0" aria-label="TX power">
+      </label>
+      <label for="rxSensitivity">RX Sensitivity (dBm):
+        <input id="rxSensitivity" type="number" step="0.1" placeholder="e.g. -25" aria-label="RX sensitivity">
+      </label>
+    </div>
+    <div class="form-row">
+      <label for="systemMargin">System Margin (dB):
+        <input id="systemMargin" type="number" step="0.1" placeholder="e.g. 3" value="3" aria-label="System margin">
+      </label>
+      <label for="budgetLoss">Estimated Loss (dB):
+        <input id="budgetLoss" type="number" step="0.01" placeholder="e.g. 12.5" aria-label="Estimated loss">
+      </label>
+    </div>
+    <p class="small-note">Tip: run the Loss Calculator first, then click <strong>Import Loss from Calculator</strong>.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button id="calcBudgetBtn" type="button">Check Budget</button>
+      <button id="importLossBtn" type="button">Import Loss from Calculator</button>
+    </div>
+    <div id="budgetError" class="error-msg" style="display:none" aria-live="assertive"></div>
+    <div id="budgetResult" class="result-out" aria-live="polite"></div>
+  </div>
+</div>
+
+<h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter ▼</h2>
 <div id="converterSection" class="section">
   <div class="section-inner">
     <div class="form-row">
@@ -226,18 +250,17 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         </select>
       </label>
     </div>
-
     <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
       <button id="convertBtn" type="button">Convert</button>
       <button id="copyConvBtn" type="button">Copy Result</button>
       <button id="applyToCalcBtn" type="button">Use in Calculator</button>
     </div>
-    <p id="convertResult" aria-live="polite"></p>
+    <p id="convertResult" class="result-out" aria-live="polite"></p>
     <p class="small-note">Tip: use <strong>Use in Calculator</strong> to populate the calculator distance and unit directly.</p>
   </div>
 </div>
 
-<h2 onclick="toggleSection('jobSection')">Jobs Info Creator ▼</h2>
+<h2 id="jobHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="jobSection">Jobs Info Creator ▼</h2>
 <div id="jobSection" class="section">
   <div class="section-inner">
     <div class="form-row">
@@ -248,25 +271,22 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         <input id="projectCode" type="text" placeholder="Project/ID" aria-label="Project code">
       </label>
     </div>
-
     <div class="form-row">
       <label for="cableName">Cable Name:
         <input id="cableName" type="text" placeholder="e.g., LG15->193-204" aria-label="Cable name">
       </label>
       <label for="countsNote">Counts / Primary:
-        <input id="countsNote" type="text" placeholder="e.g., 193-204 (193-194 Primary)" aria-label="Counts and primary note">
+        <input id="countsNote" type="text" placeholder="e.g., 193-204 (193-194 Primary)" aria-label="Counts">
       </label>
     </div>
-
     <div class="form-row">
-      <label for="coInfo">From C.O. (location / post):
+      <label for="coInfo">From C.O.:
         <input id="coInfo" type="text" placeholder="e.g., BP (Binging Post) (49,60)" aria-label="CO info">
       </label>
       <label for="jumpers">Jumpers (Tone first):
-        <input id="jumpers" type="text" placeholder="e.g., Tone: 49,60; Jumpers: n/a" aria-label="Jumpers and tone positions">
+        <input id="jumpers" type="text" placeholder="e.g., Tone: 49,60; Jumpers: n/a" aria-label="Jumpers">
       </label>
     </div>
-
     <div style="margin-top:8px;text-align:left;max-width:760px;margin-left:auto;margin-right:auto">
       <strong>OTDR Results</strong>
       <div id="otdrList" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
@@ -277,525 +297,354 @@ input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 6px rgba(0,191,255
         <button id="clearOtdrBtn" type="button">Clear OTDRs</button>
       </div>
     </div>
-
     <div style="margin-top:12px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
-      <label for="jobNotes">Additional Notes:
-        <textarea id="jobNotes" placeholder="Any extra notes for the job (optional)" aria-label="Additional job notes"></textarea>
-      </label>
+      <label for="jobNotes" style="display:block;margin-bottom:4px">Additional Notes:</label>
+      <textarea id="jobNotes" placeholder="Any extra notes for the job (optional)" aria-label="Additional job notes"></textarea>
     </div>
-
     <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:12px">
       <button id="generateJobBtn" type="button">Generate Job Note</button>
       <button id="copyJobBtn" type="button">Copy Job Note</button>
+      <button id="saveJobBtn" type="button">Save Note</button>
+      <button id="downloadJobBtn" type="button">Download as .txt</button>
       <button id="clearJobBtn" type="button">Clear Form</button>
     </div>
-
-    <p id="jobNoteResult" aria-live="polite"></p>
+    <p id="jobNoteResult" class="result-out" aria-live="polite" style="white-space:pre-wrap;text-align:left;max-width:760px;margin-left:auto;margin-right:auto"></p>
+    <div style="margin-top:16px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+      <strong id="savedNotesTitle" style="display:none">Saved Notes</strong>
+      <div id="savedNotesList" style="margin-top:8px"></div>
+    </div>
     <p class="small-note">Tip: after copying, open Notes on your iPhone and paste the text into a new note.</p>
   </div>
 </div>
 
-<h2 onclick="toggleSection('ribbonSection')">Fiber Ribbon Finder ▼</h2>
+<h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder ▼</h2>
 <div id="ribbonSection" class="section">
   <div class="section-inner">
     <label for="strand">Strand Number:
       <input id="strand" type="number" placeholder="Enter strand #" min="1" aria-label="Strand number">
     </label><br>
-    <button id="findBtn" type="button" onclick="findRibbon()">Find Ribbon</button>
-    <p id="ribbonResult" aria-live="polite"></p>
+    <button id="findBtn" type="button">Find Ribbon</button>
+    <p id="ribbonResult" class="result-out" aria-live="polite"></p>
+    <div style="margin-top:16px">
+      <strong>EIA/TIA Color Order Reference</strong>
+      <div class="ribbon-strip" id="ribbonStrip"></div>
+    </div>
   </div>
 </div>
 
-<h2 onclick="toggleSection('themeSection')">Theme Mode ▼</h2>
+<h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection">Theme Mode ▼</h2>
 <div id="themeSection" class="section">
   <div class="section-inner">
     <label class="switch" for="themeToggle">
-      <input type="checkbox" id="themeToggle" onchange="toggleTheme()"/>
+      <input type="checkbox" id="themeToggle"/>
       <span class="slider"></span>
     </label>
-    <p>Toggle Light/Dark Mode</p>
+    <p>Toggle Light / Dark Mode</p>
   </div>
 </div>
 
-<!-- Tooltip element for unit-aware hover -->
 <div id="kmTooltip" class="km-tooltip" role="status" aria-hidden="true"></div>
 
 <script>
 (function(){
-  // Constants and helpers
-  const FT_TO_KM = 0.0003048;
-  const KFT_TO_KM = 0.3048;
-  const MI_TO_KM = 1.60934;
-  const KM_TO_FT = 3280.839895;
-  const ATTENUATION = { '850':2.5, '1310':0.35, '1490':0.25, '1550':0.20, '1625':0.30 };
-  const PREVIEW_KEY = 'lens-preview-unit'; // 'ft' or 'km'
-  const $ = id => document.getElementById(id);
-  const clampInt = (v, min=0) => { const n = parseInt(v, 10); return Number.isFinite(n) ? Math.max(min, n) : min; };
-  const clampFloat = (v, min=0) => { const n = parseFloat(v); return Number.isFinite(n) ? Math.max(min, n) : min; };
-  function setSectionHeight(section){ if(!section) return; section.style.maxHeight='none'; section.style.maxHeight = section.scrollHeight + 'px'; }
-  function showText(el, text){ if(!el) return; el.textContent = text; el.classList.add('show'); el.setAttribute('aria-live','polite'); }
-  function hideText(el){ if(!el) return; el.classList.remove('show'); }
-  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  const FT_TO_KM=0.0003048,KFT_TO_KM=0.3048,MI_TO_KM=1.60934,KM_TO_FT=3280.839895;
+  const ATTENUATION={'850':2.5,'1310':0.35,'1490':0.25,'1550':0.20,'1625':0.30};
+  const PREVIEW_KEY='lens-preview-unit',THEME_KEY='lens-theme',SAVED_NOTES_KEY='lens-saved-notes';
+  const COLORS12=['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
+  const SWATCH_HEX={'Blue':'#3399ff','Orange':'#ff8800','Green':'#33cc33','Brown':'#8B4513','Slate':'#708090','White':'#f0f0f0','Red':'#ff2222','Black':'#222','Yellow':'#ffdd00','Violet':'#9966ff','Rose':'#ff66aa','Aqua':'#00e5ff'};
+  const $=id=>document.getElementById(id);
+  const clampInt=(v,min=0)=>{const n=parseInt(v,10);return Number.isFinite(n)?Math.max(min,n):min};
+  const clampFloat=(v,min=0)=>{const n=parseFloat(v);return Number.isFinite(n)?Math.max(min,n):min};
+  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Tooltip management
-  const tooltip = $('kmTooltip');
-  function showKmTooltipAt(x, y, text){
-    tooltip.textContent = text;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-    tooltip.classList.add('show');
-    tooltip.setAttribute('aria-hidden','false');
-  }
-  function hideKmTooltip(){
-    tooltip.classList.remove('show');
-    tooltip.setAttribute('aria-hidden','true');
-  }
-  function attachKmHover(el, getText){
-    if(!el) return;
-    el.addEventListener('mouseenter', (ev) => {
-      const rect = el.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top;
-      const text = getText();
-      if(text) showKmTooltipAt(x, y, text);
-    });
-    el.addEventListener('mousemove', (ev) => {
-      const x = ev.clientX;
-      const y = ev.clientY;
-      const text = getText();
-      if(text) showKmTooltipAt(x, y, text);
-    });
-    el.addEventListener('mouseleave', hideKmTooltip);
-    el.addEventListener('focus', (ev) => {
-      const rect = el.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top;
-      const text = getText();
-      if(text) showKmTooltipAt(x, y, text);
-    });
-    el.addEventListener('blur', hideKmTooltip);
+  function setSectionHeight(s){if(!s)return;s.style.maxHeight='none';s.style.maxHeight=s.scrollHeight+'px';}
+  function showText(el,text){if(!el)return;el.textContent=text;el.classList.add('show');}
+
+  const resizeObs=new ResizeObserver(()=>{
+    document.querySelectorAll('.section').forEach(s=>{if(s.style.maxHeight&&s.style.maxHeight!=='0px')setSectionHeight(s);});
+  });
+  resizeObs.observe(document.body);
+
+  function toggleSection(id,h){
+    const s=$(id);if(!s)return;
+    const open=s.style.maxHeight&&s.style.maxHeight!=='0px';
+    if(open){s.style.maxHeight='0px';}else{setSectionHeight(s);}
+    if(h)h.setAttribute('aria-expanded',String(!open));
   }
 
-  // Unit conversion helpers
-  function toKm(value, unit){
-    const v = Number(value) || 0;
-    switch(unit){
-      case 'km': return v;
-      case 'mi': return v * MI_TO_KM;
-      case 'kft': return v * KFT_TO_KM;
-      case 'ft': return v * FT_TO_KM;
-      default: return v;
-    }
-  }
-  function fromKm(kmValue, unit){
-    const v = Number(kmValue) || 0;
-    switch(unit){
-      case 'km': return v;
-      case 'mi': return v / MI_TO_KM;
-      case 'kft': return v / KFT_TO_KM;
-      case 'ft': return v / FT_TO_KM;
-      default: return v;
-    }
-  }
-  function toFeet(value, unit){
-    const km = toKm(value, unit);
-    return km * KM_TO_FT;
+  const tooltip=$('kmTooltip');
+  function showTip(x,y,t){tooltip.textContent=t;tooltip.style.left=x+'px';tooltip.style.top=y+'px';tooltip.classList.add('show');tooltip.setAttribute('aria-hidden','false');}
+  function hideTip(){tooltip.classList.remove('show');tooltip.setAttribute('aria-hidden','true');}
+  function attachKmHover(el,getText){
+    if(!el)return;
+    el.addEventListener('mouseenter',ev=>{const r=el.getBoundingClientRect();const t=getText();if(t)showTip(r.left+r.width/2,r.top,t);});
+    el.addEventListener('mousemove',ev=>{const t=getText();if(t)showTip(ev.clientX,ev.clientY,t);});
+    el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('focus',ev=>{const r=el.getBoundingClientRect();const t=getText();if(t)showTip(r.left+r.width/2,r.top,t);});
+    el.addEventListener('blur',hideTip);
   }
 
-  // Preview unit persistence
-  function getPreviewUnit(){
-    const saved = localStorage.getItem(PREVIEW_KEY);
-    return (saved === 'ft' || saved === 'km') ? saved : 'ft';
-  }
-  function setPreviewUnit(u){
-    if(u !== 'ft' && u !== 'km') return;
-    localStorage.setItem(PREVIEW_KEY, u);
-    const sel = $('previewUnit');
-    if(sel) sel.value = u;
-    updateDistanceHint();
+  function toKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v*MI_TO_KM:u==='kft'?v*KFT_TO_KM:u==='ft'?v*FT_TO_KM:v;}
+  function fromKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v/MI_TO_KM:u==='kft'?v/KFT_TO_KM:u==='ft'?v/FT_TO_KM:v;}
+  function toFeet(v,u){return toKm(v,u)*KM_TO_FT;}
+
+  function getPreviewUnit(){const s=localStorage.getItem(PREVIEW_KEY);return(s==='ft'||s==='km')?s:'ft';}
+  function setPreviewUnit(u){if(u!=='ft'&&u!=='km')return;localStorage.setItem(PREVIEW_KEY,u);const sel=$('previewUnit');if(sel)sel.value=u;updateDistanceHint();}
+  function updateDistanceHint(){
+    const val=clampFloat($('distance').value||0,0),unit=$('unit').value||'km',pu=getPreviewUnit(),hint=$('distanceHint');
+    if(!hint)return;
+    if(pu==='ft'){const ft=toFeet(val,unit);hint.textContent=`≈ ${ft.toFixed(2)} ft`;}
+    else{const km=toKm(val,unit);hint.textContent=`≈ ${km.toFixed(6)} km`;}
   }
 
-  // Splice store and rendering with inline edit
-  const spliceStore = [];
-  let spliceId = 1;
+  function setError(inputEl,msgEl,msg){if(inputEl)inputEl.classList.add('input-error');if(msgEl){msgEl.textContent=msg;msgEl.style.display='block';}}
+  function clearError(inputEl,msgEl){if(inputEl)inputEl.classList.remove('input-error');if(msgEl){msgEl.textContent='';msgEl.style.display='none';}}
+
+  const spliceStore=[];let spliceId=1;
   function renderSpliceList(){
-    const list = $('spliceList');
-    list.innerHTML = '';
-    const summary = $('spliceCustomResult');
-    if(spliceStore.length === 0){
-      summary.textContent = 'No custom splices added';
-      summary.classList.remove('show');
-    } else {
-      summary.textContent = `${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;
-      summary.classList.add('show');
-    }
-    spliceStore.forEach(s => {
-      const row = document.createElement('div');
-      row.className = 'splice-list-row';
-      row.setAttribute('data-id', s.id);
-      row.innerHTML = `
-        <div class="col label">${escapeHtml(s.label)}</div>
-        <div class="col count">${s.count}</div>
-        <div class="col loss">${Number(s.loss).toFixed(3)}</div>
-        <div class="col actions">
-          <button type="button" class="editSplice" aria-label="Edit ${escapeHtml(s.label)}">Edit</button>
-          <button type="button" class="removeSplice" aria-label="Remove ${escapeHtml(s.label)}">Remove</button>
-        </div>
-      `;
+    const list=$('spliceList'),summary=$('spliceCustomResult');list.innerHTML='';
+    if(spliceStore.length===0){summary.textContent='No custom splices added';summary.classList.remove('show');}
+    else{summary.textContent=`${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;summary.classList.add('show');}
+    spliceStore.forEach(s=>{
+      const row=document.createElement('div');row.className='splice-list-row';row.dataset.id=s.id;
+      row.innerHTML=`<div class="col label">${escapeHtml(s.label)}</div><div class="col count">${s.count}</div><div class="col loss">${Number(s.loss).toFixed(3)}</div><div class="col actions"><button type="button" class="editSplice">Edit</button><button type="button" class="removeSplice">Remove</button></div>`;
       list.appendChild(row);
     });
-    list.querySelectorAll('.removeSplice').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
-        removeSplice(id);
-      });
-    });
-    list.querySelectorAll('.editSplice').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = Number(e.currentTarget.closest('.splice-list-row').dataset.id);
-        openInlineEdit(id);
-      });
-    });
+    list.querySelectorAll('.removeSplice').forEach(btn=>btn.addEventListener('click',e=>removeSplice(Number(e.currentTarget.closest('.splice-list-row').dataset.id))));
+    list.querySelectorAll('.editSplice').forEach(btn=>btn.addEventListener('click',e=>openInlineEdit(Number(e.currentTarget.closest('.splice-list-row').dataset.id))));
   }
-  function addCustomSplice(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const label = ($('newSpliceLabel').value || '').trim() || `Splice ${spliceId}`;
-    const count = clampInt($('newSpliceCount').value || 1, 0);
-    const loss = clampFloat($('newSpliceLoss').value || 0, 0);
-    spliceStore.push({ id: spliceId++, label, count, loss });
-    $('newSpliceLabel').value = '';
-    $('newSpliceCount').value = 1;
-    $('newSpliceLoss').value = 0.05;
-    renderSpliceList();
-    setSectionHeight($('lossSection'));
+  function addCustomSplice(){
+    const label=($('newSpliceLabel').value||'').trim()||`Splice ${spliceId}`;
+    const count=clampInt($('newSpliceCount').value||1,0),loss=clampFloat($('newSpliceLoss').value||0,0);
+    spliceStore.push({id:spliceId++,label,count,loss});
+    $('newSpliceLabel').value='';$('newSpliceCount').value=1;$('newSpliceLoss').value=0.05;
+    renderSpliceList();setSectionHeight($('lossSection'));
   }
-  function removeSplice(id){
-    const idx = spliceStore.findIndex(s => s.id === id);
-    if(idx > -1) spliceStore.splice(idx, 1);
-    renderSpliceList();
-    setSectionHeight($('lossSection'));
-  }
+  function removeSplice(id){const idx=spliceStore.findIndex(s=>s.id===id);if(idx>-1)spliceStore.splice(idx,1);renderSpliceList();setSectionHeight($('lossSection'));}
   function openInlineEdit(id){
-    const list = $('spliceList');
-    const row = list.querySelector(`.splice-list-row[data-id="${id}"]`);
-    if(!row) return;
-    const s = spliceStore.find(x => x.id === id);
-    if(!s) return;
+    const list=$('spliceList'),row=list.querySelector(`.splice-list-row[data-id="${id}"]`);if(!row)return;
+    const s=spliceStore.find(x=>x.id===id);if(!s)return;
     row.classList.add('splice-editing');
-    row.innerHTML = `
-      <div class="col label"><input aria-label="Edit label" class="edit-label" type="text" value="${escapeHtml(s.label)}"></div>
-      <div class="col count"><input aria-label="Edit count" class="edit-count" type="number" min="0" value="${s.count}"></div>
-      <div class="col loss"><input aria-label="Edit loss" class="edit-loss" type="number" step="0.001" min="0" value="${s.loss}"></div>
-      <div class="col actions">
-        <button type="button" class="saveSplice">Save</button>
-        <button type="button" class="cancelSplice">Cancel</button>
-      </div>
-    `;
-    row.querySelector('.saveSplice').addEventListener('click', () => {
-      const newLabel = row.querySelector('.edit-label').value.trim() || s.label;
-      const newCount = clampInt(row.querySelector('.edit-count').value || 0, 0);
-      const newLoss = clampFloat(row.querySelector('.edit-loss').value || 0, 0);
-      s.label = newLabel; s.count = newCount; s.loss = newLoss;
-      renderSpliceList(); setSectionHeight($('lossSection'));
-    });
-    row.querySelector('.cancelSplice').addEventListener('click', () => { renderSpliceList(); setSectionHeight($('lossSection')); });
-    const firstInput = row.querySelector('.edit-label'); if(firstInput) firstInput.focus();
+    row.innerHTML=`<div class="col label"><input class="edit-label" type="text" value="${escapeHtml(s.label)}" aria-label="Edit label"></div><div class="col count"><input class="edit-count" type="number" min="0" value="${s.count}" aria-label="Edit count"></div><div class="col loss"><input class="edit-loss" type="number" step="0.001" min="0" value="${s.loss}" aria-label="Edit loss"></div><div class="col actions"><button type="button" class="saveSplice">Save</button><button type="button" class="cancelSplice">Cancel</button></div>`;
+    row.querySelector('.saveSplice').addEventListener('click',()=>{s.label=row.querySelector('.edit-label').value.trim()||s.label;s.count=clampInt(row.querySelector('.edit-count').value||0,0);s.loss=clampFloat(row.querySelector('.edit-loss').value||0,0);renderSpliceList();setSectionHeight($('lossSection'));});
+    row.querySelector('.cancelSplice').addEventListener('click',()=>{renderSpliceList();setSectionHeight($('lossSection'));});
+    const fi=row.querySelector('.edit-label');if(fi)fi.focus();
   }
-  function clearCustomSplices(e){ if(e && e.preventDefault) e.preventDefault(); spliceStore.length = 0; renderSpliceList(); setSectionHeight($('lossSection')); }
+  function clearCustomSplices(){spliceStore.length=0;renderSpliceList();setSectionHeight($('lossSection'));}
 
-  // Calculation logic
-  function computeTotalLoss({ distance=0, unit='km', wavelength='1550', connectors=0, connectorLoss=0, splices=0, spliceLoss=0, customSplices=[] }){
-    const dist = Number(distance) || 0;
-    const distanceKm = toKm(dist, unit);
-    const attenuation = ATTENUATION[wavelength] ?? 0.2;
-    const fiberLoss = attenuation * distanceKm;
-    const totalConnectorLoss = Number(connectors) * Number(connectorLoss);
-    const totalSpliceFromInput = Number(splices) * Number(spliceLoss);
-    const customTotal = (customSplices || []).reduce((acc, s) => acc + (Number(s.count) * Number(s.loss)), 0);
-    const total = fiberLoss + totalConnectorLoss + totalSpliceFromInput + customTotal;
-    return { distanceKm, fiberLoss, totalConnectorLoss, totalSpliceFromInput, customTotal, total };
+  let lastComputedLoss=null;
+  function computeTotalLoss({distance=0,unit='km',wavelength='1550',connectors=0,connectorLoss=0,splices=0,spliceLoss=0,customSplices=[]}){
+    const distanceKm=toKm(Number(distance)||0,unit),attenuation=ATTENUATION[wavelength]??0.2;
+    const fiberLoss=attenuation*distanceKm,totalConnectorLoss=Number(connectors)*Number(connectorLoss);
+    const totalSpliceFromInput=Number(splices)*Number(spliceLoss);
+    const customTotal=(customSplices||[]).reduce((a,s)=>a+(Number(s.count)*Number(s.loss)),0);
+    return{distanceKm,fiberLoss,totalConnectorLoss,totalSpliceFromInput,customTotal,total:fiberLoss+totalConnectorLoss+totalSpliceFromInput+customTotal};
   }
-  function calcLoss(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const dist = clampFloat($('distance').value || 0, 0);
-    const unit = $('unit').value || 'km';
-    const wl = $('wavelength').value || '1550';
-    const connectors = clampInt($('connectors').value || 0, 0);
-    const connectorLoss = clampFloat($('connectorLoss').value || 0, 0);
-    const splices = clampInt($('splices').value || 0, 0);
-    const spliceLoss = clampFloat($('spliceLoss').value || 0, 0);
-    const res = computeTotalLoss({ distance: dist, unit, wavelength: wl, connectors, connectorLoss, splices, spliceLoss, customSplices: spliceStore });
 
-    const previewUnit = getPreviewUnit(); // 'ft' or 'km'
-    const previewValue = (previewUnit === 'ft') ? toFeet(dist, unit) : toKm(dist, unit);
-
-    const resultEl = $('result');
-    const lines = [];
-    lines.push(`Distance: ${dist} ${unit} (${previewUnit}: ${previewValue.toFixed(previewUnit === 'ft' ? 2 : 6)})`);
-    lines.push(`Wavelength: ${wl} nm`);
-    lines.push(`Fiber attenuation: ${ATTENUATION[wl] ?? 0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`);
-    lines.push(`Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`);
-    lines.push(`Splices (input): ${splices} × ${spliceLoss.toFixed(3)} dB → ${res.totalSpliceFromInput.toFixed(3)} dB`);
-    if(spliceStore.length > 0){
-      lines.push(`Custom splices (${spliceStore.length} entries):`);
-      spliceStore.forEach(s => { lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count * s.loss).toFixed(3)} dB`); });
-      lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);
-    } else { lines.push(`Custom splices total: 0.000 dB`); }
+  function calcLoss(){
+    const distInput=$('distance'),errEl=$('distanceError');clearError(distInput,errEl);
+    if(!distInput.value||isNaN(parseFloat(distInput.value))||parseFloat(distInput.value)<=0){
+      setError(distInput,errEl,'⚠ Please enter a valid distance greater than 0.');distInput.focus();return;
+    }
+    const dist=clampFloat(distInput.value,0),unit=$('unit').value||'km',wl=$('wavelength').value||'1550';
+    const connectors=clampInt($('connectors').value||0,0),connectorLoss=clampFloat($('connectorLoss').value||0,0);
+    const splices=clampInt($('splices').value||0,0),spliceLoss=clampFloat($('spliceLoss').value||0,0);
+    const res=computeTotalLoss({distance:dist,unit,wavelength:wl,connectors,connectorLoss,splices,spliceLoss,customSplices:spliceStore});
+    lastComputedLoss=res.total;
+    const pu=getPreviewUnit(),previewValue=pu==='ft'?toFeet(dist,unit):toKm(dist,unit);
+    const resultEl=$('result');resultEl.innerHTML='';
+    const lines=[
+      `Distance: ${dist} ${unit} (${pu}: ${previewValue.toFixed(pu==='ft'?2:6)})`,
+      `Wavelength: ${wl} nm`,
+      `Fiber attenuation: ${ATTENUATION[wl]??0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`,
+      `Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`,
+      `Splices (input): ${splices} × ${spliceLoss.toFixed(3)} dB → ${res.totalSpliceFromInput.toFixed(3)} dB`,
+    ];
+    if(spliceStore.length>0){lines.push(`Custom splices (${spliceStore.length} entr${spliceStore.length===1?'y':'ies'}):`);spliceStore.forEach(s=>lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count*s.loss).toFixed(3)} dB`));lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);}
+    else{lines.push(`Custom splices total: 0.000 dB`);}
     lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
-
-    resultEl.innerHTML = '';
-    lines.forEach((ln, idx) => {
-      const p = document.createElement('div'); p.style.margin = '6px 0';
-      if(idx === 0){
-        const match = ln.match(/\(([^)]+)\)$/);
-        const previewText = match ? match[1] : '';
-        const displayText = ln.replace(/\s*\([^)]+\)$/, '');
-        const span = document.createElement('span');
-        span.textContent = displayText;
-        span.tabIndex = 0;
-        span.className = 'show-preview';
-        span.setAttribute('data-preview', previewText);
-        span.style.cursor = 'help';
-        p.appendChild(span);
-      } else { p.textContent = ln; }
+    lines.forEach((ln,idx)=>{
+      const p=document.createElement('div');p.style.margin='6px 0';
+      if(idx===0){const match=ln.match(/\(([^)]+)\)$/);const span=document.createElement('span');span.textContent=ln.replace(/\s*\([^)]+\)$/,'');span.tabIndex=0;span.className='show-preview';span.dataset.preview=match?match[1]:'';span.style.cursor='help';p.appendChild(span);}
+      else{p.textContent=ln;}
       resultEl.appendChild(p);
     });
     resultEl.classList.add('show');
-
-    const previewSpan = resultEl.querySelector('.show-preview');
-    if(previewSpan){
-      attachKmHover(previewSpan, () => {
-        const txt = previewSpan.getAttribute('data-preview') || '';
-        return txt ? txt : '';
-      });
-    }
-
+    const ps=resultEl.querySelector('.show-preview');if(ps)attachKmHover(ps,()=>ps.dataset.preview||'');
     setSectionHeight($('lossSection'));
   }
 
-  // Converter logic
+  function resetLossFields(){$('distance').value='';$('connectors').value='';$('splices').value='';clearError($('distance'),$('distanceError'));$('result').classList.remove('show');clearCustomSplices();updateDistanceHint();setSectionHeight($('lossSection'));}
+
+  function calcBudget(){
+    const errEl=$('budgetError');clearError(null,errEl);
+    const tx=parseFloat($('txPower').value),rx=parseFloat($('rxSensitivity').value),loss=parseFloat($('budgetLoss').value),margin=parseFloat($('systemMargin').value)||0;
+    if(isNaN(tx)||isNaN(rx)||isNaN(loss)){setError(null,errEl,'⚠ Please fill in TX Power, RX Sensitivity, and Estimated Loss.');return;}
+    const allowable=tx-rx-margin,passed=loss<=allowable,headroom=allowable-loss;
+    const out=$('budgetResult');
+    out.innerHTML=`<div>TX Power: ${tx} dBm &nbsp;|&nbsp; RX Sensitivity: ${rx} dBm &nbsp;|&nbsp; Margin: ${margin} dB</div><div>Allowable Loss: ${tx} − ${rx} − ${margin} = <strong>${allowable.toFixed(2)} dB</strong></div><div>Estimated Loss: <strong>${loss.toFixed(3)} dB</strong></div><div>Headroom: <strong>${headroom.toFixed(3)} dB</strong></div><div class="${passed?'budget-pass':'budget-fail'}" style="font-size:1.2em;margin-top:8px">${passed?'✅ LINK PASSES':'❌ LINK FAILS'}</div>`;
+    out.classList.add('show');setSectionHeight($('budgetSection'));
+  }
+  function importLossTobudget(){if(lastComputedLoss===null){alert('Run the Loss Calculator first to import a result.');return;}$('budgetLoss').value=lastComputedLoss.toFixed(3);setSectionHeight($('budgetSection'));}
+
   function convertDistance(){
-    const val = clampFloat($('convValue').value || 0, 0);
-    const from = $('convFrom').value || 'km';
-    const to = $('convTo').value || 'km';
-    const km = toKm(val, from);
-    const converted = fromKm(km, to);
-    const previewUnit = getPreviewUnit();
-    const preview = (previewUnit === 'ft') ? (km * KM_TO_FT) : km;
-    const out = $('convertResult');
-    showText(out, `${val} ${from} = ${converted.toFixed(6)} ${to} (≈ ${previewUnit === 'ft' ? preview.toFixed(2) + ' ft' : preview.toFixed(6) + ' km'})`);
-    setSectionHeight($('converterSection'));
-    attachKmHover(out, () => previewUnit === 'ft' ? `≈ ${preview.toFixed(2)} ft` : `≈ ${preview.toFixed(6)} km`);
+    const val=clampFloat($('convValue').value||0,0),from=$('convFrom').value||'km',to=$('convTo').value||'km';
+    const km=toKm(val,from),converted=fromKm(km,to),pu=getPreviewUnit(),preview=pu==='ft'?(km*KM_TO_FT):km;
+    const out=$('convertResult');
+    out.textContent=`${val} ${from} = ${converted.toFixed(6)} ${to}  (≈ ${pu==='ft'?preview.toFixed(2)+' ft':preview.toFixed(6)+' km'})`;
+    out.classList.add('show');setSectionHeight($('converterSection'));
+    attachKmHover(out,()=>pu==='ft'?`≈ ${preview.toFixed(2)} ft`:`≈ ${preview.toFixed(6)} km`);
   }
-  function copyConvertResult(){
-    const out = $('convertResult');
-    if(!out || !out.textContent) return;
-    navigator.clipboard?.writeText(out.textContent).then(()=> {
-      const prev = out.textContent; out.textContent = 'Copied to clipboard'; setTimeout(()=> out.textContent = prev, 1200);
-    }).catch(()=> { out.textContent = 'Unable to copy'; setTimeout(()=> out.textContent = '', 1200); });
+
+  function copyToClipboard(text,feedbackEl,successMsg){
+    const prev=feedbackEl.textContent||feedbackEl.innerText;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(()=>{feedbackEl.textContent=successMsg;setTimeout(()=>feedbackEl.textContent=prev,1400);}).catch(()=>fallbackCopy(text,feedbackEl,successMsg,prev));
+    }else{fallbackCopy(text,feedbackEl,successMsg,prev);}
   }
+  function fallbackCopy(text,feedbackEl,successMsg,prev){
+    const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.focus();ta.select();
+    try{document.execCommand('copy');feedbackEl.textContent=successMsg||'Copied!';setTimeout(()=>feedbackEl.textContent=prev||'',1400);}catch(e){feedbackEl.textContent='Unable to copy';}
+    document.body.removeChild(ta);
+  }
+
   function applyConvertedToCalculator(){
-    const val = clampFloat($('convValue').value || 0, 0);
-    const from = $('convFrom').value || 'km';
-    $('distance').value = val; $('unit').value = from; setSectionHeight($('lossSection')); calcLoss();
+    const val=clampFloat($('convValue').value||0,0),from=$('convFrom').value||'km';
+    $('distance').value=val;$('unit').value=from;updateDistanceHint();
+    const ls=$('lossSection'),lh=$('lossHeader');
+    if(!ls.style.maxHeight||ls.style.maxHeight==='0px'){setSectionHeight(ls);if(lh)lh.setAttribute('aria-expanded','true');}
+    calcLoss();
   }
 
-  // OTDR / Jobs Info management
-  const otdrStore = [];
-  let otdrId = 1;
+  const otdrStore=[];let otdrId=1;
   function renderOtdrList(){
-    const list = $('otdrList'); list.innerHTML = '';
-    if(otdrStore.length === 0){
-      const p = document.createElement('div'); p.className = 'small-note'; p.textContent = 'No OTDR entries';
-      list.appendChild(p); return;
-    }
-    otdrStore.forEach(o => {
-      const row = document.createElement('div'); row.style.display='flex'; row.style.gap='8px'; row.style.alignItems='center'; row.style.justifyContent='center'; row.style.flexWrap='wrap';
-      const label = document.createElement('div'); label.textContent = `${o.count} = ${o.value}`; label.style.minWidth='160px'; label.style.textAlign='left';
-      const rem = document.createElement('button'); rem.type='button'; rem.textContent='Remove'; rem.addEventListener('click', ()=>{ removeOtdr(o.id); });
-      row.appendChild(label); row.appendChild(rem); list.appendChild(row);
+    const list=$('otdrList');list.innerHTML='';
+    if(otdrStore.length===0){const p=document.createElement('div');p.className='small-note';p.textContent='No OTDR entries';list.appendChild(p);return;}
+    otdrStore.forEach(o=>{
+      const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;';
+      const lbl=document.createElement('div');lbl.textContent=`${o.count} = ${o.value}`;lbl.style.cssText='min-width:160px;text-align:left';
+      const rem=document.createElement('button');rem.type='button';rem.textContent='Remove';rem.addEventListener('click',()=>removeOtdr(o.id));
+      row.appendChild(lbl);row.appendChild(rem);list.appendChild(row);
     });
   }
-  function addOtdr(){
-    const count = ($('newOtdrCount').value || '').trim();
-    const value = ($('newOtdrValue').value || '').trim();
-    if(!count || !value) return;
-    otdrStore.push({ id: otdrId++, count, value });
-    $('newOtdrCount').value=''; $('newOtdrValue').value='';
-    renderOtdrList(); setSectionHeight($('jobSection'));
-  }
-  function removeOtdr(id){ const idx = otdrStore.findIndex(x=>x.id===id); if(idx>-1) otdrStore.splice(idx,1); renderOtdrList(); setSectionHeight($('jobSection')); }
-  function clearOtdr(){ otdrStore.length=0; renderOtdrList(); setSectionHeight($('jobSection')); }
+  function addOtdr(){const count=($('newOtdrCount').value||'').trim(),value=($('newOtdrValue').value||'').trim();if(!count||!value)return;otdrStore.push({id:otdrId++,count,value});$('newOtdrCount').value='';$('newOtdrValue').value='';renderOtdrList();setSectionHeight($('jobSection'));}
+  function removeOtdr(id){const idx=otdrStore.findIndex(x=>x.id===id);if(idx>-1)otdrStore.splice(idx,1);renderOtdrList();setSectionHeight($('jobSection'));}
+  function clearOtdr(){otdrStore.length=0;renderOtdrList();setSectionHeight($('jobSection'));}
 
-  function generateJobNote(){
-    const jobCode = ($('jobCode').value || '').trim();
-    const projectCode = ($('projectCode').value || '').trim();
-    const cableName = ($('cableName').value || '').trim();
-    const countsNote = ($('countsNote').value || '').trim();
-    const coInfo = ($('coInfo').value || '').trim();
-    const jumpers = ($('jumpers').value || '').trim();
-    const notes = ($('jobNotes').value || '').trim();
-    const lines = [];
-    lines.push(`Job: ${jobCode}${projectCode ? ' / ' + projectCode : ''}`);
-    lines.push(`Cable: ${cableName}`);
-    if(countsNote) lines.push(`Counts: ${countsNote}`);
-    if(coInfo) lines.push(`From C.O.: ${coInfo}`);
-    if(jumpers) lines.push(`Jumpers (Tone first): ${jumpers}`);
-    if(otdrStore.length>0){
-      lines.push(`OTDR Results:`);
-      otdrStore.forEach(o => lines.push(` ${o.count} = ${o.value}`));
-    } else { lines.push(`OTDR Results: n/a`); }
-    if(notes) { lines.push(`Notes:`); lines.push(notes); }
-    lines.push(`---`);
-    lines.push(`Generated: ${new Date().toLocaleString()}`);
-    const text = lines.join('\n');
-    const out = $('jobNoteResult');
-    out.textContent = text;
-    out.classList.add('show');
-    setSectionHeight($('jobSection'));
+  function buildJobNoteText(){
+    const g=id=>($( id).value||'').trim();
+    const lines=[`Job: ${g('jobCode')}${g('projectCode')?' / '+g('projectCode'):''}`,`Cable: ${g('cableName')}`];
+    if(g('countsNote'))lines.push(`Counts: ${g('countsNote')}`);
+    if(g('coInfo'))lines.push(`From C.O.: ${g('coInfo')}`);
+    if(g('jumpers'))lines.push(`Jumpers (Tone first): ${g('jumpers')}`);
+    if(otdrStore.length>0){lines.push(`OTDR Results:`);otdrStore.forEach(o=>lines.push(` ${o.count} = ${o.value}`));}
+    else lines.push(`OTDR Results: n/a`);
+    if(g('jobNotes')){lines.push(`Notes:`);lines.push(g('jobNotes'));}
+    lines.push(`---`);lines.push(`Generated: ${new Date().toLocaleString()}`);
+    return lines.join('\n');
   }
-  function copyJobNote(){
-    const out = $('jobNoteResult');
-    if(!out || !out.textContent) return;
-    navigator.clipboard?.writeText(out.textContent).then(()=> {
-      const prev = out.textContent; out.textContent = 'Job note copied to clipboard'; setTimeout(()=> out.textContent = prev, 1200);
-    }).catch(()=> { out.textContent = 'Unable to copy'; setTimeout(()=> out.textContent = '', 1200); });
+  function generateJobNote(){const out=$('jobNoteResult');out.textContent=buildJobNoteText();out.classList.add('show');setSectionHeight($('jobSection'));}
+  function copyJobNote(){const out=$('jobNoteResult');if(!out||!out.textContent)return;copyToClipboard(out.textContent,out,'Job note copied ✓');}
+  function getSavedNotes(){try{return JSON.parse(localStorage.getItem(SAVED_NOTES_KEY)||'[]');}catch(e){return[];}}
+  function saveJobNote(){
+    const text=buildJobNoteText();if(!text.trim())return;
+    const jobCode=($('jobCode').value||'').trim()||'Untitled';
+    const saved=getSavedNotes();saved.push({id:Date.now(),label:`${jobCode} – ${new Date().toLocaleString()}`,text});
+    localStorage.setItem(SAVED_NOTES_KEY,JSON.stringify(saved));renderSavedNotes();setSectionHeight($('jobSection'));
   }
-  function clearJobForm(){
-    $('jobCode').value=''; $('projectCode').value=''; $('cableName').value=''; $('countsNote').value=''; $('coInfo').value=''; $('jumpers').value=''; $('jobNotes').value='';
-    clearOtdr(); $('jobNoteResult').textContent=''; $('jobNoteResult').classList.remove('show');
-    setSectionHeight($('jobSection'));
+  function renderSavedNotes(){
+    const saved=getSavedNotes(),container=$('savedNotesList'),title=$('savedNotesTitle');container.innerHTML='';
+    if(saved.length===0){title.style.display='none';return;}title.style.display='block';
+    saved.forEach(note=>{
+      const row=document.createElement('div');row.className='saved-note-item';
+      const lbl=document.createElement('span');lbl.className='note-label';lbl.textContent=note.label;
+      const acts=document.createElement('div');acts.className='saved-note-actions';
+      const copyBtn=document.createElement('button');copyBtn.type='button';copyBtn.textContent='Copy';copyBtn.addEventListener('click',()=>copyToClipboard(note.text,copyBtn,'Copied ✓'));
+      const delBtn=document.createElement('button');delBtn.type='button';delBtn.textContent='Delete';delBtn.addEventListener('click',()=>{const all=getSavedNotes().filter(n=>n.id!==note.id);localStorage.setItem(SAVED_NOTES_KEY,JSON.stringify(all));renderSavedNotes();setSectionHeight($('jobSection'));});
+      acts.appendChild(copyBtn);acts.appendChild(delBtn);row.appendChild(lbl);row.appendChild(acts);container.appendChild(row);
+    });setSectionHeight($('jobSection'));
   }
+  function downloadJobNote(){
+    const text=buildJobNoteText();if(!text.trim())return;
+    const jobCode=($('jobCode').value||'').trim()||'job_note';
+    const blob=new Blob([text],{type:'text/plain'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=`${jobCode.replace(/[^a-z0-9_\-]/gi,'_')}_${Date.now()}.txt`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+  }
+  function clearJobForm(){['jobCode','projectCode','cableName','countsNote','coInfo','jumpers','jobNotes'].forEach(id=>$(id).value='');clearOtdr();const out=$('jobNoteResult');out.textContent='';out.classList.remove('show');setSectionHeight($('jobSection'));}
 
-  // Ribbon finder
-  function findRibbon(e){
-    if(e && e.preventDefault) e.preventDefault();
-    const n = clampInt($('strand').value || 0, 0);
-    const out = $('ribbonResult');
-    if(!n || n < 1){ showText(out, 'Enter a valid strand number (≥ 1).'); setSectionHeight($('ribbonSection')); return; }
-    const colors12 = ['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
-    const position = ((n - 1) % 12) + 1;
-    const ribbon = Math.floor((n - 1) / 12) + 1;
-    const color = colors12[position - 1] || 'Unknown';
-    showText(out, `Strand: ${n}\nRibbon: ${ribbon}\nPosition in ribbon: ${position}\nColor: ${color}`);
-    setSectionHeight($('ribbonSection'));
+  function findRibbon(){
+    const n=clampInt($('strand').value||0,0),out=$('ribbonResult');
+    if(!n||n<1){out.textContent='Enter a valid strand number (≥ 1).';out.classList.add('show');setSectionHeight($('ribbonSection'));return;}
+    const position=((n-1)%12)+1,ribbon=Math.floor((n-1)/12)+1,color=COLORS12[position-1]||'Unknown';
+    out.textContent=`Strand: ${n}\nRibbon: ${ribbon}\nPosition in ribbon: ${position}\nColor: ${color}`;out.classList.add('show');setSectionHeight($('ribbonSection'));
+  }
+  function buildRibbonStrip(){
+    const strip=$('ribbonStrip');if(!strip)return;
+    COLORS12.forEach((color,i)=>{
+      const wrap=document.createElement('div');wrap.className='ribbon-swatch';wrap.title=`${i+1} – ${color}`;
+      const box=document.createElement('div');box.className='swatch-box';box.style.background=SWATCH_HEX[color]||'#888';
+      if(color==='White')box.style.border='2px solid #aaa';
+      const lbl=document.createElement('div');lbl.className='swatch-label';lbl.textContent=`${i+1}\n${color}`;
+      wrap.appendChild(box);wrap.appendChild(lbl);strip.appendChild(wrap);
+    });
   }
 
-  // Update distance hint (uses preview unit)
-  function updateDistanceHint(){
-    const val = clampFloat($('distance').value || 0, 0);
-    const unit = $('unit').value || 'km';
-    const previewUnit = getPreviewUnit();
-    const hint = $('distanceHint');
-    if(!hint) return;
-    if(previewUnit === 'ft'){
-      const feet = toFeet(val, unit);
-      hint.textContent = `≈ ${feet.toFixed(2)} ft`;
-      hint.title = `${val} ${unit} ≈ ${feet.toFixed(2)} ft`;
-    } else {
-      const km = toKm(val, unit);
-      hint.textContent = `≈ ${km.toFixed(6)} km`;
-      hint.title = `${val} ${unit} ≈ ${km.toFixed(6)} km`;
-    }
+  function applySavedTheme(){const saved=localStorage.getItem(THEME_KEY),isLight=(saved==='light');document.body.classList.toggle('dark',!isLight);document.body.classList.toggle('light',isLight);const t=$('themeToggle');if(t)t.checked=isLight;}
+  function toggleTheme(){const t=$('themeToggle'),isLight=t&&t.checked;document.body.classList.toggle('dark',!isLight);document.body.classList.toggle('light',isLight);localStorage.setItem(THEME_KEY,isLight?'light':'dark');document.querySelectorAll('.section').forEach(s=>{if(s.style.maxHeight&&s.style.maxHeight!=='0px')setSectionHeight(s);});}
+
+  function wireHeader(hId,sId){
+    const h=$(hId);if(!h)return;
+    h.addEventListener('click',()=>toggleSection(sId,h));
+    h.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSection(sId,h);}});
   }
 
-  // Preview unit persistence helpers (defined earlier)
-  function getPreviewUnit(){
-    const saved = localStorage.getItem(PREVIEW_KEY);
-    return (saved === 'ft' || saved === 'km') ? saved : 'ft';
-  }
-  function setPreviewUnit(u){
-    if(u !== 'ft' && u !== 'km') return;
-    localStorage.setItem(PREVIEW_KEY, u);
-    const sel = $('previewUnit');
-    if(sel) sel.value = u;
-    updateDistanceHint();
-  }
-
-  // Wire up on DOM ready
-  document.addEventListener('DOMContentLoaded', () => {
-    const r = $('result'); if(r) r.setAttribute('aria-live','polite');
-    const rr = $('ribbonResult'); if(rr) rr.setAttribute('aria-live','polite');
-    const cr = $('convertResult'); if(cr) cr.setAttribute('aria-live','polite');
-    const jr = $('jobNoteResult'); if(jr) jr.setAttribute('aria-live','polite');
-
-    // initialize preview unit select from localStorage
-    const previewSel = $('previewUnit');
-    if(previewSel){
-      previewSel.value = getPreviewUnit();
-      previewSel.addEventListener('change', (e) => { setPreviewUnit(e.target.value); });
-    }
-
+  document.addEventListener('DOMContentLoaded',()=>{
     applySavedTheme();
-    setSectionHeight($('lossSection'));
+    wireHeader('lossHeader','lossSection');wireHeader('budgetHeader','budgetSection');wireHeader('converterHeader','converterSection');wireHeader('jobHeader','jobSection');wireHeader('ribbonHeader','ribbonSection');wireHeader('themeHeader','themeSection');
+    setSectionHeight($('lossSection'));$('lossHeader').setAttribute('aria-expanded','true');
 
-    // attach buttons and handlers
-    const addBtn = $('addSpliceBtn'); if(addBtn) addBtn.addEventListener('click', addCustomSplice);
-    const clearBtn = $('clearCustomBtn'); if(clearBtn) clearBtn.addEventListener('click', clearCustomSplices);
-    const calcBtn = $('calcBtn'); if(calcBtn) calcBtn.addEventListener('click', calcLoss);
-    const findBtn = $('findBtn'); if(findBtn) findBtn.addEventListener('click', findRibbon);
+    const previewSel=$('previewUnit');if(previewSel){previewSel.value=getPreviewUnit();previewSel.addEventListener('change',e=>setPreviewUnit(e.target.value));}
 
-    const convertBtn = $('convertBtn'); if(convertBtn) convertBtn.addEventListener('click', convertDistance);
-    const copyConvBtn = $('copyConvBtn'); if(copyConvBtn) copyConvBtn.addEventListener('click', copyConvertResult);
-    const applyToCalcBtn = $('applyToCalcBtn'); if(applyToCalcBtn) applyToCalcBtn.addEventListener('click', applyConvertedToCalculator);
+    $('addSpliceBtn').addEventListener('click',addCustomSplice);
+    $('clearCustomBtn').addEventListener('click',clearCustomSplices);
+    $('calcBtn').addEventListener('click',calcLoss);
+    $('resetLossBtn').addEventListener('click',resetLossFields);
+    $('distance').addEventListener('keydown',e=>{if(e.key==='Enter')calcLoss();});
+    $('strand').addEventListener('keydown',e=>{if(e.key==='Enter')findRibbon();});
+    $('newSpliceCount').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice();});
+    $('newSpliceLoss').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice();});
 
-    const addOtdrBtn = $('addOtdrBtn'); if(addOtdrBtn) addOtdrBtn.addEventListener('click', addOtdr);
-    const clearOtdrBtn = $('clearOtdrBtn'); if(clearOtdrBtn) clearOtdrBtn.addEventListener('click', clearOtdr);
-    const genJobBtn = $('generateJobBtn'); if(genJobBtn) genJobBtn.addEventListener('click', generateJobNote);
-    const copyJobBtn = $('copyJobBtn'); if(copyJobBtn) copyJobBtn.addEventListener('click', copyJobNote);
-    const clearJobBtn = $('clearJobBtn'); if(clearJobBtn) clearJobBtn.addEventListener('click', clearJobForm);
+    $('calcBudgetBtn').addEventListener('click',calcBudget);
+    $('importLossBtn').addEventListener('click',importLossTobudget);
 
-    // ensure all buttons have type=button
-    document.querySelectorAll('button').forEach(b => { if(!b.hasAttribute('type')) b.setAttribute('type','button'); });
+    $('convertBtn').addEventListener('click',convertDistance);
+    $('copyConvBtn').addEventListener('click',()=>{const out=$('convertResult');if(out&&out.textContent)copyToClipboard(out.textContent,out,'Copied ✓');});
+    $('applyToCalcBtn').addEventListener('click',applyConvertedToCalculator);
+    $('convValue').addEventListener('input',()=>{if($('convValue').value)convertDistance();});
+    $('convFrom').addEventListener('change',()=>{if($('convValue').value)convertDistance();});
 
-    // distance hint and tooltip attachments
-    const distanceInput = $('distance'); const unitSelect = $('unit');
-    if(distanceInput) distanceInput.addEventListener('input', updateDistanceHint);
-    if(unitSelect) unitSelect.addEventListener('change', updateDistanceHint);
+    $('addOtdrBtn').addEventListener('click',addOtdr);
+    $('clearOtdrBtn').addEventListener('click',clearOtdr);
+    $('generateJobBtn').addEventListener('click',generateJobNote);
+    $('copyJobBtn').addEventListener('click',copyJobNote);
+    $('saveJobBtn').addEventListener('click',saveJobNote);
+    $('downloadJobBtn').addEventListener('click',downloadJobNote);
+    $('clearJobBtn').addEventListener('click',clearJobForm);
+
+    $('findBtn').addEventListener('click',findRibbon);
+    $('themeToggle').addEventListener('change',toggleTheme);
+
+    $('distance').addEventListener('input',updateDistanceHint);
+    $('unit').addEventListener('change',updateDistanceHint);
     updateDistanceHint();
 
-    attachKmHover(distanceInput, () => {
-      const v = clampFloat(distanceInput.value || 0, 0); const u = unitSelect.value || 'km';
-      const previewUnit = getPreviewUnit();
-      if(previewUnit === 'ft') return `≈ ${toFeet(v, u).toFixed(2)} ft`;
-      return `≈ ${toKm(v, u).toFixed(6)} km`;
-    });
+    attachKmHover($('distance'),()=>{const v=clampFloat($('distance').value||0,0),u=$('unit').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;});
+    attachKmHover($('convValue'),()=>{const v=clampFloat($('convValue').value||0,0),u=$('convFrom').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;});
 
-    const convValue = $('convValue'); const convFrom = $('convFrom');
-    if(convValue && convFrom){
-      attachKmHover(convValue, () => {
-        const v = clampFloat(convValue.value || 0, 0); const u = convFrom.value || 'km';
-        const previewUnit = getPreviewUnit();
-        if(previewUnit === 'ft') return `≈ ${toFeet(v, u).toFixed(2)} ft`;
-        return `≈ ${toKm(v, u).toFixed(6)} km`;
-      });
-      convValue.addEventListener('input', () => { const crEl = $('convertResult'); if(crEl && crEl.classList.contains('show')) convertDistance(); });
-      convFrom.addEventListener('change', () => { if(convValue && convValue.value) convertDistance(); });
-    }
-
-    renderSpliceList(); renderOtdrList();
+    renderSpliceList();renderOtdrList();buildRibbonStrip();renderSavedNotes();
+    document.querySelectorAll('button').forEach(b=>{if(!b.getAttribute('type'))b.setAttribute('type','button');});
   });
-
-  // Theme helpers (unchanged)
-  function applySavedTheme(){
-    const saved = localStorage.getItem('lens-theme');
-    if(saved === 'light'){ document.body.classList.remove('dark'); document.body.classList.add('light'); const t = $('themeToggle'); if(t) t.checked = true; }
-    else { document.body.classList.remove('light'); document.body.classList.add('dark'); const t = $('themeToggle'); if(t) t.checked = false; }
-  }
-  function toggleTheme(){
-    const t = $('themeToggle');
-    if(t && t.checked){ document.body.classList.remove('dark'); document.body.classList.add('light'); localStorage.setItem('lens-theme','light'); }
-    else { document.body.classList.remove('light'); document.body.classList.add('dark'); localStorage.setItem('lens-theme','dark'); }
-    ['lossSection','converterSection','jobSection','ribbonSection','themeSection'].forEach(id => { const s = $(id); if(s && s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s); });
-  }
-
-  // expose for compatibility
-  window.calcLoss = calcLoss;
-  window.findRibbon = findRibbon;
-  window.toggleTheme = toggleTheme;
-  window.toggleSection = function(id){
-    const s = $(id); if(!s) return; const open = s.style.maxHeight && s.style.maxHeight !== '0px'; if(open) s.style.maxHeight = '0px'; else setSectionHeight(s);
-  };
 })();
 </script>
 </body>
