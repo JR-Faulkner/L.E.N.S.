@@ -18,9 +18,8 @@ body{font-family:Arial,sans-serif;text-align:center;padding:20px;transition:back
 .app-title h1{font-size:2.2em;color:var(--accent-red);text-shadow:0 0 10px var(--accent-red),0 0 20px #ff6600;margin:0 0 5px}
 .app-title .author{font-style:italic;font-size:1.05em;text-align:right;margin-right:20px;color:#00bfff;animation:lightning 2s infinite}
 @keyframes lightning{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px #00bfff,0 0 15px #00ffff,0 0 25px #00bfff;color:#00ffff}20%,24%,55%{text-shadow:none;color:#00bfff}}
-h2,button.section-btn{margin:0;padding:15px;font-size:1.4em;cursor:pointer;background:linear-gradient(90deg,var(--accent-red),#00ff00,#00bfff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:transform .3s;user-select:none;width:100%;text-align:center;border:none;display:block;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:Arial,sans-serif;font-weight:bold}
-h2:hover,button.section-btn:hover{transform:scale(1.03)}
-button.section-btn:active{opacity:0.8;transform:scale(0.98)}
+h2{margin:0;padding:15px;font-size:1.4em;cursor:pointer;background:linear-gradient(90deg,var(--accent-red),#00ff00,#00bfff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:transform .3s;user-select:none;width:100%;text-align:center;border:none;display:block;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:Arial,sans-serif;font-weight:bold}
+h2:hover{transform:scale(1.03)}
 .section{max-height:0;overflow:hidden;transition:max-height .45s ease;will-change:max-height}
 .section-inner{padding:12px 10px 18px}
 .form-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0}
@@ -145,8 +144,7 @@ body.light .apikey-row label{color:#884400}
 
 <!-- LOSS CALCULATOR -->
 
-<button id="hLoss" class="section-btn" aria-expanded="true" aria-controls="sLoss" type="button">Fiber Loss Calculator ▼</button>
-
+<h2 id="hLoss" tabindex="0" role="button" aria-expanded="true" aria-controls="sLoss">Fiber Loss Calculator &#9660;</h2>
 <div id="sLoss" class="section"><div class="section-inner">
   <div class="form-row">
     <label for="distance">Distance: <input id="distance" type="number" placeholder="Enter value" min="0"></label>
@@ -174,22 +172,21 @@ body.light .apikey-row label{color:#884400}
       <input id="newSpliceLabel" type="text" placeholder="Name (e.g. Splice-1)"/>
       <input id="newSpliceCount" type="number" min="0" step="1" value="1"/>
       <input id="newSpliceLoss" type="number" min="0" step="0.01" value="0.05"/>
-      <button id="addSpliceBtn" type="button">Add Splice</button>
-      <button id="clearCustomBtn" type="button">Clear Custom</button>
+      <button id="addSpliceBtn" type="button">Add Splice</h2>
+      <button id="clearCustomBtn" type="button">Clear Custom</h2>
     </div>
     <div id="spliceCustomResult" class="small-note result-out" style="text-align:center"></div>
   </div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button id="calcBtn" type="button">Calculate Total Loss</button>
-    <button id="resetLossBtn" type="button">Reset Fields</button>
+    <button id="calcBtn" type="button">Calculate Total Loss</h2>
+    <button id="resetLossBtn" type="button">Reset Fields</h2>
   </div>
   <p id="result" class="result-out" aria-live="polite"></p>
 </div></div>
 
 <!-- POWER BUDGET -->
 
-<button id="hBudget" class="section-btn" aria-expanded="false" aria-controls="sBudget" type="button">Power Budget Calculator ▼</button>
-
+<h2 id="hBudget" tabindex="0" role="button" aria-expanded="false" aria-controls="sBudget">Power Budget Calculator &#9660;</h2>
 <div id="sBudget" class="section"><div class="section-inner">
   <p class="small-note" style="margin-bottom:10px">Enter TX power, RX sensitivity, and estimated loss to check if the link passes.</p>
   <div class="form-row">
@@ -202,8 +199,8 @@ body.light .apikey-row label{color:#884400}
   </div>
   <p class="small-note">Tip: run the Loss Calculator first, then click <strong>Import Loss</strong>.</p>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button id="calcBudgetBtn" type="button">Check Budget</button>
-    <button id="importLossBtn" type="button">Import Loss from Calculator</button>
+    <button id="calcBudgetBtn" type="button">Check Budget</h2>
+    <button id="importLossBtn" type="button">Import Loss from Calculator</h2>
   </div>
   <div id="budgetError" class="error-msg" style="display:none" aria-live="assertive"></div>
   <div id="budgetResult" class="result-out" aria-live="polite"></div>
@@ -211,8 +208,7 @@ body.light .apikey-row label{color:#884400}
 
 <!-- SPLICE PRINT READER -->
 
-<button id="hSPR" class="section-btn" aria-expanded="false" aria-controls="sSPR" type="button">📷 Splice Print Reader (AI) ▼</button>
-
+<h2 id="hSPR" tabindex="0" role="button" aria-expanded="false" aria-controls="sSPR">&#128247; Splice Print Reader (AI) &#9660;</h2>
 <div id="sSPR" class="section"><div class="section-inner">
   <div class="spr-wrap">
     <p class="small-note" style="margin-bottom:14px;text-align:center">
@@ -222,7 +218,7 @@ body.light .apikey-row label{color:#884400}
     <div class="apikey-row">
       <label for="sprApiKey">&#9888; Anthropic API Key (required for AI scan):</label>
       <input type="password" id="sprApiKey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false"/>
-      <button type="button" id="toggleKeyBtn" style="margin-top:0;padding:6px 10px;font-size:.85em">Show</button>
+      <button type="button" id="toggleKeyBtn" style="margin-top:0;padding:6px 10px;font-size:.85em">Show</h2>
       <span class="small-note" style="opacity:.65">Used only to call Anthropic&#39;s API directly from your browser &#8212; never stored.</span>
     </div>
     <div class="spr-upload-zone" id="sprZone" role="button" tabindex="0" aria-label="Upload splice print image">
@@ -242,7 +238,7 @@ body.light .apikey-row label{color:#884400}
           <option value="216">216</option><option value="288">288</option><option value="432">432</option>
         </select>
       </label>
-      <button type="button" id="sprAnalyzeBtn" class="spr-analyze-btn">&#128269; Analyze Print &amp; Generate Splice Map</button>
+      <button type="button" id="sprAnalyzeBtn" class="spr-analyze-btn">&#128269; Analyze Print &amp; Generate Splice Map</h2>
     </div>
     <div id="sprError" class="error-msg" style="display:none" aria-live="assertive"></div>
     <div id="sprSpinner" class="spr-spinner">Analyzing splice print with AI &#8212; this takes a few seconds&#8230;</div>
@@ -259,9 +255,9 @@ body.light .apikey-row label{color:#884400}
         <div class="spr-raw-box" id="sprRaw"></div>
       </div>
       <div class="spr-actions">
-        <button type="button" id="sprCopyBtn">Copy Splice Plan</button>
-        <button type="button" id="sprJobBtn">Send to Job Notes</button>
-        <button type="button" id="sprClearBtn">Clear / New Scan</button>
+        <button type="button" id="sprCopyBtn">Copy Splice Plan</h2>
+        <button type="button" id="sprJobBtn">Send to Job Notes</h2>
+        <button type="button" id="sprClearBtn">Clear / New Scan</h2>
       </div>
     </div>
   </div>
@@ -269,8 +265,7 @@ body.light .apikey-row label{color:#884400}
 
 <!-- DISTANCE CONVERTER -->
 
-<button id="hConv" class="section-btn" aria-expanded="false" aria-controls="sConv" type="button">Distance Converter ▼</button>
-
+<h2 id="hConv" tabindex="0" role="button" aria-expanded="false" aria-controls="sConv">Distance Converter &#9660;</h2>
 <div id="sConv" class="section"><div class="section-inner">
   <div class="form-row">
     <label for="convValue">Value: <input id="convValue" type="number" placeholder="Enter value"></label>
@@ -278,9 +273,9 @@ body.light .apikey-row label{color:#884400}
     <label for="convTo">To: <select id="convTo"><option value="km">Kilometers (km)</option><option value="mi">Miles (mi)</option><option value="kft">Kilofeet (kft)</option><option value="ft">Feet (ft)</option></select></label>
   </div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button id="convertBtn" type="button">Convert</button>
-    <button id="copyConvBtn" type="button">Copy Result</button>
-    <button id="applyToCalcBtn" type="button">Use in Calculator</button>
+    <button id="convertBtn" type="button">Convert</h2>
+    <button id="copyConvBtn" type="button">Copy Result</h2>
+    <button id="applyToCalcBtn" type="button">Use in Calculator</h2>
   </div>
   <p id="convertResult" class="result-out" aria-live="polite"></p>
   <p class="small-note">Tip: <strong>Use in Calculator</strong> populates the loss calculator and runs it automatically.</p>
@@ -288,8 +283,7 @@ body.light .apikey-row label{color:#884400}
 
 <!-- JOBS INFO CREATOR -->
 
-<button id="hJob" class="section-btn" aria-expanded="false" aria-controls="sJob" type="button">Jobs Info Creator ▼</button>
-
+<h2 id="hJob" tabindex="0" role="button" aria-expanded="false" aria-controls="sJob">Jobs Info Creator &#9660;</h2>
 <div id="sJob" class="section"><div class="section-inner">
   <div class="form-row">
     <label for="jobCode">Job Code: <input id="jobCode" type="text" placeholder="e.g., LG15"></label>
@@ -309,8 +303,8 @@ body.light .apikey-row label{color:#884400}
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:8px">
       <input id="newOtdrCount" type="text" placeholder="Count (e.g., 193)" style="width:120px"/>
       <input id="newOtdrValue" type="text" placeholder="Value (e.g., 24534 ft)" style="width:160px"/>
-      <button id="addOtdrBtn" type="button">Add OTDR</button>
-      <button id="clearOtdrBtn" type="button">Clear OTDRs</button>
+      <button id="addOtdrBtn" type="button">Add OTDR</h2>
+      <button id="clearOtdrBtn" type="button">Clear OTDRs</h2>
     </div>
   </div>
   <div style="margin-top:12px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
@@ -318,11 +312,11 @@ body.light .apikey-row label{color:#884400}
     <textarea id="jobNotes" placeholder="Any extra notes for the job (optional)"></textarea>
   </div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px">
-    <button id="generateJobBtn" type="button">Generate Job Note</button>
-    <button id="copyJobBtn" type="button">Copy Job Note</button>
-    <button id="saveJobBtn" type="button">Save Note</button>
-    <button id="downloadJobBtn" type="button">Download as .txt</button>
-    <button id="clearJobBtn" type="button">Clear Form</button>
+    <button id="generateJobBtn" type="button">Generate Job Note</h2>
+    <button id="copyJobBtn" type="button">Copy Job Note</h2>
+    <button id="saveJobBtn" type="button">Save Note</h2>
+    <button id="downloadJobBtn" type="button">Download as .txt</h2>
+    <button id="clearJobBtn" type="button">Clear Form</h2>
   </div>
   <p id="jobNoteResult" class="result-out" aria-live="polite" style="white-space:pre-wrap;text-align:left;max-width:760px;margin-left:auto;margin-right:auto"></p>
   <div style="margin-top:16px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
@@ -334,19 +328,17 @@ body.light .apikey-row label{color:#884400}
 
 <!-- FIBER RIBBON FINDER -->
 
-<button id="hRibbon" class="section-btn" aria-expanded="false" aria-controls="sRibbon" type="button">Fiber Ribbon Finder ▼</button>
-
+<h2 id="hRibbon" tabindex="0" role="button" aria-expanded="false" aria-controls="sRibbon">Fiber Ribbon Finder &#9660;</h2>
 <div id="sRibbon" class="section"><div class="section-inner">
   <label for="strand">Strand Number: <input id="strand" type="number" placeholder="Enter strand #" min="1"></label><br>
-  <button id="findBtn" type="button">Find Ribbon</button>
+  <button id="findBtn" type="button">Find Ribbon</h2>
   <p id="ribbonResult" class="result-out" aria-live="polite"></p>
   <div style="margin-top:16px"><strong>EIA/TIA Color Order Reference</strong><div class="ribbon-strip" id="ribbonStrip"></div></div>
 </div></div>
 
 <!-- THEME -->
 
-<button id="hTheme" class="section-btn" aria-expanded="false" aria-controls="sTheme" type="button">Theme Mode ▼</button>
-
+<h2 id="hTheme" tabindex="0" role="button" aria-expanded="false" aria-controls="sTheme">Theme Mode &#9660;</h2>
 <div id="sTheme" class="section"><div class="section-inner">
   <label class="switch" for="themeToggle"><input type="checkbox" id="themeToggle"/><span class="slider"></span></label>
   <p>Toggle Light / Dark Mode</p>
@@ -381,7 +373,6 @@ if(h)h.setAttribute(‘aria-expanded’,String(!open));
 function wireH(hId,sId){
 const h=$(hId);if(!h)return;
 h.addEventListener(‘click’,()=>toggleSec(sId,h));
-h.addEventListener(‘touchend’,function(e){e.preventDefault();toggleSec(sId,h);},{passive:false});
 h.addEventListener(‘keydown’,e=>{if(e.key===‘Enter’||e.key===’ ’){e.preventDefault();toggleSec(sId,h);}});
 }
 
@@ -436,7 +427,7 @@ if(!SS.length){sum.textContent=‘No custom splices added’;sum.classList.remov
 else{sum.textContent=SS.length+’ custom splice entr’+(SS.length===1?‘y’:‘ies’)+’ applied in calculation’;sum.classList.add(‘show’);}
 SS.forEach(x=>{
 const r=document.createElement(‘div’);r.className=‘splice-list-row’;r.dataset.id=x.id;
-r.innerHTML=’<div class="col lbl">’+esc(x.label)+’</div><div class="col cnt">’+x.count+’</div><div class="col lss">’+Number(x.loss).toFixed(3)+’</div><div class="col act"><button type="button" class="eBtn">Edit</button> <button type="button" class="rBtn">Remove</button></div>’;
+r.innerHTML=’<div class="col lbl">’+esc(x.label)+’</div><div class="col cnt">’+x.count+’</div><div class="col lss">’+Number(x.loss).toFixed(3)+’</div><div class="col act"><button type="button" class="eBtn">Edit</h2> <button type="button" class="rBtn">Remove</h2></div>’;
 list.appendChild(r);
 });
 list.querySelectorAll(’.rBtn’).forEach(b=>b.addEventListener(‘click’,e=>rmS(+e.currentTarget.closest(’.splice-list-row’).dataset.id)));
@@ -453,7 +444,7 @@ function editS(id){
 const list=$(‘spliceList’),r=list.querySelector(’.splice-list-row[data-id=”’+id+’”]’);if(!r)return;
 const x=SS.find(s=>s.id===id);if(!x)return;
 r.classList.add(‘splice-editing’);
-r.innerHTML=’<div class="col lbl"><input class="el" type="text" value="'+esc(x.label)+'"></div><div class="col cnt"><input class="ec" type="number" min="0" value="'+x.count+'"></div><div class="col lss"><input class="elo" type="number" step="0.001" min="0" value="'+x.loss+'"></div><div class="col act"><button type="button" class="sv">Save</button> <button type="button" class="cn">Cancel</button></div>’;
+r.innerHTML=’<div class="col lbl"><input class="el" type="text" value="'+esc(x.label)+'"></div><div class="col cnt"><input class="ec" type="number" min="0" value="'+x.count+'"></div><div class="col lss"><input class="elo" type="number" step="0.001" min="0" value="'+x.loss+'"></div><div class="col act"><button type="button" class="sv">Save</h2> <button type="button" class="cn">Cancel</h2></div>’;
 r.querySelector(’.sv’).addEventListener(‘click’,()=>{x.label=r.querySelector(’.el’).value.trim()||x.label;x.count=ci(r.querySelector(’.ec’).value||0,0);x.loss=cf(r.querySelector(’.elo’).value||0,0);renderSL();setSH($(‘sLoss’));});
 r.querySelector(’.cn’).addEventListener(‘click’,()=>{renderSL();setSH($(‘sLoss’));});
 const fi=r.querySelector(’.el’);if(fi)fi.focus();
