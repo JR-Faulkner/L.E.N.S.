@@ -639,8 +639,8 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
   <div class="section-inner">
 
     <p class="small-note" style="margin-bottom:10px">
-      Take a photo or upload an image of any job printout.<br>
-      The AI will read it and output everything it finds — verbatim.
+      Take a photo of any job printout.<br>
+      The AI will break it down into plain English — where you're going, what you're working on, and exactly what needs to be done.
     </p>
 
     <!-- Discreet API key settings — collapsed by default -->
@@ -651,7 +651,7 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
           API Key:
           <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="new-password" spellcheck="false" aria-label="Anthropic API key">
         </label>
-        <span class="api-key-hint">Saved locally on this device only.</span>
+        <span class="api-key-hint">Saved locally on this device only. &nbsp;<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:#00bfff;opacity:.8">Get a key ↗</a></span>
       </div>
     </div>
 
@@ -671,7 +671,7 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
     <div class="ai-status" id="aiStatus" aria-live="polite"></div>
 
     <div class="btn-row" style="margin-top:4px">
-      <button id="analyzeBtn" type="button" style="display:none">🔍 Analyze Printout</button>
+      <button id="analyzeBtn" type="button" style="display:none">🔍 Break Down This Printout</button>
     </div>
 
     <!-- Raw extracted text output -->
@@ -1215,17 +1215,38 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
     const mediaType=(file&&file.type)?file.type:'image/jpeg';
 
     const systemPrompt=
-`You are a field assistant for a fiber optic construction technician at a large US communications company.
-Your job: read photos of printed job work orders and extract every piece of useful information.
+`You are an experienced fiber optic construction technician and field supervisor at a large US telecommunications company. You have decades of experience reading OSP job printouts, ORCA work orders, splice cases, manhole assignments, and fiber count sheets.
 
-Output ONLY raw plain text. No JSON. No markdown. No bullet symbols. No # headers.
-Write each piece of information on its own line, exactly as it appears on the document.
-Include everything: job codes, cable names, fiber counts, splice locations, OTDR readings,
-binding post numbers, tone positions, jumper assignments, special instructions, dates,
-addresses, ticket numbers, work order numbers — anything visible.
-If something is illegible write: [ illegible ]
-If the image is not a job printout, say so in one line.
-Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
+Your job is to read a photo of a job printout and translate it into a clear, plain-English breakdown that any technician — even one new to the job — can understand and act on in the field.
+
+Structure your response exactly like this:
+
+JOB OVERVIEW
+One or two sentences describing what this job is and where it is. Include the project code, location (manhole, vault, address), and the overall task in plain English.
+
+WHERE YOU'RE GOING
+The specific location — manhole number, vault, address, landmark. Include any relevant identifiers like MH numbers or structure codes.
+
+WHAT YOU'RE WORKING ON
+Plain English description of the cables, cases, or equipment involved. Explain what each cable or case identifier means if recognizable (e.g. "LG06 = a feeder cable", "85C = an 85-count cable", "4C = a 4-count cable"). List the cases and how many cables or counts are in each.
+
+FIBER COUNTS & ASSIGNMENTS
+Break down the count ranges clearly. For each count range, say who it belongs to or where it goes. If counts are marked NC (not connected / not in use), say so plainly. If counts are in parentheses, note they may be future or inactive. Codes in angle brackets like <A02BQWN> are job or splice ticket numbers — call them out.
+
+SCOPE OF WORK — WHAT YOU ACTUALLY NEED TO DO
+This is the most important section. In plain simple steps, list exactly what work needs to be performed. Use numbered steps. Be specific — which counts, which cable, which case, which manhole. If a SCOPE OF WORK line exists on the printout, use it as the anchor but expand on it with context from the rest of the sheet.
+
+SPECIAL NOTES & REQUIREMENTS
+Any forms required, permits, safety notes, special instructions, codes like POW, DET, county requirements, or anything else the tech needs to know before starting.
+
+QUICK REFERENCE
+A compact summary list: Project code, Location, Cable(s), Key counts, Task in one line.
+
+Rules:
+- Write in plain conversational English. No jargon without explanation.
+- Never just repeat the raw codes — always interpret them.
+- If something is unclear or illegible, say so and explain what it likely means based on context.
+- Keep it practical — a tech should be able to read this once and know exactly what to do.`;
 
     try {
       const response=await fetch('https://api.anthropic.com/v1/messages',{
@@ -1238,7 +1259,7 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
         },
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
-          max_tokens:1500,
+          max_tokens:2500,
           system:systemPrompt,
           messages:[{
             role:'user',
