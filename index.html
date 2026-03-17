@@ -3,634 +3,1001 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-<title>L.E.N.S.</title>
+<title>L.E.N.S. – Loss Estimator & Network Solver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <style>
 :root{
-  --red:#ff0000;--green:#00ff00;--cyan:#00bfff;--gold:#FFB800;
-  --grey:#8899AA;--bg:#000;--card:#111827;--input:#1F2937;
-  --border:#1F3A5F;--radius:8px;
+  --label-dark-blue:#0099cc;
+  --result-dark-blue:#00bfff;
+  --label-light-blue:#005f99;
+  --result-light-blue:#0077cc;
+  --accent-red:#ff0000;
+  --accent-green:#00ff00;
+  --bg-dark:#000;
+  --bg-light:#fff;
+  --radius:6px;
+  --input-w:160px;
+  --focus:0 0 0 3px rgba(0,191,255,0.28);
+  --tooltip-bg:rgba(0,0,0,0.85);
+  --tooltip-color:#fff;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,sans-serif;background:var(--bg);color:#fff;padding:16px;max-width:700px;margin:0 auto;}
-/* TITLE */
-.app-title{text-align:center;margin-bottom:20px;padding:16px;background:var(--card);border-radius:var(--radius);}
-.app-title h1{font-size:2em;color:var(--red);text-shadow:0 0 10px var(--red);letter-spacing:4px;}
-.app-title p{color:var(--cyan);font-style:italic;margin-top:4px;font-size:.95em;}
-/* SECTION TOGGLE - using checkbox hack for iOS compatibility */
-.section-wrap{margin-bottom:12px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
-.section-toggle{display:none;}
-.section-label{
-  display:block;width:100%;padding:16px;cursor:pointer;
-  background:linear-gradient(135deg,#003366,#001a33);
-  color:var(--cyan);font-size:1.1em;font-weight:700;
-  text-align:center;letter-spacing:.5px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-  user-select:none;
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;text-align:center;padding:20px;transition:background-color .5s ease,color .5s ease;margin:0}
+.app-title{text-align:center;margin-bottom:20px}
+.app-title h1{font-size:2.2em;color:var(--accent-red);text-shadow:0 0 10px var(--accent-red),0 0 20px #ff6600;margin:0 0 5px 0}
+.app-title .author{font-style:italic;font-size:1.05em;text-align:right;margin-right:20px;color:#00bfff;animation:lightning 2s infinite}
+@keyframes lightning{0%,19%,21%,23%,25%,54%,56%,100%{text-shadow:0 0 5px #00bfff,0 0 15px #00ffff,0 0 25px #00bfff;color:#00ffff}20%,24%,55%{text-shadow:none;color:#00bfff}}
+h2{margin:0;padding:15px;font-size:1.4em;cursor:pointer;background:linear-gradient(90deg,var(--accent-red),#00ff00,#00bfff);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;transition:transform .3s ease;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+h2:hover{transform:scale(1.03)}
+.section{max-height:0;overflow:hidden;transition:max-height .35s ease;will-change:max-height}
+.section-inner{padding:12px 10px 18px 10px}
+.form-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0}
+label{display:inline-flex;align-items:center;gap:8px;color:var(--label-dark-blue);font-weight:700;font-size:1.05em}
+input,select,textarea{font-size:1.05em;margin:0;padding:6px 8px;border-radius:var(--radius);border:1px solid rgba(0,0,0,0.08)}
+textarea{min-height:120px;max-width:100%;width:100%;box-sizing:border-box}
+input[type=number]{width:var(--input-w);box-sizing:border-box}
+button{padding:10px 18px;margin-top:12px;border-radius:var(--radius);cursor:pointer;transition:all .18s ease;border:1px solid transparent;background:#eee;color:#000;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.12)}
+button:focus{outline:none;box-shadow:var(--focus)}
+button[disabled]{opacity:0.5;cursor:not-allowed;transform:none}
+.result-out{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line}
+.result-out.show{opacity:1;transform:translateY(0)}
+/* validation error */
+.input-error{border:2px solid var(--accent-red)!important;animation:shake .25s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.error-msg{color:var(--accent-red);font-size:0.92em;margin-top:4px;font-weight:700}
+/* Dark theme */
+body.dark{background-color:var(--bg-dark);color:var(--accent-red)}
+body.dark input,body.dark select,body.dark textarea{background-color:#111;color:var(--accent-red);border:1px solid var(--accent-red)}
+body.dark button{background-color:#111;color:var(--accent-green);border:1px solid var(--accent-green)}
+body.dark button:hover{background-color:var(--accent-green);color:#000}
+body.dark .result-out{color:var(--result-dark-blue)}
+body.dark label{color:var(--label-dark-blue)}
+body.dark .section-header-wrap{border-bottom:1px solid #222}
+/* Light theme */
+body.light{background-color:var(--bg-light);color:#000}
+body.light input,body.light select,body.light textarea{background-color:#f0f0f0;color:#000;border:1px solid #000}
+body.light button{background-color:#eee;color:#000;border:1px solid #000}
+body.light button:hover{background-color:#000;color:#fff}
+body.light .result-out{color:var(--result-light-blue)}
+body.light label{color:var(--label-light-blue)}
+/* Toggle */
+.switch{position:relative;display:inline-block;width:48px;height:26px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:26px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:4px;bottom:4px;background-color:white;transition:.3s;border-radius:50%}
+input:checked+.slider{background-color:#2196F3}
+input:checked+.slider:before{transform:translateX(22px)}
+/* Custom splices */
+.custom-splices{margin-top:8px;border-radius:6px;padding:10px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:8px;max-width:760px;margin-left:auto;margin-right:auto}
+.splice-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.splice-row input[type="text"]{width:200px}
+.splice-row input[type="number"]{width:110px}
+.splice-actions{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+.small-note{font-size:0.9em;color:inherit;opacity:0.9}
+/* Splice list row */
+.splice-list-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:6px;border-radius:6px}
+.splice-list-row .col{padding:4px}
+.splice-list-row .col.label{width:200px;text-align:left}
+.splice-list-row .col.count{width:110px;text-align:left}
+.splice-list-row .col.loss{width:110px;text-align:left}
+.splice-list-row .col.actions{width:140px;text-align:left}
+.splice-editing{background:rgba(0,191,255,0.03);border:1px dashed rgba(0,191,255,0.06)}
+/* Focus ring */
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,191,255,0.18);outline:none}
+/* Tooltip */
+.km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:var(--tooltip-bg);color:var(--tooltip-color);font-size:0.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease}
+.km-tooltip.show{opacity:1}
+/* Power budget pass/fail */
+.budget-pass{color:#00ff00;font-weight:700}
+.budget-fail{color:#ff0000;font-weight:700}
+/* Ribbon color swatch strip */
+.ribbon-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin-top:14px;max-width:600px;margin-left:auto;margin-right:auto}
+.ribbon-swatch{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default}
+.ribbon-swatch .swatch-box{width:38px;height:38px;border-radius:6px;border:2px solid rgba(255,255,255,0.15);box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.ribbon-swatch .swatch-label{font-size:0.7em;font-weight:700;text-align:center;max-width:42px;word-break:break-word}
+/* Saved notes list */
+.saved-note-item{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;margin:4px 0;background:rgba(255,255,255,0.03);font-size:0.9em;text-align:left;flex-wrap:wrap}
+.saved-note-item .note-label{flex:1;min-width:100px;word-break:break-all}
+.saved-note-actions{display:flex;gap:6px}
+/* Resize-stable section */
+.section-header-wrap{display:block}
+@media(max-width:520px){.switch{width:44px;height:24px}.slider:before{height:16px;width:16px;left:4px;bottom:4px}input:checked+.slider:before{transform:translateX(20px)}}
+@media(max-width:720px){
+  .form-row{flex-direction:column;align-items:stretch}
+  label{width:100%;justify-content:flex-start}
+  input[type=number]{width:100%}
+  .splice-list-row{flex-direction:column;align-items:flex-start}
+  .splice-list-row .col{width:100%;text-align:left}
+  .splice-actions{flex-direction:column}
+  .app-title .author{display:block;text-align:center;margin-right:0}
+  h2{font-size:1.15em;padding:12px}
+  .ribbon-swatch .swatch-box{width:30px;height:30px}
 }
-.section-label:active{opacity:.8;}
-.section-label .arrow{display:inline-block;transition:transform .3s;margin-left:8px;}
-.section-toggle:checked ~ .section-label .arrow{transform:rotate(180deg);}
-.section-body{display:none;padding:16px;background:var(--card);}
-.section-toggle:checked ~ .section-body{display:block;}
-/* FORM ELEMENTS */
-.field{margin-bottom:14px;}
-.field label{display:block;color:var(--grey);font-size:.9em;margin-bottom:5px;}
-.field input,.field select,.field textarea{
-  width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--border);
-  background:var(--input);color:var(--gold);font-size:1em;
-  -webkit-appearance:none;appearance:none;
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;border-color:var(--cyan);box-shadow:0 0 0 2px rgba(0,191,255,.2);
-}
-.field textarea{min-height:100px;resize:vertical;}
-.row{display:flex;gap:10px;}
-.row .field{flex:1;}
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.chip{
-  padding:6px 14px;border-radius:20px;border:1px solid var(--border);
-  background:var(--input);color:var(--grey);font-size:.9em;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
-}
-.chip.active{background:var(--cyan);border-color:var(--cyan);color:#000;font-weight:700;}
-/* BUTTONS */
-.btn{
-  display:block;width:100%;padding:14px;border-radius:var(--radius);
-  border:1.5px solid var(--cyan);background:transparent;color:var(--cyan);
-  font-size:1em;font-weight:700;cursor:pointer;margin-top:10px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  font-family:Arial,sans-serif;text-align:center;
-}
-.btn:active{background:rgba(0,191,255,.1);}
-.btn.green{border-color:var(--green);color:var(--green);}
-.btn.green:active{background:rgba(0,255,0,.1);}
-.btn.gold{border-color:var(--gold);color:var(--gold);}
-.btn.grey{border-color:var(--grey);color:var(--grey);}
-.btn.red{border-color:#ff4444;color:#ff4444;}
-/* RESULTS */
-.result-box{margin-top:14px;padding:14px;background:#0A1628;border-radius:var(--radius);border:1px solid var(--cyan);display:none;}
-.result-box.show{display:block;}
-.result-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:.95em;}
-.result-row:last-child{border-bottom:none;}
-.result-label{color:var(--grey);}
-.result-val{color:var(--cyan);font-weight:700;font-family:monospace;}
-.result-total{font-size:1.2em;color:var(--green)!important;}
-.pass{color:var(--green);font-size:1.2em;font-weight:800;text-align:center;padding:10px;background:#001a00;border-radius:6px;margin-top:10px;}
-.fail{color:#ff4444;font-size:1.2em;font-weight:800;text-align:center;padding:10px;background:#1a0000;border-radius:6px;margin-top:10px;}
-.hint{color:var(--grey);font-size:.85em;font-style:italic;margin-top:4px;}
-/* CUSTOM SPLICES */
-.splice-item{display:flex;align-items:center;justify-content:space-between;padding:8px;background:#0d1117;border-radius:6px;margin-bottom:6px;}
-.splice-info{color:var(--cyan);font-size:.9em;}
-.splice-del{background:none;border:1px solid #ff4444;color:#ff4444;border-radius:4px;padding:4px 10px;cursor:pointer;font-size:.85em;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-/* RIBBON SWATCHES */
-.swatch-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.swatch{width:52px;text-align:center;}
-.swatch-box{width:52px;height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1em;border:1px solid rgba(255,255,255,.15);}
-.swatch-name{font-size:.65em;color:var(--grey);margin-top:3px;}
-/* RIBBON RESULT */
-.ribbon-result{display:none;margin-top:14px;padding:16px;background:#0A1628;border-radius:var(--radius);border:1px solid var(--cyan);text-align:center;}
-.ribbon-result.show{display:block;}
-.ribbon-big{font-size:2.5em;font-weight:800;color:#fff;font-family:monospace;}
-.ribbon-sub{color:var(--grey);font-size:.9em;margin-top:4px;}
-/* OTDR */
-.otdr-item{display:flex;align-items:center;justify-content:space-between;padding:8px;background:#0d1117;border-radius:6px;margin-bottom:6px;}
-.otdr-text{color:var(--cyan);font-size:.9em;font-family:monospace;}
-/* JOB NOTE OUTPUT */
-.note-output{background:#001a00;border:1px solid var(--green);border-radius:var(--radius);padding:14px;margin-top:14px;color:var(--green);font-family:monospace;font-size:.85em;line-height:1.6;white-space:pre-wrap;display:none;}
-.note-output.show{display:block;}
-/* SECTION DIVIDER */
-.sec-title{color:var(--cyan);font-size:.85em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-/* API KEY */
-.apikey-wrap{background:#1a1100;border:1px solid #664400;border-radius:6px;padding:12px;margin-bottom:14px;}
-.apikey-wrap label{color:var(--gold);font-size:.85em;display:block;margin-bottom:6px;}
-.apikey-row{display:flex;gap:8px;}
-.apikey-row input{flex:1;padding:8px;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:monospace;font-size:.9em;}
-.apikey-row button{padding:8px 14px;background:none;border:1px solid var(--grey);color:var(--grey);border-radius:6px;cursor:pointer;font-size:.85em;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-/* UPLOAD ZONE */
-.upload-zone{border:2px dashed rgba(0,191,255,.4);border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;background:rgba(0,191,255,.03);margin-bottom:14px;position:relative;}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-zone p{color:var(--grey);font-size:.9em;margin-top:6px;}
-.upload-preview{max-width:100%;max-height:280px;border-radius:8px;margin:10px auto;display:none;border:1px solid var(--cyan);}
-/* SPR RESULTS */
-.spr-table{width:100%;border-collapse:collapse;font-size:.85em;margin-top:12px;}
-.spr-table th{padding:8px;background:#003366;color:var(--cyan);text-align:left;border-bottom:2px solid var(--border);}
-.spr-table td{padding:7px 8px;border-bottom:1px solid var(--border);}
-.spr-table tr.conflict td{background:rgba(255,0,0,.08);color:#ff6666;}
-.badge-ok{display:inline-block;background:#004400;color:var(--green);font-size:.75em;font-weight:700;padding:2px 8px;border-radius:10px;}
-.badge-conflict{display:inline-block;background:#440000;color:#ff4444;font-size:.75em;font-weight:700;padding:2px 8px;border-radius:10px;}
-.spr-summary{display:flex;gap:12px;flex-wrap:wrap;padding:12px;background:rgba(0,191,255,.05);border-radius:8px;margin-bottom:12px;border:1px solid rgba(0,191,255,.15);}
-.spr-stat{text-align:center;}
-.spr-stat-val{font-size:1.4em;font-weight:700;color:var(--cyan);}
-.spr-stat-lbl{font-size:.7em;color:var(--grey);}
-.spinner{display:none;text-align:center;color:var(--cyan);padding:16px;}
-.spinner.show{display:block;}
-@media(max-width:480px){.row{flex-direction:column;}.spr-table{font-size:.78em;}}
 </style>
 </head>
-<body>
+<body class="dark">
 
 <div class="app-title">
-  <h1>L.E.N.S.</h1>
-  <p>Loss Estimator &amp; Network Solver &mdash; by Jovan Faulkner</p>
+  <h1>L.E.N.S. – Loss Estimator & Network Solver</h1>
+  <p class="author">By: Jovan Faulkner</p>
 </div>
 
-<!-- LOSS CALCULATOR -->
+<!-- ══════════════════════════════════════════════════════
+     FIBER LOSS CALCULATOR
+═══════════════════════════════════════════════════════════ -->
 
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t1" checked/>
-  <label class="section-label" for="t1">&#9889; Fiber Loss Calculator <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <div class="sec-title">Distance</div>
-    <div class="row">
-      <div class="field"><label>Distance</label><input type="number" id="distance" placeholder="e.g. 5.2" min="0" inputmode="decimal"/></div>
-      <div class="field"><label>Unit</label>
-        <select id="unit">
-          <option value="km">km</option><option value="mi">miles</option>
-          <option value="kft">kilofeet</option><option value="ft">feet</option>
+<div class="section-header-wrap">
+  <h2 id="lossHeader" tabindex="0" role="button" aria-expanded="true" aria-controls="lossSection">Fiber Loss Calculator ▼</h2>
+</div>
+<div id="lossSection" class="section">
+  <div class="section-inner">
+    <div class="form-row">
+      <label for="distance">Distance:
+        <input id="distance" type="number" placeholder="Enter value" min="0" aria-label="Distance value">
+      </label>
+      <label for="unit">Unit:
+        <select id="unit" aria-label="Distance unit">
+          <option value="km">km</option>
+          <option value="mi">miles</option>
+          <option value="kft">kilofeet</option>
+          <option value="ft">feet</option>
         </select>
-      </div>
-    </div>
-    <div id="distHint" class="hint"></div>
-    <div class="sec-title" style="margin-top:14px">Wavelength</div>
-    <div class="chips" id="wlChips">
-      <div class="chip active" data-val="1550">1550 nm</div>
-      <div class="chip" data-val="850">850 nm</div>
-      <div class="chip" data-val="1310">1310 nm</div>
-      <div class="chip" data-val="1490">1490 nm</div>
-      <div class="chip" data-val="1625">1625 nm</div>
-    </div>
-    <input type="hidden" id="wavelength" value="1550"/>
-    <div class="hint" id="attHint">Attenuation: 0.20 dB/km at 1550 nm</div>
-    <div class="sec-title" style="margin-top:14px">Connectors</div>
-    <div class="row">
-      <div class="field"><label>Count</label><input type="number" id="connectors" value="0" min="0" inputmode="numeric"/></div>
-      <div class="field"><label>Loss/connector</label>
-        <select id="connectorLoss">
-          <option value="0.45">0.45 dB</option><option value="0.55">0.55 dB</option><option value="0.75">0.75 dB</option>
+      </label>
+      <label for="previewUnit" style="font-weight:600;font-size:0.95em">Preview unit:
+        <select id="previewUnit" aria-label="Preview unit">
+          <option value="ft">feet (ft)</option>
+          <option value="km">kilometers (km)</option>
         </select>
-      </div>
+      </label>
+      <div class="small-note" id="distanceHint" aria-hidden="true" style="align-self:center"></div>
     </div>
-    <div class="sec-title">Splices</div>
-    <div class="row">
-      <div class="field"><label>Count</label><input type="number" id="splices" value="0" min="0" inputmode="numeric"/></div>
-      <div class="field"><label>Loss/splice</label>
-        <select id="spliceLoss">
-          <option value="0.03">0.03 dB</option><option value="0.05" selected>0.05 dB</option><option value="0.10">0.10 dB</option>
+
+```
+<div id="distanceError" class="error-msg" style="display:none" aria-live="assertive"></div>
+
+<div class="form-row">
+  <label for="wavelength">Wavelength:
+    <select id="wavelength" aria-label="Wavelength">
+      <option value="850">850 nm</option>
+      <option value="1310">1310 nm</option>
+      <option value="1490">1490 nm</option>
+      <option value="1550" selected>1550 nm</option>
+      <option value="1625">1625 nm</option>
+    </select>
+  </label>
+</div>
+
+<div class="form-row">
+  <label for="connectors">Connectors:
+    <input id="connectors" type="number" placeholder="0" min="0" aria-label="Number of connectors">
+  </label>
+  <label for="connectorLoss">Loss per connector:
+    <select id="connectorLoss" aria-label="Connector loss">
+      <option value="0.45">0.45 dB</option>
+      <option value="0.55">0.55 dB</option>
+      <option value="0.75">0.75 dB</option>
+    </select>
+  </label>
+</div>
+
+<div class="form-row">
+  <label for="splices">Splices:
+    <input id="splices" type="number" placeholder="0" min="0" aria-label="Number of splices">
+  </label>
+  <label for="spliceLoss">Loss per splice:
+    <select id="spliceLoss" aria-label="Splice loss">
+      <option value="0.03">0.03 dB</option>
+      <option value="0.05">0.05 dB</option>
+      <option value="0.10">0.10 dB</option>
+    </select>
+  </label>
+</div>
+
+<!-- Custom Splices -->
+<div class="custom-splices" id="customSplicesArea" aria-live="polite">
+  <div class="splice-row">
+    <strong>Custom Splices</strong>
+    <span class="small-note">Add specific splice entries to override or add to the splice count total</span>
+  </div>
+  <div class="splice-row" style="font-weight:700">
+    <div style="width:200px;text-align:left">Label</div>
+    <div style="width:110px;text-align:left">Count</div>
+    <div style="width:110px;text-align:left">Loss (dB)</div>
+    <div style="width:140px;text-align:left">Action</div>
+  </div>
+  <div id="spliceList" style="display:flex;flex-direction:column;gap:6px" aria-live="polite"></div>
+  <div class="splice-actions">
+    <input id="newSpliceLabel" type="text" placeholder="Name (e.g., #1, Splice-1)" aria-label="New splice label"/>
+    <input id="newSpliceCount" type="number" min="0" step="1" value="1" aria-label="New splice count"/>
+    <input id="newSpliceLoss" type="number" min="0" step="0.01" value="0.05" aria-label="New splice loss"/>
+    <button id="addSpliceBtn" type="button">Add Splice</button>
+    <button id="clearCustomBtn" type="button">Clear Custom</button>
+  </div>
+  <div id="spliceCustomResult" class="small-note result-out" style="text-align:center"></div>
+</div>
+
+<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
+  <button id="calcBtn" type="button">Calculate Total Loss</button>
+  <button id="resetLossBtn" type="button">Reset Fields</button>
+</div>
+<p id="result" class="result-out" aria-live="polite"></p>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     POWER BUDGET CALCULATOR
+═══════════════════════════════════════════════════════════ -->
+
+<div class="section-header-wrap">
+  <h2 id="budgetHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="budgetSection">Power Budget Calculator ▼</h2>
+</div>
+<div id="budgetSection" class="section">
+  <div class="section-inner">
+    <p class="small-note" style="margin-bottom:10px">Enter TX power, RX sensitivity, and expected loss to check if the link budget passes.</p>
+    <div class="form-row">
+      <label for="txPower">TX Power (dBm):
+        <input id="txPower" type="number" step="0.1" placeholder="e.g. 0" aria-label="TX power in dBm">
+      </label>
+      <label for="rxSensitivity">RX Sensitivity (dBm):
+        <input id="rxSensitivity" type="number" step="0.1" placeholder="e.g. -25" aria-label="RX sensitivity in dBm">
+      </label>
+    </div>
+    <div class="form-row">
+      <label for="systemMargin">System Margin (dB):
+        <input id="systemMargin" type="number" step="0.1" placeholder="e.g. 3" value="3" aria-label="System margin in dB">
+      </label>
+      <label for="budgetLoss">Estimated Loss (dB):
+        <input id="budgetLoss" type="number" step="0.01" placeholder="e.g. 12.5" aria-label="Estimated loss in dB">
+      </label>
+    </div>
+    <p class="small-note" style="margin-bottom:4px">Tip: Run the Loss Calculator first, then paste the total dB here.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button id="calcBudgetBtn" type="button">Check Budget</button>
+      <button id="importLossBtn" type="button">Import Loss from Calculator</button>
+    </div>
+    <div id="budgetError" class="error-msg" style="display:none" aria-live="assertive"></div>
+    <p id="budgetResult" class="result-out" aria-live="polite"></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     DISTANCE CONVERTER
+═══════════════════════════════════════════════════════════ -->
+
+<div class="section-header-wrap">
+  <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter ▼</h2>
+</div>
+<div id="converterSection" class="section">
+  <div class="section-inner">
+    <div class="form-row">
+      <label for="convValue">Value:
+        <input id="convValue" type="number" placeholder="Enter value" aria-label="Value to convert">
+      </label>
+      <label for="convFrom">From:
+        <select id="convFrom" aria-label="Convert from">
+          <option value="km">Kilometers (km)</option>
+          <option value="mi">Miles (mi)</option>
+          <option value="kft">Kilofeet (kft)</option>
+          <option value="ft">Feet (ft)</option>
         </select>
-      </div>
-    </div>
-    <div class="sec-title">Custom Splices</div>
-    <div id="customSpliceList"></div>
-    <div class="row">
-      <div class="field"><label>Label</label><input type="text" id="csLabel" placeholder="e.g. Splice-1"/></div>
-      <div class="field"><label>Count</label><input type="number" id="csCount" value="1" min="1" inputmode="numeric"/></div>
-      <div class="field"><label>Loss (dB)</label><input type="number" id="csLoss" value="0.05" step="0.01" inputmode="decimal"/></div>
-    </div>
-    <button class="btn gold" onclick="addCustomSplice()">&#43; Add Custom Splice</button>
-    <button class="btn" onclick="calcLoss()">&#9889; Calculate Total Loss</button>
-    <button class="btn grey" onclick="resetLoss()">&#8635; Reset</button>
-    <div class="result-box" id="lossResult">
-      <div class="result-row"><span class="result-label">Distance (km)</span><span class="result-val" id="r_km"></span></div>
-      <div class="result-row"><span class="result-label">Distance (ft)</span><span class="result-val" id="r_ft"></span></div>
-      <div class="result-row"><span class="result-label">Fiber attenuation</span><span class="result-val" id="r_fiber"></span></div>
-      <div class="result-row"><span class="result-label">Connector loss</span><span class="result-val" id="r_conn"></span></div>
-      <div class="result-row"><span class="result-label">Splice loss</span><span class="result-val" id="r_spl"></span></div>
-      <div class="result-row"><span class="result-label">Custom splice loss</span><span class="result-val" id="r_cust"></span></div>
-      <div class="result-row"><span class="result-label" style="color:#fff;font-weight:700">TOTAL LOSS</span><span class="result-val result-total" id="r_total"></span></div>
-    </div>
-  </div>
-</div>
-
-<!-- POWER BUDGET -->
-
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t2"/>
-  <label class="section-label" for="t2">&#128200; Power Budget <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <div class="field"><label>TX Power (dBm)</label><input type="number" id="txPower" value="0" step="0.1" inputmode="decimal"/></div>
-    <div class="field"><label>RX Sensitivity (dBm)</label><input type="number" id="rxSens" value="-25" step="0.1" inputmode="decimal"/></div>
-    <div class="field"><label>System Margin (dB)</label><input type="number" id="sysMar" value="3" step="0.1" inputmode="decimal"/></div>
-    <div class="field"><label>Estimated Loss (dB)</label><input type="number" id="estLoss" placeholder="Enter or import from Loss Calc" step="0.01" inputmode="decimal"/></div>
-    <button class="btn gold" onclick="importLoss()">&#128229; Import Loss from Calculator</button>
-    <button class="btn green" onclick="calcBudget()">&#9889; Check Budget</button>
-    <button class="btn grey" onclick="resetBudget()">&#8635; Reset</button>
-    <div class="result-box" id="budgetResult">
-      <div class="result-row"><span class="result-label">Allowable Loss</span><span class="result-val" id="b_allow"></span></div>
-      <div class="result-row"><span class="result-label">Estimated Loss</span><span class="result-val" id="b_loss"></span></div>
-      <div class="result-row"><span class="result-label">Headroom</span><span class="result-val" id="b_head"></span></div>
-      <div id="b_status"></div>
-    </div>
-  </div>
-</div>
-
-<!-- SPLICE PRINT READER -->
-
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t3"/>
-  <label class="section-label" for="t3">&#128247; Splice Print Reader (AI) <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <p style="color:var(--grey);font-size:.9em;margin-bottom:14px">Upload a photo of your splice print. AI reads existing assignments and maps your new count range.</p>
-    <div class="apikey-wrap">
-      <label>&#9888; Anthropic API Key (required)</label>
-      <div class="apikey-row">
-        <input type="password" id="sprKey" placeholder="sk-ant-..."/>
-        <button onclick="toggleKey()">Show</button>
-      </div>
-    </div>
-    <div class="upload-zone" id="uploadZone">
-      <input type="file" id="sprFile" accept="image/*" onchange="loadImage(event)"/>
-      <div style="font-size:2em">&#128196;</div>
-      <p><strong>Tap to upload splice print</strong></p>
-      <p>JPG, PNG, HEIC, WebP supported</p>
-    </div>
-    <img id="sprPreview" class="upload-preview"/>
-    <div class="row">
-      <div class="field"><label>New Count From</label><input type="number" id="sprFrom" placeholder="e.g. 49" min="1" inputmode="numeric"/></div>
-      <div class="field"><label>New Count To</label><input type="number" id="sprTo" placeholder="e.g. 60" min="1" inputmode="numeric"/></div>
-      <div class="field"><label>Total Fibers</label>
-        <select id="sprTotal">
-          <option>12</option><option>24</option><option>48</option><option>72</option>
-          <option>96</option><option value="144" selected>144</option>
-          <option>216</option><option>288</option><option>432</option>
+      </label>
+      <label for="convTo">To:
+        <select id="convTo" aria-label="Convert to">
+          <option value="km">Kilometers (km)</option>
+          <option value="mi">Miles (mi)</option>
+          <option value="kft">Kilofeet (kft)</option>
+          <option value="ft">Feet (ft)</option>
         </select>
-      </div>
+      </label>
     </div>
-    <button class="btn" onclick="runSPR()">&#128269; Analyze Print &amp; Generate Splice Map</button>
-    <div class="spinner" id="sprSpinner">&#128259; Analyzing with AI&hellip; please wait</div>
-    <div id="sprError" style="color:#ff4444;font-size:.9em;margin-top:8px;display:none"></div>
-    <div id="sprResultsWrap" style="display:none">
-      <div class="spr-summary" id="sprSummary"></div>
-      <div style="overflow-x:auto">
-        <table class="spr-table">
-          <thead><tr><th>#</th><th>Ribbon</th><th>Pos</th><th>Color</th><th>Status</th><th>Assigned To</th></tr></thead>
-          <tbody id="sprTbody"></tbody>
-        </table>
-      </div>
-      <div style="margin-top:12px">
-        <div style="color:var(--cyan);font-size:.85em;font-weight:700;margin-bottom:6px">Raw AI Extraction</div>
-        <div id="sprRaw" style="background:#0d1117;border-radius:6px;padding:10px;font-size:.8em;color:rgba(0,191,255,.7);font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto"></div>
-      </div>
-      <button class="btn" onclick="copySPR()">&#128203; Copy Splice Plan</button>
-      <button class="btn gold" onclick="sendSPRtoJob()">&#128196; Send to Job Notes</button>
-      <button class="btn grey" onclick="clearSPR()">&#8635; Clear</button>
+    <div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap">
+      <button id="convertBtn" type="button">Convert</button>
+      <button id="copyConvBtn" type="button">Copy Result</button>
+      <button id="applyToCalcBtn" type="button">Use in Calculator</button>
     </div>
+    <p id="convertResult" class="result-out" aria-live="polite"></p>
+    <p class="small-note">Tip: use <strong>Use in Calculator</strong> to populate the calculator distance and unit directly.</p>
   </div>
 </div>
 
-<!-- DISTANCE CONVERTER -->
+<!-- ══════════════════════════════════════════════════════
+     JOBS INFO CREATOR
+═══════════════════════════════════════════════════════════ -->
 
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t4"/>
-  <label class="section-label" for="t4">&#128207; Distance Converter <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <div class="row">
-      <div class="field"><label>Value</label><input type="number" id="convVal" placeholder="Enter distance" inputmode="decimal" oninput="autoConvert()"/></div>
-      <div class="field"><label>From Unit</label>
-        <select id="convFrom" onchange="autoConvert()">
-          <option value="km">km</option><option value="mi">miles</option>
-          <option value="kft">kilofeet</option><option value="ft">feet</option>
-        </select>
-      </div>
+<div class="section-header-wrap">
+  <h2 id="jobHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="jobSection">Jobs Info Creator ▼</h2>
+</div>
+<div id="jobSection" class="section">
+  <div class="section-inner">
+    <div class="form-row">
+      <label for="jobCode">Job Code:
+        <input id="jobCode" type="text" placeholder="e.g., LG15" aria-label="Job code">
+      </label>
+      <label for="projectCode">Project Code:
+        <input id="projectCode" type="text" placeholder="Project/ID" aria-label="Project code">
+      </label>
     </div>
-    <div class="result-box show" id="convResult">
-      <div class="result-row"><span class="result-label">Kilometers</span><span class="result-val" id="cv_km">—</span></div>
-      <div class="result-row"><span class="result-label">Miles</span><span class="result-val" id="cv_mi">—</span></div>
-      <div class="result-row"><span class="result-label">Kilofeet</span><span class="result-val" id="cv_kft">—</span></div>
-      <div class="result-row"><span class="result-label">Feet</span><span class="result-val" id="cv_ft">—</span></div>
+    <div class="form-row">
+      <label for="cableName">Cable Name:
+        <input id="cableName" type="text" placeholder="e.g., LG15->193-204" aria-label="Cable name">
+      </label>
+      <label for="countsNote">Counts / Primary:
+        <input id="countsNote" type="text" placeholder="e.g., 193-204 (193-194 Primary)" aria-label="Counts and primary note">
+      </label>
     </div>
-    <button class="btn gold" onclick="sendToCalc()">&#10145; Send to Loss Calculator</button>
+    <div class="form-row">
+      <label for="coInfo">From C.O. (location / post):
+        <input id="coInfo" type="text" placeholder="e.g., BP (Binging Post) (49,60)" aria-label="CO info">
+      </label>
+      <label for="jumpers">Jumpers (Tone first):
+        <input id="jumpers" type="text" placeholder="e.g., Tone: 49,60; Jumpers: n/a" aria-label="Jumpers and tone positions">
+      </label>
+    </div>
+
+```
+<!-- OTDR Results -->
+<div style="margin-top:8px;text-align:left;max-width:760px;margin-left:auto;margin-right:auto">
+  <strong>OTDR Results</strong>
+  <div id="otdrList" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:8px">
+    <input id="newOtdrCount" type="text" placeholder="Count (e.g., 193)" aria-label="OTDR count" style="width:120px"/>
+    <input id="newOtdrValue" type="text" placeholder="Value (e.g., 24534 ft)" aria-label="OTDR value" style="width:160px"/>
+    <button id="addOtdrBtn" type="button">Add OTDR</button>
+    <button id="clearOtdrBtn" type="button">Clear OTDRs</button>
   </div>
 </div>
 
-<!-- RIBBON FINDER -->
+<!-- Additional Notes -->
+<div style="margin-top:12px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+  <label for="jobNotes" style="display:block;margin-bottom:4px">Additional Notes:</label>
+  <textarea id="jobNotes" placeholder="Any extra notes for the job (optional)" aria-label="Additional job notes"></textarea>
+</div>
 
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t5"/>
-  <label class="section-label" for="t5">&#127912; Fiber Ribbon Finder <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <div class="field"><label>Strand Number</label><input type="number" id="strandNum" placeholder="e.g. 37" min="1" inputmode="numeric" oninput="liveRibbon()"/></div>
-    <button class="btn red" onclick="findRibbon()">&#128269; Find Ribbon</button>
-    <div class="ribbon-result" id="ribbonResult">
-      <div class="ribbon-big" id="rr_main"></div>
-      <div class="ribbon-sub" id="rr_sub"></div>
-      <div id="rr_swatch" style="width:80px;height:80px;border-radius:10px;margin:12px auto;display:flex;align-items:center;justify-content:center;font-size:1.1em;font-weight:800;border:2px solid rgba(255,255,255,.2)"></div>
-    </div>
-    <div class="sec-title" style="margin-top:16px">EIA/TIA 598 Color Reference</div>
-    <div class="swatch-grid" id="swatchGrid"></div>
+<div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:12px">
+  <button id="generateJobBtn" type="button">Generate Job Note</button>
+  <button id="copyJobBtn" type="button">Copy Job Note</button>
+  <button id="saveJobBtn" type="button">Save Note</button>
+  <button id="downloadJobBtn" type="button">Download as .txt</button>
+  <button id="clearJobBtn" type="button">Clear Form</button>
+</div>
+
+<p id="jobNoteResult" class="result-out" aria-live="polite" style="white-space:pre-wrap;text-align:left;max-width:760px;margin-left:auto;margin-right:auto"></p>
+
+<!-- Saved Notes -->
+<div style="margin-top:16px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+  <strong id="savedNotesTitle" style="display:none">Saved Notes</strong>
+  <div id="savedNotesList" style="margin-top:8px"></div>
+</div>
+
+<p class="small-note">Tip: after copying, open Notes on your iPhone and paste the text into a new note.</p>
+```
+
   </div>
 </div>
 
-<!-- JOBS INFO CREATOR -->
+<!-- ══════════════════════════════════════════════════════
+     FIBER RIBBON FINDER
+═══════════════════════════════════════════════════════════ -->
 
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t6"/>
-  <label class="section-label" for="t6">&#128203; Jobs Info Creator <span class="arrow">&#9660;</span></label>
-  <div class="section-body">
-    <div class="row">
-      <div class="field"><label>Job Code</label><input type="text" id="jobCode" placeholder="e.g. LG15"/></div>
-      <div class="field"><label>Project Code</label><input type="text" id="projCode" placeholder="optional"/></div>
-    </div>
-    <div class="field"><label>Cable Name</label><input type="text" id="cableName" placeholder="e.g. LG15->193-204"/></div>
-    <div class="field"><label>Counts / Primary</label><input type="text" id="countsNote" placeholder="e.g. 193-204 (193-194 Primary)"/></div>
-    <div class="field"><label>From C.O.</label><input type="text" id="coInfo" placeholder="e.g. BP (Binging Post) (49,60)"/></div>
-    <div class="field"><label>Jumpers (Tone first)</label><input type="text" id="jumpers" placeholder="e.g. Tone: 49,60; Jumpers: n/a"/></div>
-    <div class="sec-title">OTDR Results</div>
-    <div id="otdrList"></div>
-    <div class="row">
-      <div class="field"><label>Count</label><input type="text" id="otdrCount" placeholder="e.g. 193"/></div>
-      <div class="field"><label>Value</label><input type="text" id="otdrVal" placeholder="e.g. 24534 ft"/></div>
-    </div>
-    <button class="btn gold" onclick="addOTDR()">&#43; Add OTDR Entry</button>
-    <div class="field" style="margin-top:14px"><label>Additional Notes</label><textarea id="jobNotes" placeholder="Any extra notes..."></textarea></div>
-    <button class="btn green" onclick="generateNote()">&#128196; Generate Job Note</button>
-    <button class="btn" onclick="copyNote()">&#128203; Copy to Clipboard</button>
-    <button class="btn gold" onclick="shareNote()">&#128228; Share</button>
-    <button class="btn grey" onclick="clearJob()">&#8635; Clear Form</button>
-    <div class="note-output" id="noteOutput"></div>
+<div class="section-header-wrap">
+  <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder ▼</h2>
+</div>
+<div id="ribbonSection" class="section">
+  <div class="section-inner">
+    <label for="strand">Strand Number:
+      <input id="strand" type="number" placeholder="Enter strand #" min="1" aria-label="Strand number">
+    </label><br>
+    <button id="findBtn" type="button">Find Ribbon</button>
+    <p id="ribbonResult" class="result-out" aria-live="polite"></p>
+
+```
+<!-- Ribbon Color Legend -->
+<div style="margin-top:16px">
+  <strong>EIA/TIA Color Order Reference</strong>
+  <div class="ribbon-strip" id="ribbonStrip"></div>
+</div>
+```
+
   </div>
 </div>
 
-<!-- THEME -->
+<!-- ══════════════════════════════════════════════════════
+     THEME MODE
+═══════════════════════════════════════════════════════════ -->
 
-<div class="section-wrap">
-  <input type="checkbox" class="section-toggle" id="t7"/>
-  <label class="section-label" for="t7">&#9680; Theme <span class="arrow">&#9660;</span></label>
-  <div class="section-body" style="text-align:center">
-    <p style="color:var(--grey);margin-bottom:14px">Toggle light/dark mode</p>
-    <label style="display:inline-flex;align-items:center;gap:10px;cursor:pointer">
-      <span style="color:var(--grey)">Dark</span>
-      <input type="checkbox" id="themeToggle" onchange="toggleTheme()" style="width:40px;height:22px;cursor:pointer"/>
-      <span style="color:var(--grey)">Light</span>
+<div class="section-header-wrap">
+  <h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection">Theme Mode ▼</h2>
+</div>
+<div id="themeSection" class="section">
+  <div class="section-inner">
+    <label class="switch" for="themeToggle">
+      <input type="checkbox" id="themeToggle"/>
+      <span class="slider"></span>
     </label>
+    <p>Toggle Light / Dark Mode</p>
   </div>
 </div>
+
+<!-- Tooltip -->
+
+<div id="kmTooltip" class="km-tooltip" role="status" aria-hidden="true"></div>
 
 <script>
-// ── Constants ──────────────────────────────────────────────────
-const FT_KM=0.0003048,KFT_KM=0.3048,MI_KM=1.60934,KM_FT=3280.839895;
-const ATT={'850':2.5,'1310':0.35,'1490':0.25,'1550':0.20,'1625':0.30};
-const COLORS=['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
-const HEX={Blue:'#3399ff',Orange:'#ff8800',Green:'#33cc33',Brown:'#8B4513',Slate:'#708090',White:'#f0f0f0',Red:'#ff2222',Black:'#333',Yellow:'#ffdd00',Violet:'#9966ff',Rose:'#ff66aa',Aqua:'#00e5ff'};
-const TXT={Blue:'#fff',Orange:'#fff',Green:'#fff',Brown:'#fff',Slate:'#fff',White:'#111',Red:'#fff',Black:'#fff',Yellow:'#111',Violet:'#fff',Rose:'#fff',Aqua:'#111'};
-const $=id=>document.getElementById(id);
+(function(){
+  // ── Constants ──────────────────────────────────────────────────────────────
+  const FT_TO_KM   = 0.0003048;
+  const KFT_TO_KM  = 0.3048;
+  const MI_TO_KM   = 1.60934;
+  const KM_TO_FT   = 3280.839895;
+  const ATTENUATION = { '850':2.5,'1310':0.35,'1490':0.25,'1550':0.20,'1625':0.30 };
+  const PREVIEW_KEY = 'lens-preview-unit';
+  const THEME_KEY   = 'lens-theme';
+  const SAVED_NOTES_KEY = 'lens-saved-notes';
+  const COLORS12    = ['Blue','Orange','Green','Brown','Slate','White','Red','Black','Yellow','Violet','Rose','Aqua'];
+  const SWATCH_HEX  = {
+    'Blue':'#3399ff','Orange':'#ff8800','Green':'#33cc33','Brown':'#8B4513',
+    'Slate':'#708090','White':'#f0f0f0','Red':'#ff2222','Black':'#222',
+    'Yellow':'#ffdd00','Violet':'#9966ff','Rose':'#ff66aa','Aqua':'#00e5ff'
+  };
 
-// ── Unit helpers ───────────────────────────────────────────────
-function toKm(v,u){v=parseFloat(v)||0;return u==='mi'?v*MI_KM:u==='kft'?v*KFT_KM:u==='ft'?v*FT_KM:v;}
-function fromKm(k,u){return u==='mi'?k/MI_KM:u==='kft'?k/KFT_KM:u==='ft'?k/FT_KM:k;}
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const clampInt   = (v, min=0) => { const n=parseInt(v,10);   return Number.isFinite(n) ? Math.max(min,n) : min; };
+  const clampFloat = (v, min=0) => { const n=parseFloat(v);    return Number.isFinite(n) ? Math.max(min,n) : min; };
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// ── Fiber info ─────────────────────────────────────────────────
-function fiberInfo(n){n=parseInt(n)||1;const pos=((n-1)%12)+1,rib=Math.floor((n-1)/12)+1,col=COLORS[pos-1];return{n,pos,rib,col};}
-
-// ── Wavelength chips ───────────────────────────────────────────
-document.querySelectorAll('#wlChips .chip').forEach(c=>{
-  c.addEventListener('click',()=>{
-    document.querySelectorAll('#wlChips .chip').forEach(x=>x.classList.remove('active'));
-    c.classList.add('active');
-    $('wavelength').value=c.dataset.val;
-    $('attHint').textContent='Attenuation: '+(ATT[c.dataset.val]||0.2)+' dB/km at '+c.dataset.val+' nm';
-  });
-});
-
-// ── Distance hint ──────────────────────────────────────────────
-$('distance').addEventListener('input',()=>{
-  const v=parseFloat($('distance').value)||0,u=$('unit').value;
-  if(v>0)$('distHint').textContent='≈ '+toKm(v,u).toFixed(6)+' km  |  ≈ '+(toKm(v,u)*KM_FT).toFixed(2)+' ft';
-  else $('distHint').textContent='';
-});
-$('unit').addEventListener('change',()=>$('distance').dispatchEvent(new Event('input')));
-
-// ── Custom splices ─────────────────────────────────────────────
-let splices=[];let sid=1;
-function addCustomSplice(){
-  const label=($('csLabel').value||'').trim()||'Splice '+sid;
-  const count=parseInt($('csCount').value)||1;
-  const loss=parseFloat($('csLoss').value)||0.05;
-  splices.push({id:sid++,label,count,loss});
-  $('csLabel').value='';$('csCount').value=1;$('csLoss').value=0.05;
-  renderSplices();
-}
-function renderSplices(){
-  const list=$('customSpliceList');list.innerHTML='';
-  splices.forEach(s=>{
-    const d=document.createElement('div');d.className='splice-item';
-    d.innerHTML='<span class="splice-info">'+s.label+': '+s.count+' x '+s.loss.toFixed(3)+' dB = '+(s.count*s.loss).toFixed(3)+' dB</span><button class="splice-del" onclick="removeSplice('+s.id+')">&#215;</button>';
-    list.appendChild(d);
-  });
-}
-function removeSplice(id){splices=splices.filter(s=>s.id!==id);renderSplices();}
-
-// ── Loss calculator ────────────────────────────────────────────
-let lastLoss=null;
-function calcLoss(){
-  const d=parseFloat($('distance').value);
-  if(!d||d<=0){alert('Please enter a valid distance greater than 0.');return;}
-  const u=$('unit').value,wl=$('wavelength').value;
-  const dk=toKm(d,u),att=ATT[wl]||0.2,fl=att*dk;
-  const cl=parseInt($('connectors').value||0)*(parseFloat($('connectorLoss').value)||0);
-  const sl=parseInt($('splices').value||0)*(parseFloat($('spliceLoss').value)||0);
-  const cust=splices.reduce((a,s)=>a+s.count*s.loss,0);
-  lastLoss=fl+cl+sl+cust;
-  $('r_km').textContent=dk.toFixed(6)+' km';
-  $('r_ft').textContent=(dk*KM_FT).toLocaleString('en-US',{maximumFractionDigits:2})+' ft';
-  $('r_fiber').textContent=fl.toFixed(3)+' dB';
-  $('r_conn').textContent=cl.toFixed(3)+' dB';
-  $('r_spl').textContent=sl.toFixed(3)+' dB';
-  $('r_cust').textContent=cust.toFixed(3)+' dB';
-  $('r_total').textContent=lastLoss.toFixed(3)+' dB';
-  $('lossResult').classList.add('show');
-}
-function resetLoss(){
-  $('distance').value='';$('connectors').value=0;$('splices').value=0;
-  splices=[];renderSplices();$('lossResult').classList.remove('show');
-  $('distHint').textContent='';lastLoss=null;
-}
-
-// ── Power budget ───────────────────────────────────────────────
-function importLoss(){
-  if(lastLoss===null){alert('Run the Loss Calculator first.');return;}
-  $('estLoss').value=lastLoss.toFixed(3);
-}
-function calcBudget(){
-  const tx=parseFloat($('txPower').value),rx=parseFloat($('rxSens').value);
-  const mg=parseFloat($('sysMar').value)||0,ls=parseFloat($('estLoss').value);
-  if(isNaN(tx)||isNaN(rx)||isNaN(ls)){alert('Please fill in all fields including Estimated Loss.');return;}
-  const allow=tx-rx-mg,hr=allow-ls,pass=ls<=allow;
-  $('b_allow').textContent=allow.toFixed(3)+' dB';
-  $('b_loss').textContent=ls.toFixed(3)+' dB';
-  $('b_head').textContent=hr.toFixed(3)+' dB';
-  $('b_head').style.color=hr>=0?'#00FF88':'#ff4444';
-  $('b_status').innerHTML=pass?'<div class="pass">&#9989; LINK PASSES</div>':'<div class="fail">&#10060; LINK FAILS</div>';
-  $('budgetResult').classList.add('show');
-}
-function resetBudget(){$('txPower').value=0;$('rxSens').value=-25;$('sysMar').value=3;$('estLoss').value='';$('budgetResult').classList.remove('show');}
-
-// ── Distance converter ─────────────────────────────────────────
-function autoConvert(){
-  const v=parseFloat($('convVal').value),u=$('convFrom').value;
-  if(!v||v<=0){['km','mi','kft','ft'].forEach(x=>$('cv_'+x).textContent='—');return;}
-  const km=toKm(v,u);
-  $('cv_km').textContent=km.toFixed(6)+' km';
-  $('cv_mi').textContent=fromKm(km,'mi').toFixed(6)+' mi';
-  $('cv_kft').textContent=fromKm(km,'kft').toFixed(4)+' kft';
-  $('cv_ft').textContent=(km*KM_FT).toLocaleString('en-US',{maximumFractionDigits:2})+' ft';
-}
-function sendToCalc(){
-  const v=$('convVal').value,u=$('convFrom').value;
-  if(!v){alert('Enter a distance first.');return;}
-  $('distance').value=v;$('unit').value=u;
-  $('distance').dispatchEvent(new Event('input'));
-  $('t1').checked=true;
-  alert('Distance sent to Loss Calculator!');
-}
-
-// ── Ribbon finder ──────────────────────────────────────────────
-function liveRibbon(){const n=parseInt($('strandNum').value);if(n>=1)showRibbon(fiberInfo(n));}
-function findRibbon(){
-  const n=parseInt($('strandNum').value);
-  if(!n||n<1){alert('Enter a strand number (1 or higher).');return;}
-  showRibbon(fiberInfo(n));
-}
-function showRibbon(info){
-  $('rr_main').textContent='Ribbon '+info.rib+'  |  Position '+info.pos;
-  $('rr_sub').textContent='Strand '+info.n+' → '+info.col;
-  const sw=$('rr_swatch');
-  sw.style.background=HEX[info.col]||'#888';
-  sw.style.color=TXT[info.col]||'#fff';
-  sw.textContent=info.col;
-  $('ribbonResult').classList.add('show');
-}
-function buildSwatches(){
-  const grid=$('swatchGrid');
-  COLORS.forEach((c,i)=>{
-    const w=document.createElement('div');w.className='swatch';
-    w.innerHTML='<div class="swatch-box" style="background:'+HEX[c]+';color:'+TXT[c]+'">'+(i+1)+'</div><div class="swatch-name">'+c+'</div>';
-    grid.appendChild(w);
-  });
-}
-buildSwatches();
-
-// ── OTDR / Jobs ────────────────────────────────────────────────
-let otdrs=[];let oid=1;
-function addOTDR(){
-  const c=($('otdrCount').value||'').trim(),v=($('otdrVal').value||'').trim();
-  if(!c||!v)return;
-  otdrs.push({id:oid++,count:c,value:v});
-  $('otdrCount').value='';$('otdrVal').value='';
-  renderOTDR();
-}
-function renderOTDR(){
-  const list=$('otdrList');list.innerHTML='';
-  otdrs.forEach(o=>{
-    const d=document.createElement('div');d.className='otdr-item';
-    d.innerHTML='<span class="otdr-text">'+o.count+' = '+o.value+'</span><button class="splice-del" onclick="removeOTDR('+o.id+')">&#215;</button>';
-    list.appendChild(d);
-  });
-}
-function removeOTDR(id){otdrs=otdrs.filter(o=>o.id!==id);renderOTDR();}
-function buildNote(){
-  const g=id=>($( id).value||'').trim();
-  const lines=['────────────────────────────────────────'];
-  if(g('jobCode'))lines.push('Job: '+g('jobCode')+(g('projCode')?' / '+g('projCode'):''));
-  if(g('cableName'))lines.push('Cable: '+g('cableName'));
-  if(g('countsNote'))lines.push('Counts: '+g('countsNote'));
-  if(g('coInfo'))lines.push('From C.O.: '+g('coInfo'));
-  if(g('jumpers'))lines.push('Jumpers (Tone first): '+g('jumpers'));
-  lines.push('OTDR Results:');
-  otdrs.length?otdrs.forEach(o=>lines.push('  '+o.count+' = '+o.value)):lines.push('  n/a');
-  if(g('jobNotes')){lines.push('Notes:');lines.push(g('jobNotes'));}
-  lines.push('────────────────────────────────────────');
-  lines.push('Generated: '+new Date().toLocaleString());
-  return lines.join('\n');
-}
-function generateNote(){const t=buildNote();$('noteOutput').textContent=t;$('noteOutput').classList.add('show');}
-function copyNote(){
-  const t=buildNote();
-  if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>alert('Copied to clipboard!'));
-  else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('Copied!');}
-}
-function shareNote(){
-  const t=buildNote();
-  if(navigator.share)navigator.share({title:'LENS Job Note',text:t});
-  else copyNote();
-}
-function clearJob(){
-  if(!confirm('Clear all job fields?'))return;
-  ['jobCode','projCode','cableName','countsNote','coInfo','jumpers','jobNotes'].forEach(id=>$(id).value='');
-  otdrs=[];renderOTDR();$('noteOutput').classList.remove('show');$('noteOutput').textContent='';
-}
-
-// ── SPR (Splice Print Reader) ──────────────────────────────────
-let sprB64=null,sprMime='image/jpeg',sprPlan='';
-function toggleKey(){const k=$('sprKey');k.type=k.type==='password'?'text':'password';}
-function loadImage(e){
-  const f=e.target.files&&e.target.files[0];if(!f)return;
-  sprMime=f.type||'image/jpeg';
-  const r=new FileReader();
-  r.onload=ev=>{sprB64=ev.target.result.split(',')[1];const p=$('sprPreview');p.src=ev.target.result;p.style.display='block';$('sprResultsWrap').style.display='none';};
-  r.readAsDataURL(f);
-}
-async function runSPR(){
-  const key=($('sprKey').value||'').trim();
-  if(!key){showSPRError('Please enter your Anthropic API key.');return;}
-  if(!sprB64){showSPRError('Please upload a splice print image first.');return;}
-  const fc=parseInt($('sprFrom').value)||0,tc=parseInt($('sprTo').value)||0;
-  if(fc<1||tc<1||tc<fc){showSPRError('Enter a valid count range (From <= To, both >= 1).');return;}
-  const tot=parseInt($('sprTotal').value)||144;
-  $('sprSpinner').classList.add('show');$('sprResultsWrap').style.display='none';
-  $('sprError').style.display='none';
-  const sys='You are a fiber optic construction technician assistant. Extract ALL fiber count assignments from the splice print image and return ONLY valid JSON:
-{"extracted":[{"count":1,"assignedTo":"Customer A"}],"notes":"observations","confidence":"high|medium|low","warnings":[]}
-Rules: count=integer fiber number. assignedTo=label shown. Use Spare if marked spare. Use Unknown if unreadable. Only include counts ALREADY in the document.';
-  const usr='Splice print. Total cable: '+tot+' fibers. My new range: '+fc+' through '+tc+'. Extract existing assignments. Return only JSON.';
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens:2000,system:sys,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:sprMime,data:sprB64}},{type:'text',text:usr}]}]})});
-    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error((e.error&&e.error.message)||'API error '+res.status);}
-    const data=await res.json();
-    const raw=(data.content||[]).map(b=>b.text||'').join('');
-    let parsed;try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){throw new Error('AI returned non-JSON. Check image quality.
-
-'+raw.slice(0,200));}
-    renderSPR(parsed,fc,tc,tot,raw);
-  }catch(err){showSPRError(err.message);}
-  finally{$('sprSpinner').classList.remove('show');}
-}
-function showSPRError(msg){const e=$('sprError');e.textContent=msg;e.style.display='block';}
-function renderSPR(parsed,fc,tc,tot,raw){
-  const am={};(parsed.extracted||[]).forEach(e=>{if(e.count&&e.assignedTo&&e.assignedTo.toLowerCase()!=='spare')am[e.count]=e.assignedTo;});
-  const tb=$('sprTbody');tb.innerHTML='';let conf=0,avail=0;
-  const pl=['SPLICE MAP -- Counts '+fc+' to '+tc,'Total cable: '+tot+' fibers','─'.repeat(50)];
-  for(let n=fc;n<=tc;n++){
-    const{pos,rib,col}=fiberInfo(n);const isc=!!am[n];const al=am[n]||'—';
-    if(isc)conf++;else avail++;
-    const tr=document.createElement('tr');if(isc)tr.className='conflict';
-    tr.innerHTML='<td>'+n+'</td><td>'+rib+'</td><td>'+pos+'</td>'
-      +'<td><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:'+HEX[col]+';vertical-align:middle;margin-right:4px"></span>'+col+'</td>'
-      +'<td>'+(isc?'<span class="badge-conflict">CONFLICT</span>':'<span class="badge-ok">AVAIL</span>')+'</td>'
-      +'<td style="font-size:.8em">'+(isc?al:'—')+'</td>';
-    tb.appendChild(tr);
-    pl.push(String(n).padStart(4)+' | Rib '+String(rib).padStart(2)+' | Pos '+String(pos).padStart(2)+' | '+col.padEnd(8)+' | '+(isc?'CONFLICT  | '+al:'Available'));
+  function setSectionHeight(section){
+    if(!section) return;
+    section.style.maxHeight = 'none';
+    section.style.maxHeight = section.scrollHeight + 'px';
   }
-  pl.push('─'.repeat(50));pl.push('Total: '+(tc-fc+1)+' | Conflicts: '+conf+' | Available: '+avail);
-  if(parsed.notes)pl.push('Notes: '+parsed.notes);sprPlan=pl.join('\n');
-  $('sprSummary').innerHTML='<div class="spr-stat"><div class="spr-stat-val">'+(tc-fc+1)+'</div><div class="spr-stat-lbl">Total</div></div>'
-    +'<div class="spr-stat"><div class="spr-stat-val" style="color:#00FF88">'+avail+'</div><div class="spr-stat-lbl">Available</div></div>'
-    +'<div class="spr-stat"><div class="spr-stat-val" style="color:#ff4444">'+conf+'</div><div class="spr-stat-lbl">Conflicts</div></div>'
-    +'<div class="spr-stat"><div class="spr-stat-val">'+(parsed.extracted||[]).length+'</div><div class="spr-stat-lbl">Found</div></div>'
-    +'<div class="spr-stat"><div class="spr-stat-val" style="font-size:.9em;text-transform:capitalize">'+(parsed.confidence||'—')+'</div><div class="spr-stat-lbl">Confidence</div></div>';
-  $('sprRaw').textContent=raw;$('sprResultsWrap').style.display='block';
-}
-function copySPR(){if(!sprPlan)return;if(navigator.clipboard)navigator.clipboard.writeText(sprPlan).then(()=>alert('Copied!'));else{const ta=document.createElement('textarea');ta.value=sprPlan;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('Copied!');}}
-function sendSPRtoJob(){if(!sprPlan)return;const jn=$('jobNotes');jn.value=(jn.value?jn.value+'\n\n':'')+sprPlan;$('t6').checked=true;alert('Splice plan sent to Job Notes!');}
-function clearSPR(){sprB64=null;sprPlan='';$('sprPreview').style.display='none';$('sprPreview').src='';$('sprFile').value='';$('sprResultsWrap').style.display='none';$('sprError').style.display='none';}
+  function showText(el, text){ if(!el) return; el.textContent=text; el.classList.add('show'); }
+  function hideText(el){ if(!el) return; el.classList.remove('show'); }
 
-// ── Theme ──────────────────────────────────────────────────────
-function toggleTheme(){
-  document.body.style.background=$('themeToggle').checked?'#f5f5f5':'#000';
-  document.body.style.color=$('themeToggle').checked?'#000':'#fff';
-}
+  // ── Resize observer – keeps open sections stable ───────────────────────────
+  const resizeObs = new ResizeObserver(() => {
+    document.querySelectorAll('.section').forEach(s => {
+      if(s.style.maxHeight && s.style.maxHeight !== '0px') setSectionHeight(s);
+    });
+  });
+  resizeObs.observe(document.body);
+
+  // ── Section toggle ─────────────────────────────────────────────────────────
+  function toggleSection(id, headerEl){
+    const s = $(id); if(!s) return;
+    const open = s.style.maxHeight && s.style.maxHeight !== '0px';
+    s.style.maxHeight = open ? '0px' : (setSectionHeight(s), s.style.maxHeight);
+    if(headerEl) headerEl.setAttribute('aria-expanded', String(!open));
+  }
+
+  // ── Tooltip ────────────────────────────────────────────────────────────────
+  const tooltip = $('kmTooltip');
+  function showTip(x,y,text){ tooltip.textContent=text; tooltip.style.left=x+'px'; tooltip.style.top=y+'px'; tooltip.classList.add('show'); tooltip.setAttribute('aria-hidden','false'); }
+  function hideTip(){ tooltip.classList.remove('show'); tooltip.setAttribute('aria-hidden','true'); }
+  function attachKmHover(el, getText){
+    if(!el) return;
+    const onEnter = ev => { const r=el.getBoundingClientRect(); const t=getText(); if(t) showTip(r.left+r.width/2,r.top,t); };
+    const onMove  = ev => { const t=getText(); if(t) showTip(ev.clientX,ev.clientY,t); };
+    el.addEventListener('mouseenter', onEnter);
+    el.addEventListener('mousemove',  onMove);
+    el.addEventListener('mouseleave', hideTip);
+    el.addEventListener('focus',      onEnter);
+    el.addEventListener('blur',       hideTip);
+  }
+
+  // ── Unit conversion ────────────────────────────────────────────────────────
+  function toKm(value, unit){
+    const v = Number(value)||0;
+    return unit==='km'?v : unit==='mi'?v*MI_TO_KM : unit==='kft'?v*KFT_TO_KM : unit==='ft'?v*FT_TO_KM : v;
+  }
+  function fromKm(kmValue, unit){
+    const v = Number(kmValue)||0;
+    return unit==='km'?v : unit==='mi'?v/MI_TO_KM : unit==='kft'?v/KFT_TO_KM : unit==='ft'?v/FT_TO_KM : v;
+  }
+  function toFeet(value, unit){ return toKm(value,unit)*KM_TO_FT; }
+
+  // ── Preview unit ───────────────────────────────────────────────────────────
+  function getPreviewUnit(){ const s=localStorage.getItem(PREVIEW_KEY); return (s==='ft'||s==='km')?s:'ft'; }
+  function setPreviewUnit(u){
+    if(u!=='ft'&&u!=='km') return;
+    localStorage.setItem(PREVIEW_KEY,u);
+    const sel=$('previewUnit'); if(sel) sel.value=u;
+    updateDistanceHint();
+  }
+
+  function updateDistanceHint(){
+    const val=clampFloat($('distance').value||0,0), unit=$('unit').value||'km';
+    const pu=getPreviewUnit(), hint=$('distanceHint'); if(!hint) return;
+    if(pu==='ft'){ const ft=toFeet(val,unit); hint.textContent=`≈ ${ft.toFixed(2)} ft`; hint.title=`${val} ${unit} ≈ ${ft.toFixed(2)} ft`; }
+    else { const km=toKm(val,unit); hint.textContent=`≈ ${km.toFixed(6)} km`; hint.title=`${val} ${unit} ≈ ${km.toFixed(6)} km`; }
+  }
+
+  // ── Input validation ───────────────────────────────────────────────────────
+  function setError(inputEl, msgEl, msg){
+    if(inputEl) inputEl.classList.add('input-error');
+    if(msgEl){ msgEl.textContent=msg; msgEl.style.display='block'; }
+  }
+  function clearError(inputEl, msgEl){
+    if(inputEl) inputEl.classList.remove('input-error');
+    if(msgEl){ msgEl.textContent=''; msgEl.style.display='none'; }
+  }
+
+  // ── Splice store ───────────────────────────────────────────────────────────
+  const spliceStore = []; let spliceId=1;
+
+  function renderSpliceList(){
+    const list=$('spliceList'), summary=$('spliceCustomResult');
+    list.innerHTML='';
+    if(spliceStore.length===0){
+      summary.textContent='No custom splices added'; summary.classList.remove('show');
+    } else {
+      summary.textContent=`${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;
+      summary.classList.add('show');
+    }
+    spliceStore.forEach(s=>{
+      const row=document.createElement('div'); row.className='splice-list-row'; row.dataset.id=s.id;
+      row.innerHTML=`
+        <div class="col label">${escapeHtml(s.label)}</div>
+        <div class="col count">${s.count}</div>
+        <div class="col loss">${Number(s.loss).toFixed(3)}</div>
+        <div class="col actions">
+          <button type="button" class="editSplice" aria-label="Edit ${escapeHtml(s.label)}">Edit</button>
+          <button type="button" class="removeSplice" aria-label="Remove ${escapeHtml(s.label)}">Remove</button>
+        </div>`;
+      list.appendChild(row);
+    });
+    list.querySelectorAll('.removeSplice').forEach(btn=>btn.addEventListener('click',e=>{
+      removeSplice(Number(e.currentTarget.closest('.splice-list-row').dataset.id));
+    }));
+    list.querySelectorAll('.editSplice').forEach(btn=>btn.addEventListener('click',e=>{
+      openInlineEdit(Number(e.currentTarget.closest('.splice-list-row').dataset.id));
+    }));
+  }
+
+  function addCustomSplice(){
+    const label=($('newSpliceLabel').value||'').trim()||`Splice ${spliceId}`;
+    const count=clampInt($('newSpliceCount').value||1,0);
+    const loss=clampFloat($('newSpliceLoss').value||0,0);
+    spliceStore.push({id:spliceId++,label,count,loss});
+    $('newSpliceLabel').value=''; $('newSpliceCount').value=1; $('newSpliceLoss').value=0.05;
+    renderSpliceList(); setSectionHeight($('lossSection'));
+  }
+
+  function removeSplice(id){
+    const idx=spliceStore.findIndex(s=>s.id===id); if(idx>-1) spliceStore.splice(idx,1);
+    renderSpliceList(); setSectionHeight($('lossSection'));
+  }
+
+  function openInlineEdit(id){
+    const list=$('spliceList'), row=list.querySelector(`.splice-list-row[data-id="${id}"]`); if(!row) return;
+    const s=spliceStore.find(x=>x.id===id); if(!s) return;
+    row.classList.add('splice-editing');
+    row.innerHTML=`
+      <div class="col label"><input class="edit-label" type="text" value="${escapeHtml(s.label)}" aria-label="Edit label"></div>
+      <div class="col count"><input class="edit-count" type="number" min="0" value="${s.count}" aria-label="Edit count"></div>
+      <div class="col loss"><input class="edit-loss" type="number" step="0.001" min="0" value="${s.loss}" aria-label="Edit loss"></div>
+      <div class="col actions">
+        <button type="button" class="saveSplice">Save</button>
+        <button type="button" class="cancelSplice">Cancel</button>
+      </div>`;
+    row.querySelector('.saveSplice').addEventListener('click',()=>{
+      s.label=row.querySelector('.edit-label').value.trim()||s.label;
+      s.count=clampInt(row.querySelector('.edit-count').value||0,0);
+      s.loss=clampFloat(row.querySelector('.edit-loss').value||0,0);
+      renderSpliceList(); setSectionHeight($('lossSection'));
+    });
+    row.querySelector('.cancelSplice').addEventListener('click',()=>{ renderSpliceList(); setSectionHeight($('lossSection')); });
+    const fi=row.querySelector('.edit-label'); if(fi) fi.focus();
+  }
+
+  function clearCustomSplices(){ spliceStore.length=0; renderSpliceList(); setSectionHeight($('lossSection')); }
+
+  // ── Loss calculation ───────────────────────────────────────────────────────
+  function computeTotalLoss({distance=0,unit='km',wavelength='1550',connectors=0,connectorLoss=0,splices=0,spliceLoss=0,customSplices=[]}){
+    const distanceKm=toKm(Number(distance)||0,unit);
+    const attenuation=ATTENUATION[wavelength]??0.2;
+    const fiberLoss=attenuation*distanceKm;
+    const totalConnectorLoss=Number(connectors)*Number(connectorLoss);
+    const totalSpliceFromInput=Number(splices)*Number(spliceLoss);
+    const customTotal=(customSplices||[]).reduce((a,s)=>a+(Number(s.count)*Number(s.loss)),0);
+    const total=fiberLoss+totalConnectorLoss+totalSpliceFromInput+customTotal;
+    return {distanceKm,fiberLoss,totalConnectorLoss,totalSpliceFromInput,customTotal,total};
+  }
+
+  // Store last computed loss for power budget import
+  let lastComputedLoss = null;
+
+  function calcLoss(){
+    const distInput=$('distance'), errEl=$('distanceError');
+    clearError(distInput, errEl);
+    const dist=clampFloat(distInput.value||0,0);
+    if(!distInput.value || isNaN(parseFloat(distInput.value)) || dist < 0){
+      setError(distInput, errEl, '⚠ Please enter a valid distance greater than 0.');
+      distInput.focus(); return;
+    }
+    const unit=$('unit').value||'km';
+    const wl=$('wavelength').value||'1550';
+    const connectors=clampInt($('connectors').value||0,0);
+    const connectorLoss=clampFloat($('connectorLoss').value||0,0);
+    const splices=clampInt($('splices').value||0,0);
+    const spliceLoss=clampFloat($('spliceLoss').value||0,0);
+    const res=computeTotalLoss({distance:dist,unit,wavelength:wl,connectors,connectorLoss,splices,spliceLoss,customSplices:spliceStore});
+    lastComputedLoss = res.total;
+
+    const pu=getPreviewUnit();
+    const previewValue=(pu==='ft')?toFeet(dist,unit):toKm(dist,unit);
+    const resultEl=$('result'); resultEl.innerHTML='';
+
+    const lines=[
+      `Distance: ${dist} ${unit} (${pu}: ${previewValue.toFixed(pu==='ft'?2:6)})`,
+      `Wavelength: ${wl} nm`,
+      `Fiber attenuation: ${ATTENUATION[wl]??0.2} dB/km → ${res.fiberLoss.toFixed(3)} dB`,
+      `Connectors: ${connectors} × ${connectorLoss.toFixed(3)} dB → ${res.totalConnectorLoss.toFixed(3)} dB`,
+      `Splices (input): ${splices} × ${spliceLoss.toFixed(3)} dB → ${res.totalSpliceFromInput.toFixed(3)} dB`,
+    ];
+    if(spliceStore.length>0){
+      lines.push(`Custom splices (${spliceStore.length} entr${spliceStore.length===1?'y':'ies'}):`);
+      spliceStore.forEach(s=>lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count*s.loss).toFixed(3)} dB`));
+      lines.push(`Custom splices total: ${res.customTotal.toFixed(3)} dB`);
+    } else { lines.push(`Custom splices total: 0.000 dB`); }
+    lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
+
+    lines.forEach((ln,idx)=>{
+      const p=document.createElement('div'); p.style.margin='6px 0';
+      if(idx===0){
+        const match=ln.match(/\(([^)]+)\)$/);
+        const previewText=match?match[1]:'';
+        const displayText=ln.replace(/\s*\([^)]+\)$/,'');
+        const span=document.createElement('span'); span.textContent=displayText; span.tabIndex=0;
+        span.className='show-preview'; span.dataset.preview=previewText; span.style.cursor='help';
+        p.appendChild(span);
+      } else { p.textContent=ln; }
+      resultEl.appendChild(p);
+    });
+    resultEl.classList.add('show');
+
+    const previewSpan=resultEl.querySelector('.show-preview');
+    if(previewSpan) attachKmHover(previewSpan,()=>previewSpan.dataset.preview||'');
+    setSectionHeight($('lossSection'));
+  }
+
+  function resetLossFields(){
+    $('distance').value=''; $('connectors').value=''; $('splices').value='';
+    clearError($('distance'),$('distanceError'));
+    hideText($('result')); clearCustomSplices(); updateDistanceHint();
+    setSectionHeight($('lossSection'));
+  }
+
+  // ── Power Budget ───────────────────────────────────────────────────────────
+  function calcBudget(){
+    const txEl=$('txPower'), rxEl=$('rxSensitivity'), lossEl=$('budgetLoss'), marginEl=$('systemMargin');
+    const errEl=$('budgetError'); clearError(null,errEl);
+    const tx=parseFloat(txEl.value), rx=parseFloat(rxEl.value), loss=parseFloat(lossEl.value), margin=parseFloat(marginEl.value)||0;
+    if(isNaN(tx)||isNaN(rx)||isNaN(loss)){
+      setError(null,errEl,'⚠ Please fill in TX Power, RX Sensitivity, and Estimated Loss.'); return;
+    }
+    const allowable = tx - rx - margin;
+    const passed = loss <= allowable;
+    const headroom = allowable - loss;
+    const out=$('budgetResult');
+    out.innerHTML=`
+      <div>TX Power: ${tx} dBm &nbsp;|&nbsp; RX Sensitivity: ${rx} dBm &nbsp;|&nbsp; Margin: ${margin} dB</div>
+      <div>Allowable Loss: ${tx} − ${rx} − ${margin} = <strong>${allowable.toFixed(2)} dB</strong></div>
+      <div>Estimated Loss: <strong>${loss.toFixed(3)} dB</strong></div>
+      <div>Headroom: <strong>${headroom.toFixed(3)} dB</strong></div>
+      <div class="${passed?'budget-pass':'budget-fail'}" style="font-size:1.2em;margin-top:8px">${passed?'✅ LINK PASSES':'❌ LINK FAILS'}</div>`;
+    out.classList.add('show');
+    setSectionHeight($('budgetSection'));
+  }
+
+  function importLossTobudget(){
+    if(lastComputedLoss===null){ alert('Run the Loss Calculator first to import a result.'); return; }
+    $('budgetLoss').value=lastComputedLoss.toFixed(3);
+    setSectionHeight($('budgetSection'));
+  }
+
+  // ── Distance Converter ─────────────────────────────────────────────────────
+  function convertDistance(){
+    const val=clampFloat($('convValue').value||0,0);
+    const from=$('convFrom').value||'km', to=$('convTo').value||'km';
+    const km=toKm(val,from), converted=fromKm(km,to);
+    const pu=getPreviewUnit(), preview=(pu==='ft')?(km*KM_TO_FT):km;
+    const out=$('convertResult');
+    showText(out,`${val} ${from} = ${converted.toFixed(6)} ${to}  (≈ ${pu==='ft'?preview.toFixed(2)+' ft':preview.toFixed(6)+' km'})`);
+    setSectionHeight($('converterSection'));
+    attachKmHover(out,()=>pu==='ft'?`≈ ${preview.toFixed(2)} ft`:`≈ ${preview.toFixed(6)} km`);
+  }
+
+  function copyToClipboard(text, feedbackEl, successMsg){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(()=>{
+        const prev=feedbackEl.textContent; feedbackEl.textContent=successMsg;
+        setTimeout(()=>feedbackEl.textContent=prev,1400);
+      }).catch(()=>fallbackCopy(text,feedbackEl));
+    } else { fallbackCopy(text,feedbackEl); }
+  }
+  function fallbackCopy(text,feedbackEl){
+    const ta=document.createElement('textarea'); ta.value=text;
+    ta.style.cssText='position:fixed;opacity:0;top:0;left:0'; document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try{ document.execCommand('copy'); feedbackEl.textContent='Copied!'; setTimeout(()=>{ if(feedbackEl.textContent==='Copied!') feedbackEl.textContent=''; },1400); }
+    catch(e){ feedbackEl.textContent='Unable to copy'; }
+    document.body.removeChild(ta);
+  }
+
+  function copyConvertResult(){
+    const out=$('convertResult'); if(!out||!out.textContent) return;
+    copyToClipboard(out.textContent,out,'Copied to clipboard ✓');
+  }
+
+  function applyConvertedToCalculator(){
+    const val=clampFloat($('convValue').value||0,0), from=$('convFrom').value||'km';
+    $('distance').value=val; $('unit').value=from;
+    updateDistanceHint();
+    // Open loss section if closed
+    const ls=$('lossSection');
+    if(!ls.style.maxHeight||ls.style.maxHeight==='0px'){
+      setSectionHeight(ls); $('lossHeader').setAttribute('aria-expanded','true');
+    }
+    setSectionHeight(ls);
+    calcLoss();
+  }
+
+  // ── OTDR / Jobs ────────────────────────────────────────────────────────────
+  const otdrStore=[]; let otdrId=1;
+
+  function renderOtdrList(){
+    const list=$('otdrList'); list.innerHTML='';
+    if(otdrStore.length===0){
+      const p=document.createElement('div'); p.className='small-note'; p.textContent='No OTDR entries';
+      list.appendChild(p); return;
+    }
+    otdrStore.forEach(o=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap';
+      const label=document.createElement('div'); label.textContent=`${o.count} = ${o.value}`; label.style.cssText='min-width:160px;text-align:left';
+      const rem=document.createElement('button'); rem.type='button'; rem.textContent='Remove';
+      rem.addEventListener('click',()=>removeOtdr(o.id));
+      row.appendChild(label); row.appendChild(rem); list.appendChild(row);
+    });
+  }
+  function addOtdr(){
+    const count=($('newOtdrCount').value||'').trim(), value=($('newOtdrValue').value||'').trim();
+    if(!count||!value) return;
+    otdrStore.push({id:otdrId++,count,value});
+    $('newOtdrCount').value=''; $('newOtdrValue').value='';
+    renderOtdrList(); setSectionHeight($('jobSection'));
+  }
+  function removeOtdr(id){ const idx=otdrStore.findIndex(x=>x.id===id); if(idx>-1) otdrStore.splice(idx,1); renderOtdrList(); setSectionHeight($('jobSection')); }
+  function clearOtdr(){ otdrStore.length=0; renderOtdrList(); setSectionHeight($('jobSection')); }
+
+  function buildJobNoteText(){
+    const jobCode=($('jobCode').value||'').trim();
+    const projectCode=($('projectCode').value||'').trim();
+    const cableName=($('cableName').value||'').trim();
+    const countsNote=($('countsNote').value||'').trim();
+    const coInfo=($('coInfo').value||'').trim();
+    const jumpers=($('jumpers').value||'').trim();
+    const notes=($('jobNotes').value||'').trim();
+    const lines=[];
+    lines.push(`Job: ${jobCode}${projectCode?' / '+projectCode:''}`);
+    lines.push(`Cable: ${cableName}`);
+    if(countsNote) lines.push(`Counts: ${countsNote}`);
+    if(coInfo) lines.push(`From C.O.: ${coInfo}`);
+    if(jumpers) lines.push(`Jumpers (Tone first): ${jumpers}`);
+    if(otdrStore.length>0){
+      lines.push(`OTDR Results:`);
+      otdrStore.forEach(o=>lines.push(` ${o.count} = ${o.value}`));
+    } else { lines.push(`OTDR Results: n/a`); }
+    if(notes){ lines.push(`Notes:`); lines.push(notes); }
+    lines.push(`---`);
+    lines.push(`Generated: ${new Date().toLocaleString()}`);
+    return lines.join('\n');
+  }
+
+  function generateJobNote(){
+    const text=buildJobNoteText();
+    const out=$('jobNoteResult'); out.textContent=text; out.classList.add('show');
+    setSectionHeight($('jobSection'));
+  }
+
+  function copyJobNote(){
+    const out=$('jobNoteResult'); if(!out||!out.textContent) return;
+    copyToClipboard(out.textContent,out,'Job note copied to clipboard ✓');
+  }
+
+  function saveJobNote(){
+    const text=buildJobNoteText(); if(!text.trim()) return;
+    const jobCode=($('jobCode').value||'').trim()||'Untitled';
+    const saved=getSavedNotes();
+    saved.push({ id: Date.now(), label: `${jobCode} – ${new Date().toLocaleString()}`, text });
+    localStorage.setItem(SAVED_NOTES_KEY, JSON.stringify(saved));
+    renderSavedNotes(); setSectionHeight($('jobSection'));
+  }
+
+  function getSavedNotes(){
+    try{ return JSON.parse(localStorage.getItem(SAVED_NOTES_KEY)||'[]'); } catch(e){ return []; }
+  }
+
+  function renderSavedNotes(){
+    const saved=getSavedNotes();
+    const container=$('savedNotesList'), title=$('savedNotesTitle');
+    container.innerHTML='';
+    if(saved.length===0){ title.style.display='none'; return; }
+    title.style.display='block';
+    saved.forEach(note=>{
+      const row=document.createElement('div'); row.className='saved-note-item';
+      const lbl=document.createElement('span'); lbl.className='note-label'; lbl.textContent=note.label;
+      const acts=document.createElement('div'); acts.className='saved-note-actions';
+      const copyBtn=document.createElement('button'); copyBtn.type='button'; copyBtn.textContent='Copy';
+      copyBtn.addEventListener('click',()=>copyToClipboard(note.text,copyBtn,'Copied ✓'));
+      const delBtn=document.createElement('button'); delBtn.type='button'; delBtn.textContent='Delete';
+      delBtn.addEventListener('click',()=>{
+        const all=getSavedNotes().filter(n=>n.id!==note.id);
+        localStorage.setItem(SAVED_NOTES_KEY,JSON.stringify(all));
+        renderSavedNotes(); setSectionHeight($('jobSection'));
+      });
+      acts.appendChild(copyBtn); acts.appendChild(delBtn);
+      row.appendChild(lbl); row.appendChild(acts);
+      container.appendChild(row);
+    });
+    setSectionHeight($('jobSection'));
+  }
+
+  function downloadJobNote(){
+    const text=buildJobNoteText(); if(!text.trim()) return;
+    const jobCode=($('jobCode').value||'').trim()||'job_note';
+    const blob=new Blob([text],{type:'text/plain'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download=`${jobCode.replace(/[^a-z0-9_\-]/gi,'_')}_${Date.now()}.txt`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+
+  function clearJobForm(){
+    ['jobCode','projectCode','cableName','countsNote','coInfo','jumpers','jobNotes'].forEach(id=>$(id).value='');
+    clearOtdr(); const out=$('jobNoteResult'); out.textContent=''; out.classList.remove('show');
+    setSectionHeight($('jobSection'));
+  }
+
+  // ── Ribbon Finder ──────────────────────────────────────────────────────────
+  function findRibbon(){
+    const n=clampInt($('strand').value||0,0);
+    const out=$('ribbonResult');
+    if(!n||n<1){ showText(out,'Enter a valid strand number (≥ 1).'); setSectionHeight($('ribbonSection')); return; }
+    const position=((n-1)%12)+1;
+    const ribbon=Math.floor((n-1)/12)+1;
+    const color=COLORS12[position-1]||'Unknown';
+    showText(out,`Strand: ${n}\nRibbon: ${ribbon}\nPosition in ribbon: ${position}\nColor: ${color}`);
+    setSectionHeight($('ribbonSection'));
+  }
+
+  function buildRibbonStrip(){
+    const strip=$('ribbonStrip'); if(!strip) return;
+    COLORS12.forEach((color,i)=>{
+      const wrap=document.createElement('div'); wrap.className='ribbon-swatch'; wrap.title=`${i+1} – ${color}`;
+      const box=document.createElement('div'); box.className='swatch-box'; box.style.background=SWATCH_HEX[color]||'#888';
+      if(color==='White') box.style.border='2px solid #aaa';
+      const lbl=document.createElement('div'); lbl.className='swatch-label'; lbl.textContent=`${i+1}\n${color}`;
+      lbl.style.whiteSpace='pre'; wrap.appendChild(box); wrap.appendChild(lbl);
+      strip.appendChild(wrap);
+    });
+  }
+
+  // ── Theme ──────────────────────────────────────────────────────────────────
+  function applySavedTheme(){
+    const saved=localStorage.getItem(THEME_KEY);
+    const isLight=(saved==='light');
+    document.body.classList.toggle('dark',!isLight);
+    document.body.classList.toggle('light',isLight);
+    const t=$('themeToggle'); if(t) t.checked=isLight;
+  }
+  function toggleTheme(){
+    const t=$('themeToggle');
+    const isLight=t&&t.checked;
+    document.body.classList.toggle('dark',!isLight);
+    document.body.classList.toggle('light',isLight);
+    localStorage.setItem(THEME_KEY,isLight?'light':'dark');
+    document.querySelectorAll('.section').forEach(s=>{
+      if(s.style.maxHeight&&s.style.maxHeight!=='0px') setSectionHeight(s);
+    });
+  }
+
+  // ── Wire-up headers (single source of truth – no inline onclick in HTML) ──
+  function wireHeader(headerId, sectionId){
+    const h=$(headerId); if(!h) return;
+    h.addEventListener('click',()=>toggleSection(sectionId,h));
+    h.addEventListener('touchend',function(e){e.preventDefault();toggleSection(sectionId,h);},{passive:false});
+    h.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleSection(sectionId,h); } });
+  }
+
+  // ── DOMContentLoaded ───────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', ()=>{
+
+    // Theme
+    applySavedTheme();
+
+    // Wire section headers
+    wireHeader('lossHeader','lossSection');
+    wireHeader('budgetHeader','budgetSection');
+    wireHeader('converterHeader','converterSection');
+    wireHeader('jobHeader','jobSection');
+    wireHeader('ribbonHeader','ribbonSection');
+    wireHeader('themeHeader','themeSection');
+
+    // Open loss section by default
+    setSectionHeight($('lossSection')); $('lossHeader').setAttribute('aria-expanded','true');
+
+    // Preview unit
+    const previewSel=$('previewUnit'); if(previewSel){ previewSel.value=getPreviewUnit(); previewSel.addEventListener('change',e=>setPreviewUnit(e.target.value)); }
+
+    // Loss calculator buttons (NO onclick attributes in HTML)
+    $('addSpliceBtn').addEventListener('click',addCustomSplice);
+    $('clearCustomBtn').addEventListener('click',clearCustomSplices);
+    $('calcBtn').addEventListener('click',calcLoss);
+    $('resetLossBtn').addEventListener('click',resetLossFields);
+
+    // Enter key on distance and strand inputs
+    $('distance').addEventListener('keydown',e=>{ if(e.key==='Enter') calcLoss(); });
+    $('strand').addEventListener('keydown',e=>{ if(e.key==='Enter') findRibbon(); });
+    $('newSpliceCount').addEventListener('keydown',e=>{ if(e.key==='Enter') addCustomSplice(); });
+    $('newSpliceLoss').addEventListener('keydown',e=>{ if(e.key==='Enter') addCustomSplice(); });
+
+    // Power budget
+    $('calcBudgetBtn').addEventListener('click',calcBudget);
+    $('importLossBtn').addEventListener('click',importLossTobudget);
+
+    // Converter
+    $('convertBtn').addEventListener('click',convertDistance);
+    $('copyConvBtn').addEventListener('click',copyConvertResult);
+    $('applyToCalcBtn').addEventListener('click',applyConvertedToCalculator);
+
+    // Live convert on input
+    const convValue=$('convValue'), convFrom=$('convFrom');
+    convValue.addEventListener('input',()=>{ if(convValue.value) convertDistance(); });
+    convFrom.addEventListener('change',()=>{ if(convValue.value) convertDistance(); });
+
+    // Jobs
+    $('addOtdrBtn').addEventListener('click',addOtdr);
+    $('clearOtdrBtn').addEventListener('click',clearOtdr);
+    $('generateJobBtn').addEventListener('click',generateJobNote);
+    $('copyJobBtn').addEventListener('click',copyJobNote);
+    $('saveJobBtn').addEventListener('click',saveJobNote);
+    $('downloadJobBtn').addEventListener('click',downloadJobNote);
+    $('clearJobBtn').addEventListener('click',clearJobForm);
+
+    // Ribbon
+    $('findBtn').addEventListener('click',findRibbon);
+
+    // Theme toggle
+    $('themeToggle').addEventListener('change',toggleTheme);
+
+    // Distance hint
+    $('distance').addEventListener('input',updateDistanceHint);
+    $('unit').addEventListener('change',updateDistanceHint);
+    updateDistanceHint();
+
+    // Hover tooltips
+    attachKmHover($('distance'),()=>{
+      const v=clampFloat($('distance').value||0,0), u=$('unit').value||'km', pu=getPreviewUnit();
+      return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;
+    });
+    attachKmHover(convValue,()=>{
+      const v=clampFloat(convValue.value||0,0), u=convFrom.value||'km', pu=getPreviewUnit();
+      return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;
+    });
+
+    // Init lists
+    renderSpliceList(); renderOtdrList(); buildRibbonStrip(); renderSavedNotes();
+
+    // Ensure all buttons have type=button
+    document.querySelectorAll('button').forEach(b=>{ if(!b.getAttribute('type')) b.setAttribute('type','button'); });
+  });
+
+})();
 </script>
 
 </body>
