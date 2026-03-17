@@ -269,6 +269,71 @@ input:checked + .slider::before { transform: translateX(20px); }
 .km-tooltip.show { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════
+   API KEY ROW
+════════════════════════════════════════════════════════ */
+.api-key-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto 16px;
+  max-width: 560px;
+}
+.api-key-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.api-key-label input {
+  width: 260px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: .04em;
+}
+.api-key-hint {
+  font-size: .78em;
+  opacity: .55;
+  text-align: center;
+}
+
+/* ════════════════════════════════════════════════════════
+   CONVERTER RESULT CARD
+════════════════════════════════════════════════════════ */
+.conv-result-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 16px auto 0;
+  padding: 16px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,191,255,.35);
+  box-shadow: 0 0 16px rgba(0,191,255,.12);
+  animation: ribbonPop .25s cubic-bezier(.175,.885,.32,1.275);
+}
+.conv-result-card .cr-value {
+  font-size: 1.7em;
+  font-weight: 900;
+  color: #00bfff;
+  text-shadow: 0 0 10px rgba(0,191,255,.5);
+  letter-spacing: .02em;
+}
+.conv-result-card .cr-from {
+  font-size: .85em;
+  opacity: .6;
+}
+.conv-result-card .cr-preview {
+  font-size: .82em;
+  opacity: .5;
+  font-style: italic;
+}
+body.light .conv-result-card { border-color: rgba(0,100,180,.3); box-shadow: 0 0 16px rgba(0,100,180,.1); }
+body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
+
+/* ════════════════════════════════════════════════════════
    RIBBON RESULT CARD
 ════════════════════════════════════════════════════════ */
 .ribbon-result-card {
@@ -557,10 +622,19 @@ input:checked + .slider::before { transform: translateX(20px); }
 <div id="jobSection" class="section">
   <div class="section-inner">
 
-    <p class="small-note" style="margin-bottom:14px">
+    <p class="small-note" style="margin-bottom:10px">
       Take a photo or upload an image of any job printout.<br>
       The AI will read it and output everything it finds — verbatim.
     </p>
+
+    <!-- API Key input -->
+    <div class="api-key-row">
+      <label for="apiKeyInput" class="api-key-label">
+        🔑 Anthropic API Key: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
+        <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" aria-label="Anthropic API key">
+      </label>
+      <span class="api-key-hint">Stored locally on your device only. Never sent anywhere except Anthropic.</span>
+    </div>
 
     <!-- Camera / upload button — large for field use -->
     <label class="photo-upload-label" for="photoInput" aria-label="Take photo or upload job printout">
@@ -1031,14 +1105,24 @@ input:checked + .slider::before { transform: translateX(20px); }
     const pu=getPreviewUnit();
     const prev=pu==='ft'?(km*KM_TO_FT).toFixed(2)+' ft':km.toFixed(6)+' km';
     const out=$('convertResult');
-    showResult(out,`${val} ${from} = ${conv.toFixed(6)} ${to}  (≈ ${prev})`);
+    // Render as a styled card
+    out.style.cssText='opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;margin-top:16px;';
+    out.innerHTML=`
+      <div class="conv-result-card">
+        <div class="cr-from">${val} ${from} =</div>
+        <div class="cr-value">${conv.toFixed(6)} ${to}</div>
+        <div class="cr-preview">≈ ${prev}</div>
+      </div>`;
+    requestAnimationFrame(()=>{ out.style.opacity='1'; out.style.transform='translateY(0)'; });
+    // Store plain text for copy
+    out.dataset.plain=`${val} ${from} = ${conv.toFixed(6)} ${to}  (≈ ${prev})`;
     attachTip(out,()=>prev);
     refreshOpenSections();
   }
 
   function copyConvertResult() {
-    const out=$('convertResult'); if(!out||!out.textContent) return;
-    copyToClipboard(out.textContent,out,'Copied ✓');
+    const out=$('convertResult'); if(!out||!out.dataset.plain) return;
+    copyToClipboard(out.dataset.plain,out,'Copied ✓');
   }
 
   function applyConvertedToCalculator() {
@@ -1096,6 +1180,12 @@ input:checked + .slider::before { transform: translateX(20px); }
 
   async function analyzePhoto() {
     if(!currentPhotoB64) return;
+    const apiKey = ($('apiKeyInput').value || '').trim();
+    if (!apiKey) {
+      $('aiStatus').textContent = '❌ Enter your Anthropic API key above first.';
+      $('apiKeyInput').focus();
+      return;
+    }
     const statusEl=$('aiStatus'), outputEl=$('aiRawOutput'), analyzeBtn=$('analyzeBtn'), actionBtns=$('jobActionBtns');
     analyzeBtn.disabled=true;
     outputEl.style.display='none';
@@ -1121,10 +1211,15 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
     try {
       const response=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
-          max_tokens:1000,
+          max_tokens:1500,
           system:systemPrompt,
           messages:[{
             role:'user',
@@ -1135,7 +1230,13 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
           }]
         })
       });
-      if(!response.ok) throw new Error(`API error ${response.status}: ${response.statusText}`);
+
+      if(!response.ok) {
+        let detail = '';
+        try { const e=await response.json(); detail = e.error?.message || ''; } catch {}
+        throw new Error(`API error ${response.status}${detail ? ': ' + detail : ''}`);
+      }
+
       const data=await response.json();
       const raw=(data.content||[]).map(b=>b.type==='text'?b.text:'').join('').trim();
       if(!raw) throw new Error('No text returned from AI.');
@@ -1147,14 +1248,8 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
       statusEl.textContent='✅ Done — review below.';
 
     } catch(err) {
-      const isFetch = err.message.toLowerCase().includes('fetch') || err.message.toLowerCase().includes('network') || err.message.toLowerCase().includes('failed');
-      if(isFetch){
-        statusEl.innerHTML=`❌ <strong>Network blocked.</strong> This tool must be opened as a standalone file in Safari or Chrome — not inside claude.ai.<br><br>
-          <span style="font-size:.9em;opacity:.8">Save the index.html file to your phone or host it on GitHub Pages, then open it directly in your browser. The AI call will work fine from there.</span>`;
-      } else {
-        statusEl.textContent='❌ '+err.message;
-      }
-      console.error('[LENS Job Reader]',err);
+      statusEl.textContent = '❌ ' + err.message;
+      console.error('[LENS Job Reader]', err);
     } finally {
       analyzeBtn.disabled=false;
       refreshOpenSections();
@@ -1326,7 +1421,16 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
     $('findBtn').addEventListener('click',  findRibbon);
     $('strand').addEventListener('keydown', e=>{ if(e.key==='Enter') findRibbon(); });
 
-    // Job reader
+    // Job reader — restore saved API key
+    const savedKey = localStorage.getItem('lens-api-key');
+    if (savedKey) $('apiKeyInput').value = savedKey;
+    $('apiKeyInput').addEventListener('change', () => {
+      const k = ($('apiKeyInput').value || '').trim();
+      if (k) localStorage.setItem('lens-api-key', k);
+      else   localStorage.removeItem('lens-api-key');
+    });
+
+    // Job reader buttons
     $('copyJobBtn').addEventListener('click',     copyJobOutput);
     $('saveJobBtn').addEventListener('click',      saveJobOutput);
     $('downloadJobBtn').addEventListener('click',  downloadJobOutput);
