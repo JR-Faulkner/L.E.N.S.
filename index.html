@@ -1185,7 +1185,7 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
       const preview=$('photoPreview');
       preview.src=ev.target.result; preview.style.display='block';
       currentPhotoB64=ev.target.result.split(',')[1];
-      $('aiStatus').textContent='Photo loaded — tap Analyze to extract info.';
+      $('aiStatus').textContent='Photo loaded — tap "Break Down This Printout" to analyze.';
       $('analyzeBtn').style.display='inline-block';
       $('aiRawOutput').style.display='none';
       $('jobActionBtns').style.display='none';
@@ -1249,6 +1249,8 @@ Rules:
 - Keep it practical — a tech should be able to read this once and know exactly what to do.`;
 
     try {
+      statusEl.innerHTML='<span class="spinner"></span> Searching industry knowledge…';
+
       const response=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{
@@ -1261,11 +1263,15 @@ Rules:
           model:'claude-sonnet-4-20250514',
           max_tokens:2500,
           system:systemPrompt,
+          tools:[{
+            type:'web_search_20250305',
+            name:'web_search'
+          }],
           messages:[{
             role:'user',
             content:[
               {type:'image',source:{type:'base64',media_type:mediaType,data:currentPhotoB64}},
-              {type:'text', text:'Please read and extract all information from this job printout.'}
+              {type:'text', text:`Before analyzing this printout, search for relevant knowledge on: OSP fiber optic work order terminology, ORCA telecom job printout format, telco splice case conventions, outside plant manhole fiber assignment procedures, and any codes or abbreviations visible in this image that you are unsure about. Then provide a full plain-English breakdown of this job printout.`}
             ]
           }]
         })
@@ -1277,8 +1283,11 @@ Rules:
         throw new Error(`API error ${response.status}${detail ? ': ' + detail : ''}`);
       }
 
+      statusEl.innerHTML='<span class="spinner"></span> Reading and interpreting printout…';
+
       const data=await response.json();
-      const raw=(data.content||[]).map(b=>b.type==='text'?b.text:'').join('').trim();
+      // Collect all text blocks — web search may produce multiple content blocks
+      const raw=(data.content||[]).map(b=>b.type==='text'?b.text:'').filter(Boolean).join('\n').trim();
       if(!raw) throw new Error('No text returned from AI.');
 
       currentRawOutput=raw;
