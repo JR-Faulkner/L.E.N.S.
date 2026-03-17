@@ -269,29 +269,45 @@ input:checked + .slider::before { transform: translateX(20px); }
 .km-tooltip.show { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════
-   API KEY ROW
+   DISCREET API SETTINGS
 ════════════════════════════════════════════════════════ */
-.api-key-row {
+.api-settings-wrap {
+  margin: 0 auto 14px;
+  text-align: center;
+}
+.api-settings-toggle {
+  font-size: .78em;
+  opacity: .4;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+  letter-spacing: .04em;
+}
+.api-settings-toggle:hover { opacity: .75; }
+.api-settings-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin: 0 auto 16px;
-  max-width: 560px;
+  gap: 5px;
+  margin-top: 6px;
 }
-.api-key-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 1em;
-  flex-wrap: wrap;
-  justify-content: center;
+.api-settings-panel.open { max-height: 80px; }
+.api-settings-panel label {
+  font-size: .85em;
+  font-weight: 600;
+  gap: 8px;
+  color: inherit;
+  opacity: .7;
 }
-.api-key-label input {
-  width: 260px;
+.api-settings-panel input {
+  width: 240px;
   font-family: 'Courier New', monospace;
-  letter-spacing: .04em;
+  font-size: max(14px, .85em);
+  padding: 5px 8px;
 }
 .api-key-hint {
   font-size: .78em;
@@ -627,13 +643,16 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
       The AI will read it and output everything it finds — verbatim.
     </p>
 
-    <!-- API Key input -->
-    <div class="api-key-row">
-      <label for="apiKeyInput" class="api-key-label">
-        🔑 Anthropic API Key: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
-        <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" aria-label="Anthropic API key">
-      </label>
-      <span class="api-key-hint">Stored locally on your device only. Never sent anywhere except Anthropic.</span>
+    <!-- Discreet API key settings — collapsed by default -->
+    <div class="api-settings-wrap">
+      <span id="apiSettingsToggle" class="api-settings-toggle" tabindex="0" role="button" aria-expanded="false">⚙ Settings</span>
+      <div id="apiSettingsPanel" class="api-settings-panel">
+        <label for="apiKeyInput">
+          API Key:
+          <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="new-password" spellcheck="false" aria-label="Anthropic API key">
+        </label>
+        <span class="api-key-hint">Saved locally on this device only.</span>
+      </div>
     </div>
 
     <!-- Camera / upload button — large for field use -->
@@ -1420,6 +1439,16 @@ Do not summarize. Output everything you can read, verbatim or near-verbatim.`;
     // Ribbon
     $('findBtn').addEventListener('click',  findRibbon);
     $('strand').addEventListener('keydown', e=>{ if(e.key==='Enter') findRibbon(); });
+
+    // API settings toggle
+    const apiToggle = $('apiSettingsToggle'), apiPanel = $('apiSettingsPanel');
+    const toggleApiPanel = () => {
+      const open = apiPanel.classList.toggle('open');
+      apiToggle.setAttribute('aria-expanded', String(open));
+      if (open) refreshOpenSections();
+    };
+    apiToggle.addEventListener('click', toggleApiPanel);
+    apiToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleApiPanel(); } });
 
     // Job reader — restore saved API key
     const savedKey = localStorage.getItem('lens-api-key');
