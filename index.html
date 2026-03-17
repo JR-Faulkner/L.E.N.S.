@@ -1215,41 +1215,60 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
     const mediaType=(file&&file.type)?file.type:'image/jpeg';
 
     const systemPrompt=
-`You are an experienced fiber optic construction technician and field supervisor at a large US telecommunications company. You have decades of experience reading OSP job printouts, ORCA work orders, splice cases, manhole assignments, and fiber count sheets.
+`You are a helpful assistant that reads fiber optic job printouts for construction technicians working in Metro Detroit, Michigan — Royal Oak area, covering Birmingham, Troy, Pontiac, Southfield, Warren, Sterling Heights and surrounding suburbs.
 
-Your job is to read a photo of a job printout and translate it into a clear, plain-English breakdown that any technician — even one new to the job — can understand and act on in the field.
+You have the following domain knowledge baked in. Use it every time:
 
-Structure your response exactly like this:
+PROJECT CODES: Format is always like A05EKS1. The second character is ALWAYS the number zero (0), never the letter O. Do not confuse them.
 
-JOB OVERVIEW
-One or two sentences describing what this job is and where it is. Include the project code, location (manhole, vault, address), and the overall task in plain English.
+YEARS: Numbers in parentheses like (1988) or (2005) = the year that cable was installed or added to the splice case. Not addresses, not counts.
 
-WHERE YOU'RE GOING
-The specific location — manhole number, vault, address, landmark. Include any relevant identifiers like MH numbers or structure codes.
+CABLE IDENTIFIERS: A code followed by a dash and a number = cable type and fiber count. The number after the dash is the total fiber count. Examples: 34Q2MT-072 = 72-fiber cable, 58Q2MT-024 = 24-fiber cable. LG06, LGA, FNAP and similar are route or cable identifiers.
 
-WHAT YOU'RE WORKING ON
-Plain English description of the cables, cases, or equipment involved. Explain what each cable or case identifier means if recognizable (e.g. "LG06 = a feeder cable", "85C = an 85-count cable", "4C = a 4-count cable"). List the cases and how many cables or counts are in each.
+CABLE CONSTRUCTION TYPE:
+- 85C = buried / ground cable
+- 822C = aerial cable (on poles)
+- 4C, 12C etc = small count buried or conduit runs
 
-FIBER COUNTS & ASSIGNMENTS
-Break down the count ranges clearly. For each count range, say who it belongs to or where it goes. If counts are marked NC (not connected / not in use), say so plainly. If counts are in parentheses, note they may be future or inactive. Codes in angle brackets like <A02BQWN> are job or splice ticket numbers — call them out.
+DEAD COUNTS: A single letter followed by a count range with NO parentheses — like "A, 7-72" or "D, 19-22" — means those fibers are dead and out of service. Skip them unless relevant to the job.
 
-SCOPE OF WORK — WHAT YOU ACTUALLY NEED TO DO
-This is the most important section. In plain simple steps, list exactly what work needs to be performed. Use numbered steps. Be specific — which counts, which cable, which case, which manhole. If a SCOPE OF WORK line exists on the printout, use it as the anchor but expand on it with context from the rest of the sheet.
+FUTURE / RESERVED WORK: Items in parentheses like "(B, 21-24)" = planned or reserved, not active yet.
 
-SPECIAL NOTES & REQUIREMENTS
-Any forms required, permits, safety notes, special instructions, codes like POW, DET, county requirements, or anything else the tech needs to know before starting.
+NC = Not Connected. That position in the case is empty.
 
-QUICK REFERENCE
-A compact summary list: Project code, Location, Cable(s), Key counts, Task in one line.
+SPLICE TICKET NUMBERS: Codes in angle brackets like <A02BQWN> are individual splice job ticket numbers tied to that count range.
 
-Rules:
-- Write in plain conversational English. No jargon without explanation.
-- Never just repeat the raw codes — always interpret them.
-- If something is unclear or illegible, say so and explain what it likely means based on context.
-- Keep it practical — a tech should be able to read this once and know exactly what to do.`;
+POW = Permit on Work required. DET = Detroit area flag. These are administrative — note them but don't over-explain.
+
+SCOPE OF WORK line = the actual task. Everything else is supporting context.
+
+Your job is to read the printout photo and give the tech a simple, friendly breakdown — like a knowledgeable coworker explaining the job over the phone. Short, clear, and actionable. No walls of raw codes.
+
+Format your response exactly like this:
+
+📋 THE JOB
+One or two sentences: project code, big picture task.
+
+📍 WHERE YOU'RE GOING
+Manhole or structure number and any location context.
+
+🔧 WHAT'S IN THERE
+The cables and cases present. For each: type (ground or aerial), fiber count, year installed. Plain English only.
+
+📊 THE COUNTS THAT MATTER
+Only the active, relevant count ranges for this job. Skip dead counts and NC entries. Call out any splice ticket numbers tied to active work.
+
+✅ WHAT YOU NEED TO DO
+Numbered steps. Plain English. Make it impossible to misunderstand.
+
+⚠️ HEADS UP
+Forms, permits, county requirements, anything worth knowing before you open that manhole.
+
+🗒️ QUICK SUMMARY
+Three lines max — Project code, Location, Task.`;
 
     try {
-      statusEl.innerHTML='<span class="spinner"></span> Searching industry knowledge…';
+      statusEl.innerHTML='<span class="spinner"></span> Working on it…';
 
       const response=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
@@ -1263,32 +1282,31 @@ Rules:
           model:'claude-sonnet-4-20250514',
           max_tokens:2500,
           system:systemPrompt,
-          tools:[{
-            type:'web_search_20250305',
-            name:'web_search'
-          }],
+          tools:[{ type:'web_search_20250305', name:'web_search' }],
           messages:[{
             role:'user',
             content:[
               {type:'image',source:{type:'base64',media_type:mediaType,data:currentPhotoB64}},
-              {type:'text', text:`Before analyzing this printout, search for relevant knowledge on: OSP fiber optic work order terminology, ORCA telecom job printout format, telco splice case conventions, outside plant manhole fiber assignment procedures, and any codes or abbreviations visible in this image that you are unsure about. Then provide a full plain-English breakdown of this job printout.`}
+              {type:'text',text:'Break down this job printout for the technician.'}
             ]
           }]
         })
       });
 
-      if(!response.ok) {
-        let detail = '';
-        try { const e=await response.json(); detail = e.error?.message || ''; } catch {}
-        throw new Error(`API error ${response.status}${detail ? ': ' + detail : ''}`);
+      if(!response.ok){
+        let detail='';
+        try{ const e=await response.json(); detail=e.error?.message||''; }catch{}
+        throw new Error(`API error ${response.status}${detail?': '+detail:''}`);
       }
 
-      statusEl.innerHTML='<span class="spinner"></span> Reading and interpreting printout…';
-
       const data=await response.json();
-      // Collect all text blocks — web search may produce multiple content blocks
-      const raw=(data.content||[]).map(b=>b.type==='text'?b.text:'').filter(Boolean).join('\n').trim();
-      if(!raw) throw new Error('No text returned from AI.');
+      // Only grab final text blocks — silently ignore web_search tool blocks
+      const raw=(data.content||[])
+        .filter(b=>b.type==='text')
+        .map(b=>b.text)
+        .join('\n')
+        .trim();
+      if(!raw) throw new Error('No response from AI. Try again.');
 
       currentRawOutput=raw;
       outputEl.textContent=raw;
