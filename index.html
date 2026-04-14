@@ -89,6 +89,13 @@ align-items: center;
 justify-content: center;
 }
 h2:hover { transform: scale(1.03); }
+/* Gradient applied to inner span — h2 color is the safe fallback */
+.h2-grad {
+background: linear-gradient(90deg, var(–accent-red), #00ff00, #00bfff);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
 
 /* ════════════════════════════════════════════════════════
 SECTION ACCORDION
@@ -556,7 +563,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="otdrHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="otdrSection">OTDR Note Maker ▼</h2>
+  <h2 id="otdrHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="otdrSection"><span class="h2-grad">OTDR Note Maker ▼</span></h2>
 </div>
 <div id="otdrSection" class="section">
   <div class="section-inner">
@@ -620,7 +627,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder ▼</h2>
+  <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection"><span class="h2-grad">Fiber Ribbon Finder ▼</span></h2>
 </div>
 <div id="ribbonSection" class="section">
   <div class="section-inner">
@@ -645,7 +652,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter ▼</h2>
+  <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection"><span class="h2-grad">Distance Converter ▼</span></h2>
 </div>
 <div id="converterSection" class="section">
   <div class="section-inner">
@@ -685,7 +692,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="lossHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="lossSection">Fiber Loss Calculator ▼</h2>
+  <h2 id="lossHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="lossSection"><span class="h2-grad">Fiber Loss Calculator ▼</span></h2>
 </div>
 <div id="lossSection" class="section">
   <div class="section-inner">
@@ -789,7 +796,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="aceHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="aceSection">ACE Fire Tool ▼</h2>
+  <h2 id="aceHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="aceSection"><span class="h2-grad">ACE Fire Tool ▼</span></h2>
 </div>
 <div id="aceSection" class="section">
   <div class="section-inner">
@@ -901,7 +908,7 @@ input:checked + .slider::before { transform: translateX(20px); }
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
-  <h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection">Theme Mode ▼</h2>
+  <h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection"><span class="h2-grad">Theme Mode ▼</span></h2>
 </div>
 <div id="themeSection" class="section">
   <div class="section-inner">
