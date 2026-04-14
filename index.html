@@ -1691,8 +1691,11 @@ input:checked + .slider::before { transform: translateX(20px); }
      MODULE 13 · THEME
   ───────────────────────────────────────────────────────── */
   function applySavedTheme() {
-    const isLight=localStorage.getItem(LS_THEME)==='light';
-    document.body.classList.toggle('dark', !isLight);
+    // Default to dark if nothing saved
+    const saved = localStorage.getItem(LS_THEME);
+    const isLight = saved === 'light';
+    if (!saved) localStorage.setItem(LS_THEME, 'dark');
+    document.body.classList.toggle('dark',  !isLight);
     document.body.classList.toggle('light', isLight);
     const t=$('themeToggle'); if(t) t.checked=isLight;
   }
