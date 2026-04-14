@@ -188,8 +188,6 @@ body.dark .result-out  { color: var(–result-dark-blue); }
 body.dark label        { color: var(–label-dark-blue); }
 body.dark .section-header-wrap { border-bottom: 1px solid #222; }
 body.dark .splice-list-row { background: rgba(255,255,255,.03); }
-body.dark .saved-note-item { background: rgba(255,255,255,.03); }
-body.dark .ai-raw-output   { background: #0a0a0a; border-color: rgba(0,191,255,.3); color: #00bfff; }
 
 /* ════════════════════════════════════════════════════════
 LIGHT THEME
@@ -203,8 +201,6 @@ body.light button:hover { background-color: #000; color: #fff; }
 body.light .result-out  { color: var(–result-light-blue); }
 body.light label        { color: var(–label-light-blue); }
 body.light .splice-list-row { background: rgba(0,0,0,.03); }
-body.light .saved-note-item { background: rgba(0,0,0,.03); }
-body.light .ai-raw-output   { background: #f7faff; border-color: rgba(0,100,180,.3); color: #003366; }
 
 /* ════════════════════════════════════════════════════════
 THEME TOGGLE
@@ -268,53 +264,6 @@ white-space: nowrap; opacity: 0;
 transition: opacity .12s ease;
 }
 .km-tooltip.show { opacity: 1; }
-
-/* ════════════════════════════════════════════════════════
-DISCREET API SETTINGS
-════════════════════════════════════════════════════════ */
-.api-settings-wrap {
-margin: 0 auto 14px;
-text-align: center;
-}
-.api-settings-toggle {
-font-size: .78em;
-opacity: .4;
-cursor: pointer;
-user-select: none;
--webkit-tap-highlight-color: transparent;
-transition: opacity .15s;
-letter-spacing: .04em;
-}
-.api-settings-toggle:hover { opacity: .75; }
-.api-settings-panel {
-max-height: 0;
-overflow: hidden;
-transition: max-height .3s ease;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 5px;
-margin-top: 6px;
-}
-.api-settings-panel.open { max-height: 80px; }
-.api-settings-panel label {
-font-size: .85em;
-font-weight: 600;
-gap: 8px;
-color: inherit;
-opacity: .7;
-}
-.api-settings-panel input {
-width: 240px;
-font-family: ‘Courier New’, monospace;
-font-size: max(14px, .85em);
-padding: 5px 8px;
-}
-.api-key-hint {
-font-size: .78em;
-opacity: .55;
-text-align: center;
-}
 
 /* ════════════════════════════════════════════════════════
 CONVERTER RESULT CARD
@@ -425,91 +374,6 @@ max-width: 42px; word-break: break-word; white-space: pre;
 }
 
 /* ════════════════════════════════════════════════════════
-SAVED NOTES
-════════════════════════════════════════════════════════ */
-.saved-note-item {
-display: flex; gap: 8px; align-items: center;
-justify-content: space-between;
-padding: 8px 10px; border-radius: 6px; margin: 4px 0;
-font-size: .9em; text-align: left; flex-wrap: wrap;
-}
-.saved-note-item .note-label { flex: 1; min-width: 100px; word-break: break-all; }
-.saved-note-actions { display: flex; gap: 6px; }
-
-/* ════════════════════════════════════════════════════════
-JOB PHOTO READER
-════════════════════════════════════════════════════════ */
-.photo-upload-label {
-display: inline-flex;
-align-items: center;
-gap: 10px;
-padding: 14px 22px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 1.05em;
-font-weight: 700;
-border: 2px solid #00bfff;
-color: #00bfff;
-background: rgba(0,191,255,.08);
-transition: all .18s ease;
-margin-bottom: 10px;
-min-height: var(–min-touch);
-user-select: none;
--webkit-tap-highlight-color: transparent;
-}
-.photo-upload-label:active { background: rgba(0,191,255,.2); }
-#photoInput { display: none; }
-
-#photoPreview {
-max-width: 100%;
-max-height: 240px;
-border-radius: 8px;
-margin: 10px auto;
-display: none;
-box-shadow: 0 4px 16px rgba(0,0,0,.4);
-}
-
-.ai-status {
-font-size: .9em;
-color: #00bfff;
-margin: 8px 0;
-min-height: 1.4em;
-}
-
-/* Raw output — monospaced, scrollable, selectable */
-.ai-raw-output {
-display: none;
-margin: 12px auto 0;
-max-width: 760px;
-text-align: left;
-border: 1px solid rgba(0,191,255,.3);
-border-radius: 8px;
-padding: 14px 16px;
-font-family: ‘Courier New’, Courier, monospace;
-font-size: 0.9em;
-font-weight: 400;
-white-space: pre-wrap;
-word-break: break-word;
-line-height: 1.7;
-max-height: 460px;
-overflow-y: auto;
--webkit-overflow-scrolling: touch;
-user-select: text;
-}
-
-.spinner {
-display: inline-block;
-width: 16px; height: 16px;
-border: 2px solid rgba(0,191,255,.3);
-border-top-color: #00bfff;
-border-radius: 50%;
-animation: spin .7s linear infinite;
-vertical-align: middle;
-margin-right: 6px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ════════════════════════════════════════════════════════
 BTN ROW HELPER
 ════════════════════════════════════════════════════════ */
 .btn-row {
@@ -518,6 +382,62 @@ gap: 8px;
 justify-content: center;
 align-items: center;
 flex-wrap: wrap;
+}
+
+/* ════════════════════════════════════════════════════════
+ACE FIRE TOOL
+════════════════════════════════════════════════════════ */
+.ace-step { max-width: 760px; margin: 0 auto; text-align: left; }
+.ace-step-title {
+font-size: 1.1em; font-weight: 900; color: #00bfff;
+text-shadow: 0 0 8px rgba(0,191,255,.4);
+margin: 0 0 12px; text-align: center;
+}
+.ace-field-group {
+display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;
+}
+.ace-field-row {
+display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.ace-field-row label {
+font-size: .9em; font-weight: 700; min-width: 160px; flex-shrink: 0;
+}
+.ace-field-row input, .ace-field-row select {
+flex: 1; min-width: 0;
+}
+.ace-locked {
+opacity: .45; font-size: .85em; padding: 6px 10px;
+border-radius: var(–radius); font-family: ‘Courier New’, monospace;
+}
+.ace-section-divider {
+border: none; border-top: 1px solid rgba(0,191,255,.15);
+margin: 16px 0;
+}
+.ace-event-block {
+border: 1px solid rgba(0,191,255,.15);
+border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;
+}
+.ace-event-title {
+font-size: .88em; font-weight: 700; color: #00bfff;
+margin-bottom: 10px; opacity: .8;
+}
+.ace-preview-box {
+background: rgba(0,0,0,.3);
+border: 1px solid rgba(0,191,255,.2);
+border-radius: 8px; padding: 14px;
+font-family: ‘Courier New’, monospace;
+font-size: .8em; white-space: pre-wrap;
+max-height: 360px; overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+user-select: text; line-height: 1.5;
+margin-top: 10px;
+}
+body.light .ace-preview-box {
+background: #f4f8ff; border-color: rgba(0,100,180,.2); color: #003;
+}
+body.light .ace-event-block { border-color: rgba(0,100,180,.15); }
+.ace-progress {
+font-size: .82em; opacity: .55; text-align: center; margin-bottom: 8px;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -611,12 +531,6 @@ input[type=number] { width: 100%; }
 
 .app-title .author { display: block; text-align: center; margin-right: 0; }
 .ribbon-swatch .swatch-box { width: 30px; height: 30px; }
-
-.saved-note-item { flex-direction: column; align-items: flex-start; }
-.saved-note-actions { width: 100%; }
-.saved-note-actions button { flex: 1; }
-
-.photo-upload-label { width: 100%; justify-content: center; }
 }
 @media (max-width: 520px) {
 .switch { width: 44px; height: 24px; }
@@ -871,7 +785,119 @@ input:checked + .slider::before { transform: translateX(20px); }
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     5. THEME MODE
+     5. ACE FIRE TOOL
+═══════════════════════════════════════════════════════════ -->
+
+<div class="section-header-wrap">
+  <h2 id="aceHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="aceSection">ACE Fire Tool ▼</h2>
+</div>
+<div id="aceSection" class="section">
+  <div class="section-inner">
+
+```
+<!-- Step 1: Core job info -->
+<div id="aceStep1" class="ace-step">
+  <p class="ace-step-title">Step 1 — Job Setup</p>
+  <div class="ace-field-group">
+    <div class="ace-field-row">
+      <label>CLO # (CFAS):</label>
+      <input id="aceCfas" type="text" placeholder="e.g. MIC689559001" autocomplete="off">
+    </div>
+    <div class="ace-field-row">
+      <label>Fiber Cable Name:</label>
+      <input id="aceCableId" type="text" placeholder="e.g. LG8" autocomplete="off">
+    </div>
+    <div class="ace-field-row">
+      <label>Strands Affected:</label>
+      <input id="aceStrandFrom" type="number" inputmode="numeric" min="1" placeholder="From" style="width:90px">
+      <span style="padding:0 8px;opacity:.6">–</span>
+      <input id="aceStrandTo" type="number" inputmode="numeric" min="1" placeholder="To" style="width:90px">
+    </div>
+    <div class="ace-field-row">
+      <label>Total Events:</label>
+      <input id="aceEventCount" type="number" inputmode="numeric" min="2" value="7" style="width:90px">
+      <span class="small-note" style="margin-left:8px">(including first connector &amp; end)</span>
+    </div>
+    <div class="ace-field-row">
+      <label>Date Tested:</label>
+      <input id="aceDateTested" type="date">
+    </div>
+    <div class="ace-field-row">
+      <label>Calibration Date:</label>
+      <input id="aceCalDate" type="date">
+    </div>
+  </div>
+  <div id="aceStep1Error" class="error-msg" style="display:none"></div>
+  <div class="btn-row" style="margin-top:14px">
+    <button id="aceStep1Next" type="button">Next →</button>
+  </div>
+</div>
+
+<!-- Step 2: Strand count confirmation -->
+<div id="aceStep2" class="ace-step" style="display:none">
+  <p class="ace-step-title">Step 2 — Confirm Strands</p>
+  <div id="aceConfirmMsg" style="text-align:center;font-size:1.1em;line-height:1.9;margin-bottom:20px;color:#00bfff"></div>
+  <div class="btn-row">
+    <button id="aceStep2Back"    type="button">← Back</button>
+    <button id="aceStep2Confirm" type="button">Yes, correct →</button>
+  </div>
+</div>
+
+<!-- Step 3: Per-strand OTDR data — one strand at a time -->
+<div id="aceStep3" class="ace-step" style="display:none">
+  <p id="aceStep3Title" class="ace-step-title"></p>
+  <p id="aceStrandProgress" class="ace-progress"></p>
+  <div class="ace-field-group">
+    <div class="ace-field-row">
+      <label>Span Length (ft):</label>
+      <input id="aceSpanLength" type="number" inputmode="numeric" min="0" placeholder="e.g. 15202">
+    </div>
+    <div class="ace-field-row">
+      <label>Pass / Fail:</label>
+      <select id="acePassFail">
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+      </select>
+    </div>
+  </div>
+  <hr class="ace-section-divider">
+  <p class="small-note" style="text-align:center;margin-bottom:10px">Link Measurements</p>
+  <div class="ace-field-group">
+    <div class="ace-field-row"><label>1310nm — Total Loss (dB):</label><input id="aceLm1310Loss" type="number" inputmode="decimal" step="0.001" placeholder="e.g. 2.125"></div>
+    <div class="ace-field-row"><label>1310nm — Total ORL (dB):</label> <input id="aceLm1310Orl"  type="number" inputmode="decimal" step="0.001" placeholder="e.g. 35.11"></div>
+    <div class="ace-field-row"><label>1550nm — Total Loss (dB):</label><input id="aceLm1550Loss" type="number" inputmode="decimal" step="0.001" placeholder="e.g. 1.497"></div>
+    <div class="ace-field-row"><label>1550nm — Total ORL (dB):</label> <input id="aceLm1550Orl"  type="number" inputmode="decimal" step="0.001" placeholder="e.g. 37.14"></div>
+  </div>
+  <hr class="ace-section-divider">
+  <p class="small-note" style="text-align:center;margin-bottom:12px">Events</p>
+  <div id="aceEventsContainer"></div>
+  <div id="aceStep3Error" class="error-msg" style="display:none"></div>
+  <div class="btn-row" style="margin-top:14px">
+    <button id="aceStep3Back"  type="button">← Back</button>
+    <button id="aceStep3Next"  type="button">Save Strand &amp; Continue →</button>
+  </div>
+</div>
+
+<!-- Step 4: Review & Download -->
+<div id="aceStep4" class="ace-step" style="display:none">
+  <p class="ace-step-title">Step 4 — Review &amp; Download</p>
+  <p class="small-note" style="text-align:center;margin-bottom:8px">Edit directly if anything needs tweaking, then download.</p>
+  <textarea id="aceJsonPreview" class="ace-preview-box" style="width:100%;min-height:320px;resize:vertical" spellcheck="false" aria-label="JSON preview"></textarea>
+  <div id="aceStep4Error" class="error-msg" style="display:none"></div>
+  <div class="btn-row" style="margin-top:10px">
+    <button id="aceStep4Back"   type="button">← Back</button>
+    <button id="aceValidateBtn" type="button">Validate JSON</button>
+    <button id="aceDownloadBtn" type="button">⬇ Download .json</button>
+    <button id="aceRestartBtn"  type="button">Start Over</button>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     6. THEME MODE
 ═══════════════════════════════════════════════════════════ -->
 
 <div class="section-header-wrap">
@@ -1436,6 +1462,232 @@ input:checked + .slider::before { transform: translateX(20px); }
   }
 
   /* ─────────────────────────────────────────────────────────
+     MODULE · ACE FIRE TOOL
+  ───────────────────────────────────────────────────────── */
+
+  const ACE_THRESHOLDS = {
+    spliceLossThreshold:       0.5,
+    connectorLossThreshold:    0.99,
+    eventReflectanceThreshold: -40.0,
+    strandOrlThreshold:        28.0
+  };
+
+  let aceData = { header:{}, strandFrom:1, strandTo:1, eventCount:7, strands:[], currentStrand:0 };
+
+  function aceShowStep(n) {
+    [1,2,3,4].forEach(i => { const el=$('aceStep'+i); if(el) el.style.display=(i===n)?'block':'none'; });
+    refreshOpenSections();
+  }
+
+  function aceStep1Next() {
+    const errEl=$('aceStep1Error'); clearError(null,errEl);
+    const cfas=($('aceCfas').value||'').trim();
+    const cableId=($('aceCableId').value||'').trim();
+    const from=clampInt($('aceStrandFrom').value,0);
+    const to=clampInt($('aceStrandTo').value,0);
+    const evts=clampInt($('aceEventCount').value,2);
+    const calDate=$('aceCalDate').value||'';
+    if(!cfas){setError(null,errEl,'⚠ CLO # is required.');return;}
+    if(!cableId){setError(null,errEl,'⚠ Fiber Cable Name is required.');return;}
+    if(!from||!to){setError(null,errEl,'⚠ Enter the strand range.');return;}
+    if(to<from){setError(null,errEl,'⚠ "To" strand must be ≥ "From" strand.');return;}
+    // Hardcode fixed fields — same equipment every job
+    aceData.header={
+      tester:          '',
+      wireCenterClli:  '',
+      cfas,
+      aLoc:            '',
+      zLoc:            '',
+      dateTested:      $('aceDateTested').value||new Date().toISOString().split('T')[0],
+      model:           'FTBx-720D-SM1',
+      serialNumber:    '1869003',
+      version:         '1.0',
+      calibrationDate: calDate,
+      cableId
+    };
+    aceData.strandFrom=from; aceData.strandTo=to; aceData.eventCount=evts;
+    aceData.strands=[]; aceData.currentStrand=0;
+    const count=to-from+1;
+    const list=Array.from({length:count},(_,i)=>from+i).join(', ');
+    $('aceConfirmMsg').innerHTML=
+      `We're working with strand${count>1?'s':''} <strong>${list}</strong> on cable <strong>${esc(cableId)}</strong>.<br>`+
+      `That's <strong>${count} strand${count>1?'s':''}</strong> total, `+
+      `each with <strong>${evts} event${evts!==1?'s':''}</strong> (including the first connector and the end event).<br><br>`+
+      `Calibration date: <strong>${calDate||'(not set)'}</strong> — correct?`;
+    aceShowStep(2);
+  }
+
+  function aceStep2Confirm() {
+    aceLoadStrand(0);
+    aceShowStep(3);
+  }
+
+  function aceLoadStrand(idx) {
+    const from=aceData.strandFrom, total=aceData.strandTo-from+1;
+    const strandNum=from+idx;
+    $('aceStep3Title').textContent=`Step 3 — Strand ${strandNum} (${idx+1} of ${total})`;
+    $('aceStrandProgress').textContent=`Strand ${idx+1} of ${total}`;
+    const existing=aceData.strands[idx];
+    $('aceSpanLength').value=existing?existing.spanLength:'';
+    $('acePassFail').value=existing?existing.passFail:'pass';
+    const lm1310=existing?.linkMeasurements?.find(l=>l.wavelength===1310);
+    const lm1550=existing?.linkMeasurements?.find(l=>l.wavelength===1550);
+    $('aceLm1310Loss').value=lm1310?lm1310.totalLoss:'';
+    $('aceLm1310Orl').value=lm1310?lm1310.totalORL:'';
+    $('aceLm1550Loss').value=lm1550?lm1550.totalLoss:'';
+    $('aceLm1550Orl').value=lm1550?lm1550.totalORL:'';
+    aceBuildEventInputs(aceData.eventCount, existing?.events||null);
+  }
+
+  function aceBuildEventInputs(count, existingEvents) {
+    const container=$('aceEventsContainer');
+    container.innerHTML='';
+    for(let i=0;i<count;i++){
+      const ev=existingEvents?existingEvents[i]:null;
+      const isStart=i===0;
+      // Last event index = count-1, that gets the "end" format regardless of event number
+      const isEnd=i===count-1;
+      const defType=isStart?'Group':isEnd?'end':'Splice';
+      const m1310=ev?.measurements?.find(m=>m.wavelength===1310);
+      const m1550=ev?.measurements?.find(m=>m.wavelength===1550);
+      const block=document.createElement('div');
+      block.className='ace-event-block'; block.dataset.eventIdx=i;
+      let fields='';
+      if(isEnd){
+        fields=`
+          <div class="ace-field-row"><label>Distance from A (ft):</label>
+            <input class="ev-dist" type="number" inputmode="decimal" min="0" value="${ev?.distanceFromA??''}" placeholder="e.g. 15202"></div>
+          <div class="ace-field-row"><label>1310nm Reflectance:</label>
+            <input class="ev-end-ref-1310" type="number" inputmode="decimal" step="0.001" value="${m1310?.reflectance??''}" placeholder="e.g. -67.2"></div>
+          <div class="ace-field-row"><label>1550nm Reflectance:</label>
+            <input class="ev-end-ref-1550" type="number" inputmode="decimal" step="0.001" value="${m1550?.reflectance??''}" placeholder="e.g. -59.1"></div>`;
+      } else {
+        fields=`
+          <div class="ace-field-row"><label>Distance from A (ft):</label>
+            <input class="ev-dist" type="number" inputmode="decimal" min="0" value="${ev?.distanceFromA??(isStart?0:'')}" placeholder="${isStart?'0':'e.g. 800'}"></div>
+          <div class="ace-field-row"><label>1310nm Loss (dB):</label>
+            <input class="ev-loss-1310" type="number" inputmode="decimal" step="0.001" value="${m1310?.loss??''}" placeholder="e.g. 0.082"></div>
+          <div class="ace-field-row"><label>1310nm Loss to Event:</label>
+            <input class="ev-lte-1310" type="number" inputmode="decimal" step="0.001" value="${m1310?.lossToEvent??''}" placeholder="e.g. 0.082"></div>
+          <div class="ace-field-row"><label>1310nm Reflectance:</label>
+            <input class="ev-ref-1310" type="number" inputmode="decimal" step="0.001" value="${m1310?.reflectance??''}" placeholder="${isStart?'e.g. -46.7':'null = leave blank'}"></div>
+          <div class="ace-field-row"><label>1550nm Loss (dB):</label>
+            <input class="ev-loss-1550" type="number" inputmode="decimal" step="0.001" value="${m1550?.loss??''}" placeholder="e.g. 0.014"></div>
+          <div class="ace-field-row"><label>1550nm Loss to Event:</label>
+            <input class="ev-lte-1550" type="number" inputmode="decimal" step="0.001" value="${m1550?.lossToEvent??''}" placeholder="e.g. 0.014"></div>
+          <div class="ace-field-row"><label>1550nm Reflectance:</label>
+            <input class="ev-ref-1550" type="number" inputmode="decimal" step="0.001" value="${m1550?.reflectance??''}" placeholder="${isStart?'e.g. -43.7':'null = leave blank'}"></div>`;
+      }
+      block.innerHTML=`<div class="ace-event-title">Event ${i} — ${isStart?'Start (Connector Group)':isEnd?'End':'Splice'}</div><div class="ace-field-group">${fields}</div>`;
+      container.appendChild(block);
+    }
+    refreshOpenSections();
+  }
+
+  function aceCollectStrand() {
+    const errEl=$('aceStep3Error'); clearError(null,errEl);
+    const spanLength=clampInt($('aceSpanLength').value,0);
+    const passFail=$('acePassFail').value;
+    const lm1310Loss=parseFloat($('aceLm1310Loss').value);
+    const lm1310Orl=parseFloat($('aceLm1310Orl').value);
+    const lm1550Loss=parseFloat($('aceLm1550Loss').value);
+    const lm1550Orl=parseFloat($('aceLm1550Orl').value);
+    if([lm1310Loss,lm1310Orl,lm1550Loss,lm1550Orl].some(isNaN)){
+      setError(null,errEl,'⚠ Fill in all four link measurement values.'); return null;
+    }
+    const linkMeasurements=[
+      {wavelength:1310,totalLoss:lm1310Loss,totalORL:lm1310Orl},
+      {wavelength:1550,totalLoss:lm1550Loss,totalORL:lm1550Orl}
+    ];
+    const blocks=$('aceEventsContainer').querySelectorAll('.ace-event-block');
+    const events=[]; const total=blocks.length;
+    const parseOrNull=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
+    for(let i=0;i<total;i++){
+      const b=blocks[i];
+      const isStart=i===0;
+      // Last event in the array gets "end" format — regardless of event number
+      const isEnd=i===total-1;
+      const dist=parseOrNull(b.querySelector('.ev-dist')?.value)||0;
+      const evtAttrs=isStart?['start','Connector','Connector']:isEnd?['end']:[];
+      const evtType=isStart?'Group':isEnd?'end':'Splice';
+      let measurements;
+      if(isEnd){
+        const r1310=parseOrNull(b.querySelector('.ev-end-ref-1310')?.value);
+        const r1550=parseOrNull(b.querySelector('.ev-end-ref-1550')?.value);
+        measurements=[
+          {wavelength:1310,reflectance:r1310,loss:null,lossToEvent:null,spanLossThruEvent:null},
+          {wavelength:1550,reflectance:r1550,loss:null,lossToEvent:null,spanLossThruEvent:null}
+        ];
+      } else {
+        measurements=[
+          {wavelength:1310,reflectance:parseOrNull(b.querySelector('.ev-ref-1310')?.value),
+           loss:parseOrNull(b.querySelector('.ev-loss-1310')?.value),
+           lossToEvent:parseOrNull(b.querySelector('.ev-lte-1310')?.value),spanLossThruEvent:null},
+          {wavelength:1550,reflectance:parseOrNull(b.querySelector('.ev-ref-1550')?.value),
+           loss:parseOrNull(b.querySelector('.ev-loss-1550')?.value),
+           lossToEvent:parseOrNull(b.querySelector('.ev-lte-1550')?.value),spanLossThruEvent:null}
+        ];
+      }
+      events.push({eventNumber:i,distanceFromA:dist,eventType:evtType,eventAttributes:evtAttrs,measurements});
+    }
+    const strand=aceData.strandFrom+aceData.currentStrand;
+    return {strand,spanLength,passFail,linkMeasurements,events};
+  }
+
+  function aceStep3Next() {
+    const strandObj=aceCollectStrand(); if(!strandObj) return;
+    aceData.strands[aceData.currentStrand]=strandObj;
+    aceData.currentStrand++;
+    if(aceData.currentStrand<(aceData.strandTo-aceData.strandFrom+1)){
+      aceLoadStrand(aceData.currentStrand);
+      refreshOpenSections();
+    } else {
+      aceShowPreview(); aceShowStep(4);
+    }
+  }
+
+  function aceBuildJson() {
+    return { Label:{ ...aceData.header, ...ACE_THRESHOLDS, Tested:aceData.strands } };
+  }
+
+  function aceShowPreview() {
+    try{ $('aceJsonPreview').value=JSON.stringify(aceBuildJson(),null,2); }
+    catch(e){ $('aceJsonPreview').value='// Error: '+e.message; }
+  }
+
+  function aceValidate() {
+    const errEl=$('aceStep4Error'); clearError(null,errEl);
+    try{
+      JSON.parse($('aceJsonPreview').value);
+      errEl.textContent='✅ Valid JSON'; errEl.style.display='block'; errEl.style.color='#00ff00';
+      setTimeout(()=>{errEl.style.display='none';errEl.style.color='';},2000);
+    } catch(e){ setError(null,errEl,'⚠ Invalid JSON — '+e.message); }
+  }
+
+  function aceDownload() {
+    const errEl=$('aceStep4Error'); clearError(null,errEl);
+    const jsonText=$('aceJsonPreview').value;
+    try{ JSON.parse(jsonText); } catch(e){ setError(null,errEl,'⚠ Fix JSON errors before downloading.'); return; }
+    const fname=`${aceData.header.cfas||'output'}.json`.replace(/[^a-z0-9_\-\.]/gi,'_');
+    const blob=new Blob([jsonText],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+  }
+
+  function aceRestart() {
+    aceData={header:{},strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
+    ['aceCfas','aceCableId'].forEach(id=>{const el=$(id);if(el)el.value='';});
+    $('aceStrandFrom').value=''; $('aceStrandTo').value='';
+    $('aceEventCount').value=7;
+    $('aceDateTested').value=new Date().toISOString().split('T')[0];
+    $('aceCalDate').value='';
+    clearError(null,$('aceStep1Error')); clearError(null,$('aceStep3Error')); clearError(null,$('aceStep4Error'));
+    aceShowStep(1);
+  }
+
+
+
+    /* ─────────────────────────────────────────────────────────
      MODULE 13 · THEME
   ───────────────────────────────────────────────────────── */
   function applySavedTheme() {
@@ -1465,6 +1717,7 @@ input:checked + .slider::before { transform: translateX(20px); }
     wireHeader('ribbonHeader',    'ribbonSection');
     wireHeader('converterHeader', 'converterSection');
     wireHeader('lossHeader',      'lossSection');
+    wireHeader('aceHeader',       'aceSection');
     wireHeader('themeHeader',     'themeSection');
 
     // No section open by default — user opens what they need
@@ -1528,6 +1781,18 @@ input:checked + .slider::before { transform: translateX(20px); }
     });
     $('otdrDistInput').addEventListener('keydown', e => { if (e.key === 'Enter') otdrRecordAndAdvance(false); });
     $('otdrRangeEnd').addEventListener('keydown',  e => { if (e.key === 'Enter') otdrStart(); });
+
+    // ACE Fire Tool
+    $('aceStep1Next').addEventListener('click',   aceStep1Next);
+    $('aceStep2Back').addEventListener('click',   () => aceShowStep(1));
+    $('aceStep2Confirm').addEventListener('click',aceStep2Confirm);
+    $('aceStep3Back').addEventListener('click',   () => { aceData.currentStrand = Math.max(0, aceData.currentStrand - 1); aceLoadStrand(aceData.currentStrand); aceShowStep(3); });
+    $('aceStep3Next').addEventListener('click',   aceStep3Next);
+    $('aceStep4Back').addEventListener('click',   () => { aceData.currentStrand = (aceData.strandTo - aceData.strandFrom); aceLoadStrand(aceData.currentStrand); aceShowStep(3); });
+    $('aceValidateBtn').addEventListener('click', aceValidate);
+    $('aceDownloadBtn').addEventListener('click', aceDownload);
+    $('aceRestartBtn').addEventListener('click',  aceRestart);
+    $('aceDateTested').value = new Date().toISOString().split('T')[0];
 
     // Init
     renderSpliceList();
