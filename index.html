@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -27,224 +26,224 @@
 }
 
 /* ════════════════════════════════════════════════════════
-RESET & BASE
+   RESET & BASE
 ════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; }
 body {
-font-family: Arial, sans-serif;
-text-align: center;
-padding: 16px;
-margin: 0;
-transition: background-color .5s ease, color .5s ease;
-overscroll-behavior: none;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 16px;
+  margin: 0;
+  transition: background-color .5s ease, color .5s ease;
+  overscroll-behavior: none;
 }
 
 /* ════════════════════════════════════════════════════════
-APP TITLE
+   APP TITLE
 ════════════════════════════════════════════════════════ */
 .app-title { text-align: center; margin-bottom: 20px; }
 .app-title h1 {
-font-size: clamp(1.4em, 5vw, 2.2em);
-color: var(–accent-red);
-text-shadow: 0 0 10px var(–accent-red), 0 0 20px #ff6600;
-margin: 0 0 5px 0;
+  font-size: clamp(1.4em, 5vw, 2.2em);
+  color: var(--accent-red);
+  text-shadow: 0 0 10px var(--accent-red), 0 0 20px #ff6600;
+  margin: 0 0 5px 0;
 }
 .app-title .author {
-font-style: italic;
-font-size: 1.05em;
-text-align: right;
-margin-right: 20px;
-color: #00bfff;
-animation: lightning 2s infinite;
+  font-style: italic;
+  font-size: 1.05em;
+  text-align: right;
+  margin-right: 20px;
+  color: #00bfff;
+  animation: lightning 2s infinite;
 }
 @keyframes lightning {
-0%,19%,21%,23%,25%,54%,56%,100% {
-text-shadow: 0 0 5px #00bfff, 0 0 15px #00ffff, 0 0 25px #00bfff;
-color: #00ffff;
-}
-20%,24%,55% { text-shadow: none; color: #00bfff; }
+  0%,19%,21%,23%,25%,54%,56%,100% {
+    text-shadow: 0 0 5px #00bfff, 0 0 15px #00ffff, 0 0 25px #00bfff;
+    color: #00ffff;
+  }
+  20%,24%,55% { text-shadow: none; color: #00bfff; }
 }
 
 /* ════════════════════════════════════════════════════════
-SECTION HEADERS
+   SECTION HEADERS
 ════════════════════════════════════════════════════════ */
 .section-header-wrap { display: block; }
 h2 {
-margin: 0;
-padding: 15px;
-font-size: clamp(1em, 3.5vw, 1.4em);
-cursor: pointer;
-background: linear-gradient(90deg, var(–accent-red), #00ff00, #00bfff);
--webkit-background-clip: text;
-background-clip: text;
-color: transparent;
--webkit-text-fill-color: transparent;
-transition: transform .3s ease;
-user-select: none;
--webkit-tap-highlight-color: transparent;
-touch-action: manipulation;
-min-height: var(–min-touch);
-display: flex;
-align-items: center;
-justify-content: center;
+  margin: 0;
+  padding: 15px;
+  font-size: clamp(1em, 3.5vw, 1.4em);
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--accent-red), #00ff00, #00bfff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  transition: transform .3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: var(--min-touch);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 h2:hover { transform: scale(1.03); }
 
 /* ════════════════════════════════════════════════════════
-SECTION ACCORDION
+   SECTION ACCORDION
 ════════════════════════════════════════════════════════ */
 .section { max-height: 0; overflow: hidden; transition: max-height .35s ease; will-change: max-height; }
 .section-inner { padding: 12px 10px 18px; }
 
 /* ════════════════════════════════════════════════════════
-FORM ELEMENTS
+   FORM ELEMENTS
 ════════════════════════════════════════════════════════ */
 .form-row {
-display: flex;
-gap: 12px;
-align-items: center;
-justify-content: center;
-flex-wrap: wrap;
-margin: 6px 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 6px 0;
 }
 label {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-color: var(–label-dark-blue);
-font-weight: 700;
-font-size: 1.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--label-dark-blue);
+  font-weight: 700;
+  font-size: 1.05em;
 }
 input, select, textarea {
-margin: 0;
-padding: 8px 10px;
-border-radius: var(–radius);
-border: 1px solid rgba(0,0,0,.08);
-font-size: max(16px, 1em);
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,0,0,.08);
+  font-size: max(16px, 1em);
 }
 textarea { min-height: 160px; max-width: 100%; width: 100%; resize: vertical; }
-input[type=number] { width: var(–input-w); }
-input:focus, select:focus, textarea:focus { box-shadow: var(–focus); outline: none; }
+input[type=number] { width: var(--input-w); }
+input:focus, select:focus, textarea:focus { box-shadow: var(--focus); outline: none; }
 
 /* ════════════════════════════════════════════════════════
-BUTTONS
+   BUTTONS
 ════════════════════════════════════════════════════════ */
 button {
-padding: 10px 18px;
-min-height: var(–min-touch);
-min-width: 44px;
-margin-top: 12px;
-border-radius: var(–radius);
-cursor: pointer;
-transition: all .18s ease;
-border: 1px solid transparent;
-background: #eee;
-color: #000;
--webkit-tap-highlight-color: transparent;
-touch-action: manipulation;
-font-size: 0.95em;
-user-select: none;
+  padding: 10px 18px;
+  min-height: var(--min-touch);
+  min-width: 44px;
+  margin-top: 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .18s ease;
+  border: 1px solid transparent;
+  background: #eee;
+  color: #000;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  font-size: 0.95em;
+  user-select: none;
 }
 button:hover    { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.12); }
-button:focus    { outline: none; box-shadow: var(–focus); }
+button:focus    { outline: none; box-shadow: var(--focus); }
 button:active   { transform: translateY(0); }
 button[disabled]{ opacity: .5; cursor: not-allowed; transform: none; }
 
 /* ════════════════════════════════════════════════════════
-RESULT OUTPUT
+   RESULT OUTPUT
 ════════════════════════════════════════════════════════ */
 .result-out {
-margin-top: 16px;
-font-size: 1.05em;
-font-weight: 700;
-opacity: 0;
-transform: translateY(8px);
-transition: opacity .25s ease, transform .25s ease;
-white-space: pre-line;
+  margin-top: 16px;
+  font-size: 1.05em;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .25s ease, transform .25s ease;
+  white-space: pre-line;
 }
 .result-out.show { opacity: 1; transform: translateY(0); }
 
 /* ════════════════════════════════════════════════════════
-VALIDATION
+   VALIDATION
 ════════════════════════════════════════════════════════ */
-.input-error { border: 2px solid var(–accent-red) !important; animation: shake .25s ease; }
+.input-error { border: 2px solid var(--accent-red) !important; animation: shake .25s ease; }
 @keyframes shake {
-0%,100% { transform: translateX(0); }
-25%     { transform: translateX(-4px); }
-75%     { transform: translateX(4px); }
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-4px); }
+  75%     { transform: translateX(4px); }
 }
-.error-msg { color: var(–accent-red); font-size: .92em; margin-top: 4px; font-weight: 700; }
+.error-msg { color: var(--accent-red); font-size: .92em; margin-top: 4px; font-weight: 700; }
 
 /* ════════════════════════════════════════════════════════
-DARK THEME
+   DARK THEME
 ════════════════════════════════════════════════════════ */
-body.dark { background-color: var(–bg-dark); color: var(–accent-red); }
+body.dark { background-color: var(--bg-dark); color: var(--accent-red); }
 body.dark input,
 body.dark select,
-body.dark textarea  { background-color: #111; color: var(–accent-red); border: 1px solid var(–accent-red); }
-body.dark button    { background-color: #111; color: var(–accent-green); border: 1px solid var(–accent-green); }
-body.dark button:hover { background-color: var(–accent-green); color: #000; }
-body.dark .result-out  { color: var(–result-dark-blue); }
-body.dark label        { color: var(–label-dark-blue); }
+body.dark textarea  { background-color: #111; color: var(--accent-red); border: 1px solid var(--accent-red); }
+body.dark button    { background-color: #111; color: var(--accent-green); border: 1px solid var(--accent-green); }
+body.dark button:hover { background-color: var(--accent-green); color: #000; }
+body.dark .result-out  { color: var(--result-dark-blue); }
+body.dark label        { color: var(--label-dark-blue); }
 body.dark .section-header-wrap { border-bottom: 1px solid #222; }
 body.dark .splice-list-row { background: rgba(255,255,255,.03); }
 body.dark .saved-note-item { background: rgba(255,255,255,.03); }
 body.dark .ai-raw-output   { background: #0a0a0a; border-color: rgba(0,191,255,.3); color: #00bfff; }
 
 /* ════════════════════════════════════════════════════════
-LIGHT THEME
+   LIGHT THEME
 ════════════════════════════════════════════════════════ */
-body.light { background-color: var(–bg-light); color: #000; }
+body.light { background-color: var(--bg-light); color: #000; }
 body.light input,
 body.light select,
 body.light textarea  { background-color: #f0f0f0; color: #000; border: 1px solid #000; }
 body.light button    { background-color: #eee; color: #000; border: 1px solid #000; }
 body.light button:hover { background-color: #000; color: #fff; }
-body.light .result-out  { color: var(–result-light-blue); }
-body.light label        { color: var(–label-light-blue); }
+body.light .result-out  { color: var(--result-light-blue); }
+body.light label        { color: var(--label-light-blue); }
 body.light .splice-list-row { background: rgba(0,0,0,.03); }
 body.light .saved-note-item { background: rgba(0,0,0,.03); }
 body.light .ai-raw-output   { background: #f7faff; border-color: rgba(0,100,180,.3); color: #003366; }
 
 /* ════════════════════════════════════════════════════════
-THEME TOGGLE
+   THEME TOGGLE
 ════════════════════════════════════════════════════════ */
 .switch { position: relative; display: inline-block; width: 48px; height: 28px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider {
-position: absolute; cursor: pointer;
-top: 0; left: 0; right: 0; bottom: 0;
-background-color: #ccc; transition: .3s; border-radius: 26px;
+  position: absolute; cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc; transition: .3s; border-radius: 26px;
 }
 .slider::before {
-position: absolute; content: “”;
-height: 20px; width: 20px; left: 4px; bottom: 4px;
-background-color: white; transition: .3s; border-radius: 50%;
+  position: absolute; content: "";
+  height: 20px; width: 20px; left: 4px; bottom: 4px;
+  background-color: white; transition: .3s; border-radius: 50%;
 }
 input:checked + .slider { background-color: #2196F3; }
 input:checked + .slider::before { transform: translateX(20px); }
 
 /* ════════════════════════════════════════════════════════
-CUSTOM SPLICES
+   CUSTOM SPLICES
 ════════════════════════════════════════════════════════ */
 .custom-splices {
-margin: 8px auto 0;
-border-radius: 6px;
-padding: 10px;
-background: rgba(255,255,255,.02);
-display: flex;
-flex-direction: column;
-gap: 8px;
-max-width: 760px;
+  margin: 8px auto 0;
+  border-radius: 6px;
+  padding: 10px;
+  background: rgba(255,255,255,.02);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 760px;
 }
 .splice-row { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.splice-row input[type=“text”]   { width: 200px; }
-.splice-row input[type=“number”] { width: 110px; }
+.splice-row input[type="text"]   { width: 200px; }
+.splice-row input[type="number"] { width: 110px; }
 .splice-actions { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
 .splice-list-row {
-display: flex; gap: 8px; align-items: center;
-justify-content: center; flex-wrap: wrap;
-padding: 8px; border-radius: 6px; margin: 2px 0;
+  display: flex; gap: 8px; align-items: center;
+  justify-content: center; flex-wrap: wrap;
+  padding: 8px; border-radius: 6px; margin: 2px 0;
 }
 .splice-list-row .col        { padding: 4px; }
 .splice-list-row .col.label  { width: 200px; text-align: left; }
@@ -256,480 +255,320 @@ padding: 8px; border-radius: 6px; margin: 2px 0;
 .small-note { font-size: .9em; color: inherit; opacity: .9; }
 
 /* ════════════════════════════════════════════════════════
-TOOLTIP
+   TOOLTIP
 ════════════════════════════════════════════════════════ */
 .km-tooltip {
-position: fixed; pointer-events: none;
-padding: 6px 8px; border-radius: 6px;
-background: var(–tooltip-bg); color: var(–tooltip-color);
-font-size: .9em; z-index: 9999;
-transform: translate(-50%, -120%);
-white-space: nowrap; opacity: 0;
-transition: opacity .12s ease;
+  position: fixed; pointer-events: none;
+  padding: 6px 8px; border-radius: 6px;
+  background: var(--tooltip-bg); color: var(--tooltip-color);
+  font-size: .9em; z-index: 9999;
+  transform: translate(-50%, -120%);
+  white-space: nowrap; opacity: 0;
+  transition: opacity .12s ease;
 }
 .km-tooltip.show { opacity: 1; }
 
 /* ════════════════════════════════════════════════════════
-DISCREET API SETTINGS
+   DISCREET API SETTINGS
 ════════════════════════════════════════════════════════ */
 .api-settings-wrap {
-margin: 0 auto 14px;
-text-align: center;
+  margin: 0 auto 14px;
+  text-align: center;
 }
 .api-settings-toggle {
-font-size: .78em;
-opacity: .4;
-cursor: pointer;
-user-select: none;
--webkit-tap-highlight-color: transparent;
-transition: opacity .15s;
-letter-spacing: .04em;
+  font-size: .78em;
+  opacity: .4;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+  letter-spacing: .04em;
 }
 .api-settings-toggle:hover { opacity: .75; }
 .api-settings-panel {
-max-height: 0;
-overflow: hidden;
-transition: max-height .3s ease;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 5px;
-margin-top: 6px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
 }
 .api-settings-panel.open { max-height: 80px; }
 .api-settings-panel label {
-font-size: .85em;
-font-weight: 600;
-gap: 8px;
-color: inherit;
-opacity: .7;
+  font-size: .85em;
+  font-weight: 600;
+  gap: 8px;
+  color: inherit;
+  opacity: .7;
 }
 .api-settings-panel input {
-width: 240px;
-font-family: ‘Courier New’, monospace;
-font-size: max(14px, .85em);
-padding: 5px 8px;
+  width: 240px;
+  font-family: 'Courier New', monospace;
+  font-size: max(14px, .85em);
+  padding: 5px 8px;
 }
 .api-key-hint {
-font-size: .78em;
-opacity: .55;
-text-align: center;
+  font-size: .78em;
+  opacity: .55;
+  text-align: center;
 }
 
 /* ════════════════════════════════════════════════════════
-CONVERTER RESULT CARD
+   CONVERTER RESULT CARD
 ════════════════════════════════════════════════════════ */
 .conv-result-card {
-display: inline-flex;
-flex-direction: column;
-align-items: center;
-gap: 6px;
-margin: 16px auto 0;
-padding: 16px 28px;
-border-radius: 12px;
-border: 1px solid rgba(0,191,255,.35);
-box-shadow: 0 0 16px rgba(0,191,255,.12);
-animation: ribbonPop .25s cubic-bezier(.175,.885,.32,1.275);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 16px auto 0;
+  padding: 16px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,191,255,.35);
+  box-shadow: 0 0 16px rgba(0,191,255,.12);
+  animation: ribbonPop .25s cubic-bezier(.175,.885,.32,1.275);
 }
 .conv-result-card .cr-value {
-font-size: 1.7em;
-font-weight: 900;
-color: #00bfff;
-text-shadow: 0 0 10px rgba(0,191,255,.5);
-letter-spacing: .02em;
+  font-size: 1.7em;
+  font-weight: 900;
+  color: #00bfff;
+  text-shadow: 0 0 10px rgba(0,191,255,.5);
+  letter-spacing: .02em;
 }
 .conv-result-card .cr-from {
-font-size: .85em;
-opacity: .6;
+  font-size: .85em;
+  opacity: .6;
 }
 .conv-result-card .cr-preview {
-font-size: .82em;
-opacity: .5;
-font-style: italic;
+  font-size: .82em;
+  opacity: .5;
+  font-style: italic;
 }
 body.light .conv-result-card { border-color: rgba(0,100,180,.3); box-shadow: 0 0 16px rgba(0,100,180,.1); }
 body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
 
 /* ════════════════════════════════════════════════════════
-RIBBON RESULT CARD
+   RIBBON RESULT CARD
 ════════════════════════════════════════════════════════ */
 .ribbon-result-card {
-display: inline-flex;
-flex-direction: column;
-align-items: center;
-gap: 10px;
-margin: 18px auto 0;
-padding: 18px 28px;
-border-radius: 12px;
-border: 2px solid var(–ribbon-color, #888);
-box-shadow: 0 0 18px var(–ribbon-glow, rgba(128,128,128,.3)),
-inset 0 0 30px rgba(0,0,0,.2);
-animation: ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 18px auto 0;
+  padding: 18px 28px;
+  border-radius: 12px;
+  border: 2px solid var(--ribbon-color, #888);
+  box-shadow: 0 0 18px var(--ribbon-glow, rgba(128,128,128,.3)),
+              inset 0 0 30px rgba(0,0,0,.2);
+  animation: ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);
 }
 @keyframes ribbonPop {
-from { opacity:0; transform:scale(.88) translateY(10px); }
-to   { opacity:1; transform:scale(1)   translateY(0); }
+  from { opacity:0; transform:scale(.88) translateY(10px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
 }
 .ribbon-result-card .rc-swatch {
-width: 60px; height: 60px;
-border-radius: 10px;
-border: 3px solid rgba(255,255,255,.2);
-box-shadow: 0 0 14px var(–ribbon-glow, rgba(128,128,128,.5));
+  width: 60px; height: 60px;
+  border-radius: 10px;
+  border: 3px solid rgba(255,255,255,.2);
+  box-shadow: 0 0 14px var(--ribbon-glow, rgba(128,128,128,.5));
 }
 .ribbon-result-card .rc-color-name {
-font-size: 1.55em;
-font-weight: 900;
-letter-spacing: .04em;
-color: var(–ribbon-color, #888);
-text-shadow: 0 0 12px var(–ribbon-glow, rgba(128,128,128,.5));
+  font-size: 1.55em;
+  font-weight: 900;
+  letter-spacing: .04em;
+  color: var(--ribbon-color, #888);
+  text-shadow: 0 0 12px var(--ribbon-glow, rgba(128,128,128,.5));
 }
 .ribbon-result-card .rc-details {
-display: flex;
-gap: 20px;
-flex-wrap: wrap;
-justify-content: center;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .ribbon-result-card .rc-detail {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 .ribbon-result-card .rc-detail-label {
-font-size: .7em;
-opacity: .55;
-text-transform: uppercase;
-letter-spacing: .09em;
+  font-size: .7em;
+  opacity: .55;
+  text-transform: uppercase;
+  letter-spacing: .09em;
 }
 .ribbon-result-card .rc-detail-value {
-font-size: 1.15em;
-font-weight: 700;
-color: var(–ribbon-color, #888);
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--ribbon-color, #888);
 }
 
 /* ════════════════════════════════════════════════════════
-RIBBON SWATCHES
+   RIBBON SWATCHES
 ════════════════════════════════════════════════════════ */
 .ribbon-strip {
-display: flex; justify-content: center; flex-wrap: wrap;
-gap: 6px; margin: 14px auto 0; max-width: 600px;
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: 6px; margin: 14px auto 0; max-width: 600px;
 }
 .ribbon-swatch { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: default; }
 .ribbon-swatch .swatch-box {
-width: 38px; height: 38px; border-radius: 6px;
-border: 2px solid rgba(255,255,255,.15); box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  width: 38px; height: 38px; border-radius: 6px;
+  border: 2px solid rgba(255,255,255,.15); box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
 .ribbon-swatch .swatch-label {
-font-size: .7em; font-weight: 700; text-align: center;
-max-width: 42px; word-break: break-word; white-space: pre;
+  font-size: .7em; font-weight: 700; text-align: center;
+  max-width: 42px; word-break: break-word; white-space: pre;
 }
 
 /* ════════════════════════════════════════════════════════
-SAVED NOTES
+   SAVED NOTES
 ════════════════════════════════════════════════════════ */
 .saved-note-item {
-display: flex; gap: 8px; align-items: center;
-justify-content: space-between;
-padding: 8px 10px; border-radius: 6px; margin: 4px 0;
-font-size: .9em; text-align: left; flex-wrap: wrap;
+  display: flex; gap: 8px; align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px; border-radius: 6px; margin: 4px 0;
+  font-size: .9em; text-align: left; flex-wrap: wrap;
 }
 .saved-note-item .note-label { flex: 1; min-width: 100px; word-break: break-all; }
 .saved-note-actions { display: flex; gap: 6px; }
 
 /* ════════════════════════════════════════════════════════
-JOB PHOTO READER
+   JOB PHOTO READER
 ════════════════════════════════════════════════════════ */
 .photo-upload-label {
-display: inline-flex;
-align-items: center;
-gap: 10px;
-padding: 14px 22px;
-border-radius: 8px;
-cursor: pointer;
-font-size: 1.05em;
-font-weight: 700;
-border: 2px solid #00bfff;
-color: #00bfff;
-background: rgba(0,191,255,.08);
-transition: all .18s ease;
-margin-bottom: 10px;
-min-height: var(–min-touch);
-user-select: none;
--webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.05em;
+  font-weight: 700;
+  border: 2px solid #00bfff;
+  color: #00bfff;
+  background: rgba(0,191,255,.08);
+  transition: all .18s ease;
+  margin-bottom: 10px;
+  min-height: var(--min-touch);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .photo-upload-label:active { background: rgba(0,191,255,.2); }
 #photoInput { display: none; }
 
 #photoPreview {
-max-width: 100%;
-max-height: 240px;
-border-radius: 8px;
-margin: 10px auto;
-display: none;
-box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 8px;
+  margin: 10px auto;
+  display: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
 }
 
 .ai-status {
-font-size: .9em;
-color: #00bfff;
-margin: 8px 0;
-min-height: 1.4em;
+  font-size: .9em;
+  color: #00bfff;
+  margin: 8px 0;
+  min-height: 1.4em;
 }
 
 /* Raw output — monospaced, scrollable, selectable */
 .ai-raw-output {
-display: none;
-margin: 12px auto 0;
-max-width: 760px;
-text-align: left;
-border: 1px solid rgba(0,191,255,.3);
-border-radius: 8px;
-padding: 14px 16px;
-font-family: ‘Courier New’, Courier, monospace;
-font-size: 0.9em;
-font-weight: 400;
-white-space: pre-wrap;
-word-break: break-word;
-line-height: 1.7;
-max-height: 460px;
-overflow-y: auto;
--webkit-overflow-scrolling: touch;
-user-select: text;
+  display: none;
+  margin: 12px auto 0;
+  max-width: 760px;
+  text-align: left;
+  border: 1px solid rgba(0,191,255,.3);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.7;
+  max-height: 460px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  user-select: text;
 }
 
 .spinner {
-display: inline-block;
-width: 16px; height: 16px;
-border: 2px solid rgba(0,191,255,.3);
-border-top-color: #00bfff;
-border-radius: 50%;
-animation: spin .7s linear infinite;
-vertical-align: middle;
-margin-right: 6px;
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0,191,255,.3);
+  border-top-color: #00bfff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ════════════════════════════════════════════════════════
-BTN ROW HELPER
+   BTN ROW HELPER
 ════════════════════════════════════════════════════════ */
 .btn-row {
-display: flex;
-gap: 8px;
-justify-content: center;
-align-items: center;
-flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 /* ════════════════════════════════════════════════════════
-OTDR RESULT CARD
-════════════════════════════════════════════════════════ */
-.otdr-result-card {
-margin: 12px auto 0;
-max-width: 600px;
-border-radius: 12px;
-border: 1px solid rgba(0,191,255,.35);
-overflow: hidden;
-animation: ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);
-}
-.otdr-card-header {
-padding: 14px 18px 10px;
-border-bottom: 1px solid rgba(0,191,255,.2);
-}
-.otdr-card-header .otdr-job {
-font-size: 1.5em;
-font-weight: 900;
-color: #00bfff;
-text-shadow: 0 0 10px rgba(0,191,255,.4);
-letter-spacing: .04em;
-}
-.otdr-card-header .otdr-meta {
-font-size: .82em;
-opacity: .6;
-margin-top: 2px;
-}
-.otdr-row {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 9px 18px;
-border-bottom: 1px solid rgba(0,191,255,.08);
-font-size: .95em;
-gap: 8px;
-}
-.otdr-row:last-child { border-bottom: none; }
-.otdr-row .count-num {
-font-weight: 700;
-min-width: 60px;
-color: #00bfff;
-}
-.otdr-row .dist-val {
-flex: 1;
-font-weight: 700;
-text-align: right;
-}
-.otdr-row .diff-flag {
-min-width: 90px;
-text-align: right;
-font-size: .85em;
-font-weight: 700;
-}
-.otdr-row.flag-ok   .diff-flag { color: #00ff00; }
-.otdr-row.flag-warn .diff-flag { color: #ff6600; }
-.otdr-row.flag-skip .dist-val  { opacity: .4; font-style: italic; }
-.otdr-card-footer {
-padding: 10px 18px;
-font-size: .82em;
-opacity: .5;
-border-top: 1px solid rgba(0,191,255,.1);
-}
-body.light .otdr-result-card  { border-color: rgba(0,100,180,.3); }
-body.light .otdr-card-header .otdr-job { color: #0055aa; text-shadow: none; }
-body.light .otdr-row          { border-bottom-color: rgba(0,100,180,.1); }
-body.light .otdr-row .count-num { color: #0055aa; }
-body.light .otdr-row.flag-ok .diff-flag { color: #007700; }
-
-/* ════════════════════════════════════════════════════════
-RESPONSIVE
+   RESPONSIVE
 ════════════════════════════════════════════════════════ */
 @media (max-width: 720px) {
-body { padding: 10px 8px; }
-.form-row { flex-direction: column; align-items: stretch; gap: 10px; }
-label { width: 100%; justify-content: space-between; }
-label input[type=number], label select { flex: 1; width: auto; min-width: 0; }
-input[type=number] { width: 100%; }
+  body { padding: 10px 8px; }
+  .form-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  label { width: 100%; justify-content: space-between; }
+  label input[type=number], label select { flex: 1; width: auto; min-width: 0; }
+  input[type=number] { width: 100%; }
 
-.splice-list-row { flex-direction: column; align-items: flex-start; }
-.splice-list-row .col { width: 100%; text-align: left; }
-.splice-list-row .col.actions { flex-wrap: wrap; }
-.splice-actions { flex-direction: column; align-items: stretch; }
-.splice-actions input, .splice-actions button { width: 100%; }
-.splice-row input[type=“text”],
-.splice-row input[type=“number”] { width: 100%; }
+  .splice-list-row { flex-direction: column; align-items: flex-start; }
+  .splice-list-row .col { width: 100%; text-align: left; }
+  .splice-list-row .col.actions { flex-wrap: wrap; }
+  .splice-actions { flex-direction: column; align-items: stretch; }
+  .splice-actions input, .splice-actions button { width: 100%; }
+  .splice-row input[type="text"],
+  .splice-row input[type="number"] { width: 100%; }
 
-.btn-row { flex-direction: column; align-items: stretch; }
-.btn-row button { width: 100%; margin-top: 8px; }
+  .btn-row { flex-direction: column; align-items: stretch; }
+  .btn-row button { width: 100%; margin-top: 8px; }
 
-.app-title .author { display: block; text-align: center; margin-right: 0; }
-.ribbon-swatch .swatch-box { width: 30px; height: 30px; }
+  .app-title .author { display: block; text-align: center; margin-right: 0; }
+  .ribbon-swatch .swatch-box { width: 30px; height: 30px; }
 
-.saved-note-item { flex-direction: column; align-items: flex-start; }
-.saved-note-actions { width: 100%; }
-.saved-note-actions button { flex: 1; }
+  .saved-note-item { flex-direction: column; align-items: flex-start; }
+  .saved-note-actions { width: 100%; }
+  .saved-note-actions button { flex: 1; }
 
-.photo-upload-label { width: 100%; justify-content: center; }
+  .photo-upload-label { width: 100%; justify-content: center; }
 }
 @media (max-width: 520px) {
-.switch { width: 44px; height: 24px; }
-.slider::before { height: 16px; width: 16px; }
-input:checked + .slider::before { transform: translateX(20px); }
+  .switch { width: 44px; height: 24px; }
+  .slider::before { height: 16px; width: 16px; }
+  input:checked + .slider::before { transform: translateX(20px); }
 }
 </style>
-
 </head>
 <body class="dark">
 
 <!-- ══════════════════════════════════════════════════════
      APP HEADER
 ═══════════════════════════════════════════════════════════ -->
-
 <div class="app-title">
   <h1>L.E.N.S. – Loss Estimator &amp; Network Solver</h1>
   <p class="author">By: Jovan Faulkner</p>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     1. OTDR NOTE MAKER
+     1. DISTANCE CONVERTER
 ═══════════════════════════════════════════════════════════ -->
-
-<div class="section-header-wrap">
-  <h2 id="otdrHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="otdrSection">OTDR Note Maker ▼</h2>
-</div>
-<div id="otdrSection" class="section">
-  <div class="section-inner">
-
-```
-<!-- Step 1: Job info -->
-<div id="otdrStep1">
-  <p class="small-note" style="margin-bottom:12px">Enter the job info to get started.</p>
-  <div class="form-row">
-    <label for="otdrJobCode">Job / Ticket Code:
-      <input id="otdrJobCode" type="text" placeholder="e.g. A02RFAX" autocomplete="off">
-    </label>
-  </div>
-  <div class="form-row">
-    <label for="otdrRangeStart">Count Range — From:
-      <input id="otdrRangeStart" type="number" inputmode="numeric" placeholder="e.g. 25" min="1">
-    </label>
-    <label for="otdrRangeEnd">To:
-      <input id="otdrRangeEnd" type="number" inputmode="numeric" placeholder="e.g. 34" min="1">
-    </label>
-  </div>
-  <div id="otdrStep1Error" class="error-msg" style="display:none"></div>
-  <div class="btn-row" style="margin-top:12px">
-    <button id="otdrStartBtn" type="button">Start Entering Readings</button>
-  </div>
-</div>
-
-<!-- Step 2: Count-by-count entry -->
-<div id="otdrStep2" style="display:none">
-  <div id="otdrProgressLabel" class="small-note" style="margin-bottom:10px;font-size:1em;font-weight:700"></div>
-  <div class="form-row">
-    <label for="otdrCountDisplay" style="font-size:1.2em;font-weight:900;color:#00bfff">
-      Count <span id="otdrCountDisplay">—</span>:
-      <input id="otdrDistInput" type="number" inputmode="decimal" placeholder="Distance (ft)" min="0" style="width:160px">
-    </label>
-  </div>
-  <p class="small-note" id="otdrDiffHint" style="min-height:1.2em;margin:4px 0"></p>
-  <div class="btn-row">
-    <button id="otdrNextBtn" type="button">Next Count →</button>
-    <button id="otdrSkipBtn" type="button">Skip</button>
-  </div>
-</div>
-
-<!-- Step 3: Results -->
-<div id="otdrStep3" style="display:none">
-  <div id="otdrResultCard" class="otdr-result-card"></div>
-  <div class="btn-row" style="margin-top:8px">
-    <button id="otdrCopyBtn"     type="button">Copy</button>
-    <button id="otdrSaveBtn"     type="button">Save</button>
-    <button id="otdrDownloadBtn" type="button">Download .txt</button>
-    <button id="otdrRestartBtn"  type="button">New Reading</button>
-  </div>
-</div>
-```
-
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
-     2. FIBER RIBBON FINDER
-═══════════════════════════════════════════════════════════ -->
-
-<div class="section-header-wrap">
-  <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder ▼</h2>
-</div>
-<div id="ribbonSection" class="section">
-  <div class="section-inner">
-    <div class="form-row">
-      <label for="strand">Strand Number:
-        <input id="strand" type="number" inputmode="numeric" placeholder="Enter strand #" min="1" aria-label="Strand number">
-      </label>
-    </div>
-    <div class="btn-row">
-      <button id="findBtn" type="button">Find Ribbon</button>
-    </div>
-    <p id="ribbonResult" class="result-out" aria-live="polite"></p>
-    <div style="margin-top:16px">
-      <strong>EIA/TIA Color Order Reference</strong>
-      <div class="ribbon-strip" id="ribbonStrip"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
-     3. DISTANCE CONVERTER
-═══════════════════════════════════════════════════════════ -->
-
 <div class="section-header-wrap">
   <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter ▼</h2>
 </div>
@@ -767,105 +606,194 @@ input:checked + .slider::before { transform: translateX(20px); }
 </div>
 
 <!-- ══════════════════════════════════════════════════════
+     2. FIBER RIBBON FINDER
+═══════════════════════════════════════════════════════════ -->
+<div class="section-header-wrap">
+  <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder ▼</h2>
+</div>
+<div id="ribbonSection" class="section">
+  <div class="section-inner">
+    <div class="form-row">
+      <label for="strand">Strand Number:
+        <input id="strand" type="number" inputmode="numeric" placeholder="Enter strand #" min="1" aria-label="Strand number">
+      </label>
+    </div>
+    <div class="btn-row">
+      <button id="findBtn" type="button">Find Ribbon</button>
+    </div>
+    <p id="ribbonResult" class="result-out" aria-live="polite"></p>
+    <div style="margin-top:16px">
+      <strong>EIA/TIA Color Order Reference</strong>
+      <div class="ribbon-strip" id="ribbonStrip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3. JOB PRINTOUT READER
+═══════════════════════════════════════════════════════════ -->
+<div class="section-header-wrap">
+  <h2 id="jobHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="jobSection">Job Printout Reader ▼</h2>
+</div>
+<div id="jobSection" class="section">
+  <div class="section-inner">
+
+    <p class="small-note" style="margin-bottom:10px">
+      Take a photo of any job printout.<br>
+      The AI will break it down into plain English — where you're going, what you're working on, and exactly what needs to be done.
+    </p>
+
+    <!-- Discreet API key settings — collapsed by default -->
+    <div class="api-settings-wrap">
+      <span id="apiSettingsToggle" class="api-settings-toggle" tabindex="0" role="button" aria-expanded="false">⚙ Settings</span>
+      <div id="apiSettingsPanel" class="api-settings-panel">
+        <label for="apiKeyInput">
+          API Key:
+          <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="new-password" spellcheck="false" aria-label="Anthropic API key">
+        </label>
+        <span class="api-key-hint">Saved locally on this device only. &nbsp;<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:#00bfff;opacity:.8">Get a key ↗</a></span>
+      </div>
+    </div>
+
+    <!-- Camera / upload button — large for field use -->
+    <label class="photo-upload-label" for="photoInput" aria-label="Take photo or upload job printout">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      📋 Take Photo / Upload Printout
+    </label>
+    <!-- capture="environment" = rear camera on iPhone -->
+    <input type="file" id="photoInput" accept="image/*" capture="environment" aria-label="Upload job printout image">
+
+    <div><img id="photoPreview" alt="Printout preview" /></div>
+
+    <div class="ai-status" id="aiStatus" aria-live="polite"></div>
+
+    <div class="btn-row" style="margin-top:4px">
+      <button id="analyzeBtn" type="button" style="display:none">🔍 Break Down This Printout</button>
+    </div>
+
+    <!-- Raw extracted text output -->
+    <div id="aiRawOutput" class="ai-raw-output" aria-live="polite" tabindex="0"></div>
+
+    <!-- Action buttons — shown after analysis completes -->
+    <div class="btn-row" id="jobActionBtns" style="display:none; margin-top:4px">
+      <button id="copyJobBtn"     type="button">Copy</button>
+      <button id="saveJobBtn"     type="button">Save</button>
+      <button id="downloadJobBtn" type="button">Download .txt</button>
+      <button id="clearJobBtn"    type="button">Clear</button>
+    </div>
+
+    <!-- Saved notes list -->
+    <div style="margin-top:20px;max-width:760px;margin-left:auto;margin-right:auto;text-align:left">
+      <strong id="savedNotesTitle" style="display:none">Saved Notes</strong>
+      <div id="savedNotesList" style="margin-top:8px"></div>
+    </div>
+
+    <p class="small-note" style="margin-top:16px">
+      Tip: tap Copy, then open Notes on your iPhone and paste.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
      4. FIBER LOSS CALCULATOR
 ═══════════════════════════════════════════════════════════ -->
-
 <div class="section-header-wrap">
   <h2 id="lossHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="lossSection">Fiber Loss Calculator ▼</h2>
 </div>
 <div id="lossSection" class="section">
   <div class="section-inner">
 
-```
-<div class="form-row">
-  <label for="distance">Distance:
-    <input id="distance" type="number" inputmode="decimal" placeholder="Enter value" min="0" aria-label="Distance value">
-  </label>
-  <label for="unit">Unit:
-    <select id="unit" aria-label="Distance unit">
-      <option value="km">km</option>
-      <option value="mi">miles</option>
-      <option value="kft">kilofeet</option>
-      <option value="ft">feet</option>
-    </select>
-  </label>
-  <label for="previewUnit" style="font-weight:600;font-size:.95em">Preview unit:
-    <select id="previewUnit" aria-label="Preview unit">
-      <option value="ft">feet (ft)</option>
-      <option value="km">kilometers (km)</option>
-    </select>
-  </label>
-  <div class="small-note" id="distanceHint" aria-hidden="true" style="align-self:center"></div>
-</div>
-<div id="distanceError" class="error-msg" style="display:none" aria-live="assertive"></div>
+    <div class="form-row">
+      <label for="distance">Distance:
+        <input id="distance" type="number" inputmode="decimal" placeholder="Enter value" min="0" aria-label="Distance value">
+      </label>
+      <label for="unit">Unit:
+        <select id="unit" aria-label="Distance unit">
+          <option value="km">km</option>
+          <option value="mi">miles</option>
+          <option value="kft">kilofeet</option>
+          <option value="ft">feet</option>
+        </select>
+      </label>
+      <label for="previewUnit" style="font-weight:600;font-size:.95em">Preview unit:
+        <select id="previewUnit" aria-label="Preview unit">
+          <option value="ft">feet (ft)</option>
+          <option value="km">kilometers (km)</option>
+        </select>
+      </label>
+      <div class="small-note" id="distanceHint" aria-hidden="true" style="align-self:center"></div>
+    </div>
+    <div id="distanceError" class="error-msg" style="display:none" aria-live="assertive"></div>
 
-<div class="form-row">
-  <label for="wavelength">Wavelength:
-    <select id="wavelength" aria-label="Wavelength">
-      <option value="850">850 nm</option>
-      <option value="1310">1310 nm</option>
-      <option value="1490">1490 nm</option>
-      <option value="1550" selected>1550 nm</option>
-      <option value="1625">1625 nm</option>
-    </select>
-  </label>
-</div>
+    <div class="form-row">
+      <label for="wavelength">Wavelength:
+        <select id="wavelength" aria-label="Wavelength">
+          <option value="850">850 nm</option>
+          <option value="1310">1310 nm</option>
+          <option value="1490">1490 nm</option>
+          <option value="1550" selected>1550 nm</option>
+          <option value="1625">1625 nm</option>
+        </select>
+      </label>
+    </div>
 
-<div class="form-row">
-  <label for="connectors">Connectors:
-    <input id="connectors" type="number" inputmode="numeric" placeholder="0" min="0" aria-label="Number of connectors">
-  </label>
-  <label for="connectorLoss">Loss per connector:
-    <select id="connectorLoss" aria-label="Connector loss">
-      <option value="0.45">0.45 dB</option>
-      <option value="0.55">0.55 dB</option>
-      <option value="0.75">0.75 dB</option>
-    </select>
-  </label>
-</div>
+    <div class="form-row">
+      <label for="connectors">Connectors:
+        <input id="connectors" type="number" inputmode="numeric" placeholder="0" min="0" aria-label="Number of connectors">
+      </label>
+      <label for="connectorLoss">Loss per connector:
+        <select id="connectorLoss" aria-label="Connector loss">
+          <option value="0.45">0.45 dB</option>
+          <option value="0.55">0.55 dB</option>
+          <option value="0.75">0.75 dB</option>
+        </select>
+      </label>
+    </div>
 
-<div class="form-row">
-  <label for="splices">Splices:
-    <input id="splices" type="number" inputmode="numeric" placeholder="0" min="0" aria-label="Number of splices">
-  </label>
-  <label for="spliceLoss">Loss per splice:
-    <select id="spliceLoss" aria-label="Splice loss">
-      <option value="0.03">0.03 dB</option>
-      <option value="0.05">0.05 dB</option>
-      <option value="0.10">0.10 dB</option>
-    </select>
-  </label>
-</div>
+    <div class="form-row">
+      <label for="splices">Splices:
+        <input id="splices" type="number" inputmode="numeric" placeholder="0" min="0" aria-label="Number of splices">
+      </label>
+      <label for="spliceLoss">Loss per splice:
+        <select id="spliceLoss" aria-label="Splice loss">
+          <option value="0.03">0.03 dB</option>
+          <option value="0.05">0.05 dB</option>
+          <option value="0.10">0.10 dB</option>
+        </select>
+      </label>
+    </div>
 
-<!-- Custom Splices -->
-<div class="custom-splices" id="customSplicesArea" aria-live="polite">
-  <div class="splice-row">
-    <strong>Custom Splices</strong>
-    <span class="small-note">Add specific splice entries to include in the total</span>
-  </div>
-  <div class="splice-row" style="font-weight:700" aria-hidden="true">
-    <div style="width:200px;text-align:left">Label</div>
-    <div style="width:110px;text-align:left">Count</div>
-    <div style="width:110px;text-align:left">Loss (dB)</div>
-    <div style="width:140px;text-align:left">Action</div>
-  </div>
-  <div id="spliceList" style="display:flex;flex-direction:column;gap:6px" aria-live="polite"></div>
-  <div class="splice-actions">
-    <input id="newSpliceLabel" type="text"   placeholder="Name (e.g., Splice-1)"    aria-label="New splice label"/>
-    <input id="newSpliceCount" type="number" inputmode="numeric" min="0" step="1"   value="1"    aria-label="New splice count"/>
-    <input id="newSpliceLoss"  type="number" inputmode="decimal" min="0" step="0.01" value="0.05" aria-label="New splice loss in dB"/>
-    <button id="addSpliceBtn"   type="button">Add Splice</button>
-    <button id="clearCustomBtn" type="button">Clear Custom</button>
-  </div>
-  <div id="spliceCustomResult" class="small-note result-out" style="text-align:center"></div>
-</div>
+    <!-- Custom Splices -->
+    <div class="custom-splices" id="customSplicesArea" aria-live="polite">
+      <div class="splice-row">
+        <strong>Custom Splices</strong>
+        <span class="small-note">Add specific splice entries to include in the total</span>
+      </div>
+      <div class="splice-row" style="font-weight:700" aria-hidden="true">
+        <div style="width:200px;text-align:left">Label</div>
+        <div style="width:110px;text-align:left">Count</div>
+        <div style="width:110px;text-align:left">Loss (dB)</div>
+        <div style="width:140px;text-align:left">Action</div>
+      </div>
+      <div id="spliceList" style="display:flex;flex-direction:column;gap:6px" aria-live="polite"></div>
+      <div class="splice-actions">
+        <input id="newSpliceLabel" type="text"   placeholder="Name (e.g., Splice-1)"    aria-label="New splice label"/>
+        <input id="newSpliceCount" type="number" inputmode="numeric" min="0" step="1"   value="1"    aria-label="New splice count"/>
+        <input id="newSpliceLoss"  type="number" inputmode="decimal" min="0" step="0.01" value="0.05" aria-label="New splice loss in dB"/>
+        <button id="addSpliceBtn"   type="button">Add Splice</button>
+        <button id="clearCustomBtn" type="button">Clear Custom</button>
+      </div>
+      <div id="spliceCustomResult" class="small-note result-out" style="text-align:center"></div>
+    </div>
 
-<div class="btn-row" style="margin-top:12px">
-  <button id="calcBtn"      type="button">Calculate Total Loss</button>
-  <button id="resetLossBtn" type="button">Reset Fields</button>
-</div>
-<p id="result" class="result-out" aria-live="polite"></p>
-```
+    <div class="btn-row" style="margin-top:12px">
+      <button id="calcBtn"      type="button">Calculate Total Loss</button>
+      <button id="resetLossBtn" type="button">Reset Fields</button>
+    </div>
+    <p id="result" class="result-out" aria-live="polite"></p>
 
   </div>
 </div>
@@ -873,7 +801,6 @@ input:checked + .slider::before { transform: translateX(20px); }
 <!-- ══════════════════════════════════════════════════════
      5. THEME MODE
 ═══════════════════════════════════════════════════════════ -->
-
 <div class="section-header-wrap">
   <h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection">Theme Mode ▼</h2>
 </div>
@@ -888,13 +815,11 @@ input:checked + .slider::before { transform: translateX(20px); }
 </div>
 
 <!-- Tooltip -->
-
 <div id="kmTooltip" class="km-tooltip" role="status" aria-hidden="true"></div>
 
 <!-- ══════════════════════════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════════════════════════════ -->
-
 <script>
 (function () {
   'use strict';
@@ -1248,7 +1173,211 @@ input:checked + .slider::before { transform: translateX(20px); }
   }
 
   /* ─────────────────────────────────────────────────────────
-     MODULE 11 · RIBBON FINDER
+     MODULE 11 · JOB PRINTOUT READER (AI)
+  ───────────────────────────────────────────────────────── */
+  let currentPhotoB64  = null;
+  let currentRawOutput = null;
+
+  $('photoInput').addEventListener('change', function () {
+    const file=this.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const preview=$('photoPreview');
+      preview.src=ev.target.result; preview.style.display='block';
+      currentPhotoB64=ev.target.result.split(',')[1];
+      $('aiStatus').textContent='Photo loaded — tap "Break Down This Printout" to analyze.';
+      $('analyzeBtn').style.display='inline-block';
+      $('aiRawOutput').style.display='none';
+      $('jobActionBtns').style.display='none';
+      currentRawOutput=null;
+      refreshOpenSections();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $('analyzeBtn').addEventListener('click', analyzePhoto);
+
+  async function analyzePhoto() {
+    if(!currentPhotoB64) return;
+    const apiKey = ($('apiKeyInput').value || '').trim();
+    if (!apiKey) {
+      $('aiStatus').textContent = '❌ Enter your Anthropic API key above first.';
+      $('apiKeyInput').focus();
+      return;
+    }
+    const statusEl=$('aiStatus'), outputEl=$('aiRawOutput'), analyzeBtn=$('analyzeBtn'), actionBtns=$('jobActionBtns');
+    analyzeBtn.disabled=true;
+    outputEl.style.display='none';
+    actionBtns.style.display='none';
+    statusEl.innerHTML='<span class="spinner"></span> Reading printout…';
+
+    const file=$('photoInput').files[0];
+    const mediaType=(file&&file.type)?file.type:'image/jpeg';
+
+    const systemPrompt=
+`You are a helpful assistant that reads fiber optic job printouts for construction technicians working in Metro Detroit, Michigan — Royal Oak area, covering Birmingham, Troy, Pontiac, Southfield, Warren, Sterling Heights and surrounding suburbs.
+
+You have the following domain knowledge baked in. Use it every time:
+
+PROJECT CODES: Format is always like A05EKS1. The second character is ALWAYS the number zero (0), never the letter O. Do not confuse them.
+
+YEARS: Numbers in parentheses like (1988) or (2005) = the year that cable was installed or added to the splice case. Not addresses, not counts.
+
+CABLE IDENTIFIERS: A code followed by a dash and a number = cable type and fiber count. The number after the dash is the total fiber count. Examples: 34Q2MT-072 = 72-fiber cable, 58Q2MT-024 = 24-fiber cable. LG06, LGA, FNAP and similar are route or cable identifiers.
+
+CABLE CONSTRUCTION TYPE:
+- 85C = buried / ground cable
+- 822C = aerial cable (on poles)
+- 4C, 12C etc = small count buried or conduit runs
+
+DEAD COUNTS: A single letter followed by a count range with NO parentheses — like "A, 7-72" or "D, 19-22" — means those fibers are dead and out of service. Skip them unless relevant to the job.
+
+FUTURE / RESERVED WORK: Items in parentheses like "(B, 21-24)" = planned or reserved, not active yet.
+
+NC = Not Connected. That position in the case is empty.
+
+SPLICE TICKET NUMBERS: Codes in angle brackets like <A02BQWN> are individual splice job ticket numbers tied to that count range.
+
+POW = Permit on Work required. DET = Detroit area flag. These are administrative — note them but don't over-explain.
+
+SCOPE OF WORK line = the actual task. Everything else is supporting context.
+
+Your job is to read the printout photo and give the tech a simple, friendly breakdown — like a knowledgeable coworker explaining the job over the phone. Short, clear, and actionable. No walls of raw codes.
+
+Format your response exactly like this:
+
+📋 THE JOB
+One or two sentences: project code, big picture task.
+
+📍 WHERE YOU'RE GOING
+Manhole or structure number and any location context.
+
+🔧 WHAT'S IN THERE
+The cables and cases present. For each: type (ground or aerial), fiber count, year installed. Plain English only.
+
+📊 THE COUNTS THAT MATTER
+Only the active, relevant count ranges for this job. Skip dead counts and NC entries. Call out any splice ticket numbers tied to active work.
+
+✅ WHAT YOU NEED TO DO
+Numbered steps. Plain English. Make it impossible to misunderstand.
+
+⚠️ HEADS UP
+Forms, permits, county requirements, anything worth knowing before you open that manhole.
+
+🗒️ QUICK SUMMARY
+Three lines max — Project code, Location, Task.`;
+
+    try {
+      statusEl.innerHTML='<span class="spinner"></span> Working on it…';
+
+      const response=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:2500,
+          system:systemPrompt,
+          tools:[{ type:'web_search_20250305', name:'web_search' }],
+          messages:[{
+            role:'user',
+            content:[
+              {type:'image',source:{type:'base64',media_type:mediaType,data:currentPhotoB64}},
+              {type:'text',text:'Break down this job printout for the technician.'}
+            ]
+          }]
+        })
+      });
+
+      if(!response.ok){
+        let detail='';
+        try{ const e=await response.json(); detail=e.error?.message||''; }catch{}
+        throw new Error(`API error ${response.status}${detail?': '+detail:''}`);
+      }
+
+      const data=await response.json();
+      // Only grab final text blocks — silently ignore web_search tool blocks
+      const raw=(data.content||[])
+        .filter(b=>b.type==='text')
+        .map(b=>b.text)
+        .join('\n')
+        .trim();
+      if(!raw) throw new Error('No response from AI. Try again.');
+
+      currentRawOutput=raw;
+      outputEl.textContent=raw;
+      outputEl.style.display='block';
+      actionBtns.style.display='flex';
+      statusEl.textContent='✅ Done — review below.';
+
+    } catch(err) {
+      statusEl.textContent = '❌ ' + err.message;
+      console.error('[LENS Job Reader]', err);
+    } finally {
+      analyzeBtn.disabled=false;
+      refreshOpenSections();
+    }
+  }
+
+  function copyJobOutput()     { if(!currentRawOutput) return; copyToClipboard(currentRawOutput,$('copyJobBtn'),'Copied ✓'); }
+  function downloadJobOutput() {
+    if(!currentRawOutput) return;
+    const blob=new Blob([currentRawOutput],{type:'text/plain'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download=`job_printout_${Date.now()}.txt`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }
+  function saveJobOutput() {
+    if(!currentRawOutput) return;
+    const saved=getSavedNotes();
+    saved.push({id:Date.now(),label:`Job – ${new Date().toLocaleString()}`,text:currentRawOutput});
+    localStorage.setItem(LS_NOTES,JSON.stringify(saved));
+    renderSavedNotes(); refreshOpenSections();
+  }
+  function clearJobPanel() {
+    $('photoPreview').style.display ='none';
+    $('aiRawOutput').style.display  ='none';
+    $('jobActionBtns').style.display='none';
+    $('aiStatus').textContent       ='';
+    $('analyzeBtn').style.display   ='none';
+    $('photoInput').value           ='';
+    currentPhotoB64=null; currentRawOutput=null;
+    refreshOpenSections();
+  }
+
+  /* ── Saved notes ─────────────────────────────────────── */
+  function getSavedNotes() {
+    try { return JSON.parse(localStorage.getItem(LS_NOTES)||'[]'); } catch { return []; }
+  }
+  function renderSavedNotes() {
+    const saved=getSavedNotes(), container=$('savedNotesList'), title=$('savedNotesTitle');
+    container.innerHTML='';
+    if(saved.length===0){ title.style.display='none'; return; }
+    title.style.display='block';
+    saved.forEach(note=>{
+      const row=document.createElement('div'); row.className='saved-note-item';
+      const lbl=document.createElement('span'); lbl.className='note-label'; lbl.textContent=note.label;
+      const acts=document.createElement('div'); acts.className='saved-note-actions';
+      const copyBtn=document.createElement('button'); copyBtn.type='button'; copyBtn.textContent='Copy';   copyBtn.style.marginTop='0';
+      const delBtn =document.createElement('button'); delBtn.type ='button'; delBtn.textContent ='Delete'; delBtn.style.marginTop ='0';
+      copyBtn.addEventListener('click',()=>copyToClipboard(note.text,copyBtn,'Copied ✓'));
+      delBtn.addEventListener('click',()=>{
+        localStorage.setItem(LS_NOTES,JSON.stringify(getSavedNotes().filter(n=>n.id!==note.id)));
+        renderSavedNotes(); refreshOpenSections();
+      });
+      acts.appendChild(copyBtn); acts.appendChild(delBtn);
+      row.appendChild(lbl); row.appendChild(acts); container.appendChild(row);
+    });
+    refreshOpenSections();
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     MODULE 12 · RIBBON FINDER
   ───────────────────────────────────────────────────────── */
   function findRibbon() {
     const n=clampInt($('strand').value||0,0), out=$('ribbonResult');
@@ -1291,151 +1420,6 @@ input:checked + .slider::before { transform: translateX(20px); }
   }
 
   /* ─────────────────────────────────────────────────────────
-     MODULE · OTDR NOTES
-  ───────────────────────────────────────────────────────── */
-  let otdrSession = null; // holds current session state
-
-  function otdrStart() {
-    const jobCode  = ($('otdrJobCode').value  || '').trim();
-    const from     = clampInt($('otdrRangeStart').value, 1);
-    const to       = clampInt($('otdrRangeEnd').value,   1);
-    const errEl    = $('otdrStep1Error');
-
-    clearError(null, errEl);
-    if (!jobCode)              { setError(null, errEl, '⚠ Enter a job or ticket code.'); return; }
-    if (from < 1 || to < from) { setError(null, errEl, '⚠ Check your count range — From must be less than To.'); return; }
-
-    otdrSession = {
-      jobCode,
-      counts: [],
-      range: { from, to },
-      current: from
-    };
-
-    $('otdrStep1').style.display = 'none';
-    $('otdrStep2').style.display = 'block';
-    otdrUpdateStep2();
-    refreshOpenSections();
-  }
-
-  function otdrUpdateStep2() {
-    if (!otdrSession) return;
-    const { current, range } = otdrSession;
-    $('otdrCountDisplay').textContent = current;
-    $('otdrDistInput').value = '';
-    $('otdrDistInput').focus();
-    const done = current - range.from;
-    const left = range.to - current + 1;
-    $('otdrProgressLabel').textContent = `Count ${current} of ${range.to}  (${done} done, ${left} remaining)`;
-    $('otdrDiffHint').textContent = '';
-  }
-
-  function otdrRecordAndAdvance(skip = false) {
-    if (!otdrSession) return;
-    const dist = skip ? null : parseFloat($('otdrDistInput').value);
-    if (!skip && (isNaN(dist) || dist <= 0)) {
-      $('otdrDiffHint').textContent = '⚠ Enter a valid distance or tap Skip.';
-      $('otdrDistInput').focus();
-      return;
-    }
-    otdrSession.counts.push({ count: otdrSession.current, dist, skipped: skip });
-    otdrSession.current++;
-    if (otdrSession.current > otdrSession.range.to) {
-      otdrFinish();
-    } else {
-      otdrUpdateStep2();
-      refreshOpenSections();
-    }
-  }
-
-  function otdrFinish() {
-    if (!otdrSession) return;
-    $('otdrStep2').style.display = 'none';
-    $('otdrStep3').style.display = 'block';
-
-    const { jobCode, counts, range } = otdrSession;
-
-    // Outlier detection — flag anything >25ft from the median of actual readings
-    const actual = counts.filter(c => !c.skipped).map(c => c.dist);
-    const sorted = [...actual].sort((a, b) => a - b);
-    const mid    = Math.floor(sorted.length / 2);
-    const median = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-
-    const flagged = counts.filter(c => !c.skipped && Math.abs(c.dist - median) > 25);
-
-    let rows = '';
-    counts.forEach(c => {
-      if (c.skipped) {
-        rows += `<div class="otdr-row flag-skip">
-          <span class="count-num">Count ${c.count}</span>
-          <span class="dist-val">— skipped —</span>
-          <span class="diff-flag"></span>
-        </div>`;
-      } else {
-        const diff   = c.dist - median;
-        const isWarn = Math.abs(diff) > 25;
-        const sign   = diff >= 0 ? '+' : '';
-        const cls    = isWarn ? 'flag-warn' : 'flag-ok';
-        const flag   = isWarn ? `⚠ ${sign}${diff.toFixed(0)} ft` : `✓`;
-        rows += `<div class="otdr-row ${cls}">
-          <span class="count-num">Count ${c.count}</span>
-          <span class="dist-val">${c.dist.toFixed(0)} ft</span>
-          <span class="diff-flag">${flag}</span>
-        </div>`;
-      }
-    });
-
-    const summary = flagged.length === 0
-      ? `All readings consistent.`
-      : `${flagged.length} reading${flagged.length > 1 ? 's' : ''} stand out — review flagged counts.`;
-
-    $('otdrResultCard').innerHTML = `
-      <div class="otdr-card-header">
-        <div class="otdr-job">${esc(jobCode)}</div>
-        <div class="otdr-meta">Counts ${range.from}–${range.to} &nbsp;|&nbsp; ${summary}</div>
-      </div>
-      ${rows}
-      <div class="otdr-card-footer">Generated ${new Date().toLocaleString()}</div>`;
-
-    otdrSession.plainText = buildOtdrPlainText(median);
-    refreshOpenSections();
-  }
-
-  function buildOtdrPlainText(median) {
-    if (!otdrSession) return '';
-    const { jobCode, counts, range } = otdrSession;
-    const lines = [
-      `OTDR Notes — ${jobCode}`,
-      `Counts: ${range.from}–${range.to}`,
-      `Generated: ${new Date().toLocaleString()}`,
-      `─────────────────────────`
-    ];
-    counts.forEach(c => {
-      if (c.skipped) {
-        lines.push(`Count ${c.count}: skipped`);
-      } else {
-        const diff   = c.dist - median;
-        const sign   = diff >= 0 ? '+' : '';
-        const flag   = Math.abs(diff) > 25 ? `  ⚠ (${sign}${diff.toFixed(0)} ft from group)` : '';
-        lines.push(`Count ${c.count}: ${c.dist.toFixed(0)} ft${flag}`);
-      }
-    });
-    return lines.join('\n');
-  }
-
-  function otdrRestart() {
-    otdrSession = null;
-    $('otdrStep2').style.display = 'none';
-    $('otdrStep3').style.display = 'none';
-    $('otdrStep1').style.display = 'block';
-    $('otdrJobCode').value    = '';
-    $('otdrRangeStart').value = '';
-    $('otdrRangeEnd').value   = '';
-    clearError(null, $('otdrStep1Error'));
-    refreshOpenSections();
-  }
-
-  /* ─────────────────────────────────────────────────────────
      MODULE 13 · THEME
   ───────────────────────────────────────────────────────── */
   function applySavedTheme() {
@@ -1461,10 +1445,10 @@ input:checked + .slider::before { transform: translateX(20px); }
     $('themeToggle').addEventListener('change', toggleTheme);
 
     // Section order: Loss → Converter → Ribbon → Job → Theme
-    wireHeader('otdrHeader',      'otdrSection');
-    wireHeader('ribbonHeader',    'ribbonSection');
-    wireHeader('converterHeader', 'converterSection');
     wireHeader('lossHeader',      'lossSection');
+    wireHeader('converterHeader', 'converterSection');
+    wireHeader('ribbonHeader',    'ribbonSection');
+    wireHeader('jobHeader',       'jobSection');
     wireHeader('themeHeader',     'themeSection');
 
     // No section open by default — user opens what they need
@@ -1504,40 +1488,40 @@ input:checked + .slider::before { transform: translateX(20px); }
     $('findBtn').addEventListener('click',  findRibbon);
     $('strand').addEventListener('keydown', e=>{ if(e.key==='Enter') findRibbon(); });
 
-    // OTDR Notes
-    $('otdrStartBtn').addEventListener('click',    otdrStart);
-    $('otdrNextBtn').addEventListener('click',     () => otdrRecordAndAdvance(false));
-    $('otdrSkipBtn').addEventListener('click',     () => otdrRecordAndAdvance(true));
-    $('otdrRestartBtn').addEventListener('click',  otdrRestart);
-    $('otdrCopyBtn').addEventListener('click',     () => { if(otdrSession?.plainText) copyToClipboard(otdrSession.plainText, $('otdrCopyBtn'), 'Copied ✓'); });
-    $('otdrDownloadBtn').addEventListener('click', () => {
-      if (!otdrSession?.plainText) return;
-      const blob = new Blob([otdrSession.plainText], {type:'text/plain'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = `OTDR_${(otdrSession.jobCode||'note').replace(/[^a-z0-9_-]/gi,'_')}_${Date.now()}.txt`;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
+    // API settings toggle
+    const apiToggle = $('apiSettingsToggle'), apiPanel = $('apiSettingsPanel');
+    const toggleApiPanel = () => {
+      const open = apiPanel.classList.toggle('open');
+      apiToggle.setAttribute('aria-expanded', String(open));
+      if (open) refreshOpenSections();
+    };
+    apiToggle.addEventListener('click', toggleApiPanel);
+    apiToggle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleApiPanel(); } });
+
+    // Job reader — restore saved API key
+    const savedKey = localStorage.getItem('lens-api-key');
+    if (savedKey) $('apiKeyInput').value = savedKey;
+    $('apiKeyInput').addEventListener('change', () => {
+      const k = ($('apiKeyInput').value || '').trim();
+      if (k) localStorage.setItem('lens-api-key', k);
+      else   localStorage.removeItem('lens-api-key');
     });
-    $('otdrSaveBtn').addEventListener('click', () => {
-      if (!otdrSession?.plainText) return;
-      const saved = JSON.parse(localStorage.getItem(LS_NOTES)||'[]');
-      saved.push({ id: Date.now(), label: `OTDR ${otdrSession.jobCode} – ${new Date().toLocaleString()}`, text: otdrSession.plainText });
-      localStorage.setItem(LS_NOTES, JSON.stringify(saved));
-      $('otdrSaveBtn').textContent = 'Saved ✓';
-      setTimeout(() => $('otdrSaveBtn').textContent = 'Save', 1500);
-    });
-    $('otdrDistInput').addEventListener('keydown', e => { if (e.key === 'Enter') otdrRecordAndAdvance(false); });
-    $('otdrRangeEnd').addEventListener('keydown',  e => { if (e.key === 'Enter') otdrStart(); });
+
+    // Job reader buttons
+    $('copyJobBtn').addEventListener('click',     copyJobOutput);
+    $('saveJobBtn').addEventListener('click',      saveJobOutput);
+    $('downloadJobBtn').addEventListener('click',  downloadJobOutput);
+    $('clearJobBtn').addEventListener('click',     clearJobPanel);
 
     // Init
     renderSpliceList();
     buildRibbonStrip();
+    renderSavedNotes();
 
     document.querySelectorAll('button:not([type])').forEach(b=>b.setAttribute('type','button'));
   });
 
 })();
 </script>
-
 </body>
 </html>
