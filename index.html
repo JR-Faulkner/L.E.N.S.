@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -221,6 +222,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 1. OTDR NOTE MAKER -->
+
 <div class="section-header-wrap">
   <h2 id="otdrHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="otdrSection">OTDR Note Maker &#9660;</h2>
 </div>
@@ -266,6 +268,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 2. DISTANCE CONVERTER -->
+
 <div class="section-header-wrap">
   <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter &#9660;</h2>
 </div>
@@ -297,6 +300,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 3. FIBER RIBBON FINDER -->
+
 <div class="section-header-wrap">
   <h2 id="ribbonHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ribbonSection">Fiber Ribbon Finder &#9660;</h2>
 </div>
@@ -315,6 +319,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 4. FIBER LOSS CALCULATOR -->
+
 <div class="section-header-wrap">
   <h2 id="lossHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="lossSection">Fiber Loss Calculator &#9660;</h2>
 </div>
@@ -386,6 +391,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 5. ACE FIRE TOOL -->
+
 <div class="section-header-wrap">
   <h2 id="aceHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="aceSection">ACE Fire Tool &#9660;</h2>
 </div>
@@ -461,6 +467,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 </div>
 
 <!-- 6. THEME MODE -->
+
 <div class="section-header-wrap">
   <h2 id="themeHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="themeSection">Theme Mode &#9660;</h2>
 </div>
@@ -696,7 +703,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
   }
 
   /* ACE */
-  let aceData={header:{},strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
+  let aceData={header:{},cableId:'',strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
   function aceShowStep(n){[1,2,3,4].forEach(i=>{const el=$('aceStep'+i);if(el)el.style.display=i===n?'block':'none'});refreshOpenSections()}
   function aceStep1Next(){
     const err=$('aceStep1Error');clearError(null,err);
@@ -706,7 +713,8 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     if(!cableId){setError(null,err,'\u26a0 Fiber Cable Name is required.');return}
     if(!from||!to){setError(null,err,'\u26a0 Enter the strand range.');return}
     if(to<from){setError(null,err,'\u26a0 "To" strand must be \u2265 "From" strand.');return}
-    aceData.header={tester:'',wireCenterClli:'',cfas,aLoc:'',zLoc:'',dateTested:$('aceDateTested').value||new Date().toISOString().split('T')[0],model:'FTBx-720D-SM1',serialNumber:'1869003',version:'1.0',calibrationDate:$('aceCalDate').value||'',cableId};
+    aceData.header={tester:'',wireCenterClli:'',cfas,aLoc:'',zLoc:'',dateTested:$('aceDateTested').value||new Date().toISOString().split('T')[0],model:'FTBx-720D-SM1',serialNumber:'1869003',version:'1.0',calibrationDate:$('aceCalDate').value||''};
+    aceData.cableId=cableId;
     aceData.strandFrom=from;aceData.strandTo=to;aceData.eventCount=evts;aceData.strands=[];aceData.currentStrand=0;
     const count=to-from+1,list=Array.from({length:count},(_,i)=>from+i).join(', ');
     $('aceConfirmMsg').innerHTML=`We're working with strand${count>1?'s':''} <strong>${list}</strong> on cable <strong>${esc(cableId)}</strong>.<br>That's <strong>${count} strand${count>1?'s':''}</strong> total, each with <strong>${evts} event${evts!==1?'s':''}</strong> (including the first connector and the end event).<br><br>Calibration date: <strong>${$('aceCalDate').value||'(not set)'}</strong> \u2014 correct?`;
@@ -733,7 +741,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
       const blk=document.createElement('div');blk.className='ace-event-block';blk.dataset.eventIdx=i;
       let f=isEnd
         ?`<div class="ace-field-row"><label>Distance from A (ft):</label><input class="ev-dist" type="number" inputmode="decimal" min="0" value="${ev?.distanceFromA??''}" placeholder="e.g. 15202"></div><div class="ace-field-row"><label>1310nm Reflectance:</label><input class="ev-end-ref-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.reflectance??''}" placeholder="e.g. -67.2"></div><div class="ace-field-row"><label>1550nm Reflectance:</label><input class="ev-end-ref-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.reflectance??''}" placeholder="e.g. -59.1"></div>`
-        :`<div class="ace-field-row"><label>Distance from A (ft):</label><input class="ev-dist" type="number" inputmode="decimal" min="0" value="${ev?.distanceFromA??(isStart?0:'')}" placeholder="${isStart?'0':'e.g. 800'}"></div><div class="ace-field-row"><label>1310nm Loss (dB):</label><input class="ev-loss-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.loss??''}" placeholder="e.g. 0.082"></div><div class="ace-field-row"><label>1310nm Loss to Event:</label><input class="ev-lte-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.lossToEvent??''}" placeholder="e.g. 0.082"></div><div class="ace-field-row"><label>1310nm Reflectance:</label><input class="ev-ref-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.reflectance??''}" placeholder="${isStart?'e.g. -46.7':'leave blank if null'}"></div><div class="ace-field-row"><label>1550nm Loss (dB):</label><input class="ev-loss-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.loss??''}" placeholder="e.g. 0.014"></div><div class="ace-field-row"><label>1550nm Loss to Event:</label><input class="ev-lte-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.lossToEvent??''}" placeholder="e.g. 0.014"></div><div class="ace-field-row"><label>1550nm Reflectance:</label><input class="ev-ref-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.reflectance??''}" placeholder="${isStart?'e.g. -43.7':'leave blank if null'}"></div>`;
+        :`<div class="ace-field-row"><label>Distance from A (ft):</label><input class="ev-dist" type="number" inputmode="decimal" min="0" value="${ev?.distanceFromA??(isStart?0:'')}" placeholder="${isStart?'0':'e.g. 800'}"></div><div class="ace-field-row"><label>1310nm Loss (dB):</label><input class="ev-loss-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.loss??''}" placeholder="e.g. 0.082"></div><div class="ace-field-row"><label>1310nm Reflectance:</label><input class="ev-ref-1310" type="number" inputmode="decimal" step="0.001" value="${m1?.reflectance??''}" placeholder="${isStart?'e.g. -46.7':'leave blank if null'}"></div><div class="ace-field-row"><label>1550nm Loss (dB):</label><input class="ev-loss-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.loss??''}" placeholder="e.g. 0.014"></div><div class="ace-field-row"><label>1550nm Reflectance:</label><input class="ev-ref-1550" type="number" inputmode="decimal" step="0.001" value="${m5?.reflectance??''}" placeholder="${isStart?'e.g. -43.7':'leave blank if null'}"></div>`;
       blk.innerHTML=`<div class="ace-event-title">Event ${i} \u2014 ${isStart?'Start (Connector Group)':isEnd?'End':'Splice'}</div><div class="ace-field-group">${f}</div>`;
       c.appendChild(blk);
     }
@@ -747,13 +755,30 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     const lm=[{wavelength:1310,totalLoss:l1,totalORL:o1},{wavelength:1550,totalLoss:l5,totalORL:o5}];
     const blocks=$('aceEventsContainer').querySelectorAll('.ace-event-block'),events=[],tot=blocks.length;
     const p=v=>{const n=parseFloat(v);return isNaN(n)?null:n};
+    // First pass — collect raw losses
+    const rawLoss1310=[],rawLoss1550=[];
+    for(let i=0;i<tot;i++){
+      const b=blocks[i],isEnd=i===tot-1;
+      if(isEnd){rawLoss1310.push(null);rawLoss1550.push(null)}
+      else{rawLoss1310.push(p(b.querySelector('.ev-loss-1310')?.value));rawLoss1550.push(p(b.querySelector('.ev-loss-1550')?.value))}
+    }
+    // Second pass — build events with auto-calculated lossToEvent
+    let cum1310=0,cum1550=0;
     for(let i=0;i<tot;i++){
       const b=blocks[i],isStart=i===0,isEnd=i===tot-1,dist=p(b.querySelector('.ev-dist')?.value)||0;
       const attrs=isStart?['start','Connector','Connector']:isEnd?['end']:[];
       const type=isStart?'Group':isEnd?'end':'Splice';
       let m;
-      if(isEnd){m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-end-ref-1310')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null},{wavelength:1550,reflectance:p(b.querySelector('.ev-end-ref-1550')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null}]}
-      else{m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-ref-1310')?.value),loss:p(b.querySelector('.ev-loss-1310')?.value),lossToEvent:p(b.querySelector('.ev-lte-1310')?.value),spanLossThruEvent:null},{wavelength:1550,reflectance:p(b.querySelector('.ev-ref-1550')?.value),loss:p(b.querySelector('.ev-loss-1550')?.value),lossToEvent:p(b.querySelector('.ev-lte-1550')?.value),spanLossThruEvent:null}]}
+      if(isEnd){
+        m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-end-ref-1310')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null},
+           {wavelength:1550,reflectance:p(b.querySelector('.ev-end-ref-1550')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null}];
+      } else {
+        const l1=rawLoss1310[i],l5=rawLoss1550[i];
+        if(l1!=null) cum1310=Math.round((cum1310+(l1))*1000)/1000;
+        if(l5!=null) cum1550=Math.round((cum1550+(l5))*1000)/1000;
+        m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-ref-1310')?.value),loss:l1,lossToEvent:l1!=null?cum1310:null,spanLossThruEvent:null},
+           {wavelength:1550,reflectance:p(b.querySelector('.ev-ref-1550')?.value),loss:l5,lossToEvent:l5!=null?cum1550:null,spanLossThruEvent:null}];
+      }
       events.push({eventNumber:i,distanceFromA:dist,eventType:type,eventAttributes:attrs,measurements:m});
     }
     return{strand:aceData.strandFrom+aceData.currentStrand,spanLength:sl,passFail:pf,linkMeasurements:lm,events};
@@ -762,7 +787,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     const s=aceCollectStrand();if(!s)return;
     aceData.strands[aceData.currentStrand]=s;aceData.currentStrand++;
     if(aceData.currentStrand<(aceData.strandTo-aceData.strandFrom+1)){aceLoadStrand(aceData.currentStrand);refreshOpenSections()}
-    else{try{$('aceJsonPreview').value=JSON.stringify({Label:{...aceData.header,...ACE_THRESHOLDS,Tested:aceData.strands}},null,2)}catch(e){$('aceJsonPreview').value='// Error: '+e.message}aceShowStep(4)}
+    else{try{$('aceJsonPreview').value=JSON.stringify({Label:{...aceData.header,...ACE_THRESHOLDS,cableId:aceData.cableId,Tested:aceData.strands}},null,2)}catch(e){$('aceJsonPreview').value='// Error: '+e.message}aceShowStep(4)}
   }
   function aceValidate(){
     const err=$('aceStep4Error');clearError(null,err);
@@ -778,7 +803,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
   }
   function aceRestart(){
-    aceData={header:{},strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
+    aceData={header:{},cableId:'',strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
     ['aceCfas','aceCableId'].forEach(id=>{const el=$(id);if(el)el.value=''});
     $('aceStrandFrom').value='';$('aceStrandTo').value='';$('aceEventCount').value=7;
     $('aceDateTested').value=new Date().toISOString().split('T')[0];$('aceCalDate').value='';
@@ -852,6 +877,6 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 
 })();
 </script>
+
 </body>
 </html>
-
