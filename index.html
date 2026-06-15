@@ -157,20 +157,19 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
 /* OTDR */
 .otdr-result-card { margin: 12px auto 0; max-width: 600px; border-radius: 12px; border: 1px solid rgba(0,191,255,.35); overflow: hidden; animation: ribbonPop .3s cubic-bezier(.175,.885,.32,1.275); }
 .otdr-card-header { padding: 14px 18px 10px; border-bottom: 1px solid rgba(0,191,255,.2); }
-.otdr-card-header .otdr-job { font-size: 1.5em; font-weight: 900; color: #00bfff; text-shadow: 0 0 10px rgba(0,191,255,.4); letter-spacing: .04em; }
-.otdr-card-header .otdr-meta { font-size: .82em; opacity: .6; margin-top: 2px; }
-.otdr-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 18px; border-bottom: 1px solid rgba(0,191,255,.08); font-size: .95em; gap: 8px; }
+.otdr-card-header .otdr-title { font-size: 1.6em; font-weight: 900; color: #fff; letter-spacing: .04em; }
+.otdr-card-header .otdr-subtitle { font-size: 1em; font-weight: 700; color: #ccc; margin-top: 3px; }
+.otdr-card-header .otdr-tone-light-label { font-size: .85em; color: #888; margin-top: 4px; }
+.otdr-row { display: flex; align-items: center; padding: 9px 18px; border-bottom: 1px solid rgba(0,191,255,.08); font-size: .95em; }
 .otdr-row:last-child { border-bottom: none; }
-.otdr-row .count-num { font-weight: 700; min-width: 60px; color: #00bfff; }
-.otdr-row .dist-val { flex: 1; font-weight: 700; text-align: right; }
-.otdr-row .diff-flag { min-width: 90px; text-align: right; font-size: .85em; font-weight: 700; }
-.otdr-row.flag-ok .diff-flag { color: #00ff00; }
-.otdr-row.flag-warn .diff-flag { color: #ff6600; }
-.otdr-row.flag-skip .dist-val { opacity: .4; font-style: italic; }
+.otdr-row .pair-label { flex: 1; font-weight: 700; }
+.otdr-row.flag-skip .pair-label { opacity: .4; font-style: italic; }
+.tone-badge { color: #ffe000; text-shadow: 0 0 8px rgba(255,224,0,.9), 0 0 16px rgba(255,200,0,.5); font-weight: 900; }
+.light-badge { color: #ff2222; font-weight: 900; }
 .otdr-card-footer { padding: 10px 18px; font-size: .82em; opacity: .5; border-top: 1px solid rgba(0,191,255,.1); }
 body.light .otdr-result-card { border-color: rgba(0,100,180,.3); }
-body.light .otdr-row .count-num { color: #0055aa; }
-body.light .otdr-row.flag-ok .diff-flag { color: #007700; }
+body.light .otdr-card-header .otdr-title { color: #003; }
+body.light .otdr-card-header .otdr-subtitle { color: #333; }
 /* ACE */
 .ace-step { max-width: 760px; margin: 0 auto; text-align: left; }
 .ace-step-title { font-size: 1.1em; font-weight: 900; color: #00bfff; text-shadow: 0 0 8px rgba(0,191,255,.4); margin: 0 0 12px; text-align: center; }
@@ -229,13 +228,24 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
 <div id="otdrSection" class="section">
   <div class="section-inner">
     <div id="otdrStep1">
-      <p class="small-note" style="margin-bottom:12px">Enter the job info to get started.</p>
+      <p class="small-note" style="margin-bottom:12px">Enter job info to generate your OTDR notes.</p>
       <div class="form-row">
-        <label for="otdrJobCode">Job / Ticket Code: <input id="otdrJobCode" type="text" placeholder="e.g. A02RFAX" autocomplete="off"></label>
+        <label for="otdrProjectCode">Project Code: <input id="otdrProjectCode" type="text" placeholder="e.g. A05BL07" autocomplete="off"></label>
       </div>
       <div class="form-row">
-        <label for="otdrRangeStart">Count Range &#8212; From: <input id="otdrRangeStart" type="number" inputmode="numeric" placeholder="e.g. 25" min="1"></label>
-        <label for="otdrRangeEnd">To: <input id="otdrRangeEnd" type="number" inputmode="numeric" placeholder="e.g. 34" min="1"></label>
+        <label for="otdrCableId">Cable ID: <input id="otdrCableId" type="text" placeholder="e.g. LG10" autocomplete="off"></label>
+      </div>
+      <div class="form-row">
+        <label for="otdrRangeStart">Field Count &#8212; From: <input id="otdrRangeStart" type="number" inputmode="numeric" placeholder="e.g. 13" min="1"></label>
+        <label for="otdrRangeEnd">To: <input id="otdrRangeEnd" type="number" inputmode="numeric" placeholder="e.g. 18" min="1"></label>
+      </div>
+      <div class="form-row">
+        <label for="otdrCoRangeStart">C.O. Count &#8212; From: <input id="otdrCoRangeStart" type="number" inputmode="numeric" placeholder="e.g. 133" min="1"></label>
+        <label for="otdrCoRangeEnd">To: <input id="otdrCoRangeEnd" type="number" inputmode="numeric" placeholder="e.g. 138" min="1"></label>
+      </div>
+      <div class="form-row">
+        <label for="otdrToneCount">TONE Count #: <input id="otdrToneCount" type="number" inputmode="numeric" placeholder="optional"></label>
+        <label for="otdrLightCount">LIGHT Count #: <input id="otdrLightCount" type="number" inputmode="numeric" placeholder="optional"></label>
       </div>
       <div id="otdrStep1Error" class="error-msg" style="display:none"></div>
       <div class="btn-row" style="margin-top:12px">
@@ -245,7 +255,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     <div id="otdrStep2" style="display:none">
       <div id="otdrProgressLabel" class="small-note" style="margin-bottom:10px;font-size:1em;font-weight:700"></div>
       <div class="form-row">
-        <label style="font-size:1.2em;font-weight:900;color:#00bfff">Count <span id="otdrCountDisplay">&#8212;</span>:
+        <label style="font-size:1.2em;font-weight:900;color:#00bfff"><span id="otdrCountDisplay">&#8212;</span>:
           <input id="otdrDistInput" type="number" inputmode="decimal" placeholder="Distance (ft)" min="0" style="width:160px">
         </label>
       </div>
@@ -616,18 +626,28 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
   /* OTDR */
   let otdrSession=null;
   function otdrStart(){
-    const jc=($('otdrJobCode').value||'').trim(),fr=clampInt($('otdrRangeStart').value,1),to=clampInt($('otdrRangeEnd').value,1),err=$('otdrStep1Error');
+    const proj=($('otdrProjectCode').value||'').trim(),cable=($('otdrCableId').value||'').trim();
+    const fr=clampInt($('otdrRangeStart').value,1),to=clampInt($('otdrRangeEnd').value,1);
+    const coFr=clampInt($('otdrCoRangeStart').value,1),coTo=clampInt($('otdrCoRangeEnd').value,1);
+    const toneCount=clampInt($('otdrToneCount').value,0)||null,lightCount=clampInt($('otdrLightCount').value,0)||null;
+    const err=$('otdrStep1Error');
     clearError(null,err);
-    if(!jc){setError(null,err,'\u26a0 Enter a job or ticket code.');return}
-    if(fr<1||to<fr){setError(null,err,'\u26a0 Check your count range.');return}
-    otdrSession={jobCode:jc,counts:[],range:{from:fr,to:to},current:fr};
+    if(!proj){setError(null,err,'\u26a0 Enter a project code.');return}
+    if(!cable){setError(null,err,'\u26a0 Enter a cable ID.');return}
+    if(fr<1||to<fr){setError(null,err,'\u26a0 Check your field count range.');return}
+    if(coFr<1||coTo<coFr||(coTo-coFr)!==(to-fr)){setError(null,err,`\u26a0 C.O. range must span the same number of counts as the field range (${to-fr+1}).`);return}
+    if(toneCount&&(toneCount<fr||toneCount>to)){setError(null,err,`\u26a0 TONE count must be between ${fr} and ${to}.`);return}
+    if(lightCount&&(lightCount<fr||lightCount>to)){setError(null,err,`\u26a0 LIGHT count must be between ${fr} and ${to}.`);return}
+    otdrSession={projectCode:proj,cableId:cable,counts:[],range:{from:fr,to:to},coRange:{from:coFr,to:coTo},toneCount,lightCount,current:fr};
     $('otdrStep1').style.display='none';$('otdrStep2').style.display='block';
     otdrUpdateStep2();refreshOpenSections();
   }
   function otdrUpdateStep2(){
     if(!otdrSession)return;
-    const{current,range}=otdrSession;
-    $('otdrCountDisplay').textContent=current;$('otdrDistInput').value='';$('otdrDistInput').focus();
+    const{current,range,coRange}=otdrSession;
+    const coNum=coRange.from+(current-range.from);
+    $('otdrCountDisplay').textContent=`${current} <-> ${coNum}`;
+    $('otdrDistInput').value='';$('otdrDistInput').focus();
     $('otdrProgressLabel').textContent=`Count ${current} of ${range.to}  (${current-range.from} done, ${range.to-current+1} remaining)`;
     $('otdrDiffHint').textContent='';
   }
@@ -643,26 +663,30 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
   function otdrFinish(){
     if(!otdrSession)return;
     $('otdrStep2').style.display='none';$('otdrStep3').style.display='block';
-    const{jobCode,counts,range}=otdrSession;
-    const actual=counts.filter(c=>!c.skipped).map(c=>c.dist);
-    const sorted=[...actual].sort((a,b)=>a-b),mid=Math.floor(sorted.length/2);
-    const median=sorted.length%2!==0?sorted[mid]:(sorted[mid-1]+sorted[mid])/2;
-    const flagged=counts.filter(c=>!c.skipped&&Math.abs(c.dist-median)>25);
+    const{projectCode,cableId,counts,range,coRange,toneCount,lightCount}=otdrSession;
     let rows='';
+    const lines=[`${projectCode} -> ${range.from} to ${range.to}`,`${cableId}->${coRange.from} to ${coRange.to}`,'Tone/Light',''];
     counts.forEach(c=>{
-      if(c.skipped){rows+=`<div class="otdr-row flag-skip"><span class="count-num">Count ${c.count}</span><span class="dist-val">\u2014 skipped \u2014</span><span class="diff-flag"></span></div>`}
-      else{const diff=c.dist-median,warn=Math.abs(diff)>25,sign=diff>=0?'+':'',cls=warn?'flag-warn':'flag-ok',flag=warn?`\u26a0 ${sign}${diff.toFixed(0)} ft`:'\u2713';
-      rows+=`<div class="otdr-row ${cls}"><span class="count-num">Count ${c.count}</span><span class="dist-val">${c.dist.toFixed(0)} ft</span><span class="diff-flag">${flag}</span></div>`}
+      const coNum=coRange.from+(c.count-range.from);
+      const isTone=toneCount&&c.count===toneCount,isLight=lightCount&&c.count===lightCount;
+      if(c.skipped){
+        rows+=`<div class="otdr-row flag-skip"><span class="pair-label">${c.count} &lt;-&gt; ${coNum}: \u2014 skipped \u2014</span></div>`;
+        lines.push(`${c.count} <-> ${coNum}: skipped`);
+      }else{
+        const badge=isTone?` <span class="tone-badge">\u2192 TONE</span>`:isLight?` <span class="light-badge">\u2192 LIGHT</span>`:'';
+        const badgeTxt=isTone?' -> TONE':isLight?' -> LIGHT':'';
+        rows+=`<div class="otdr-row"><span class="pair-label">${c.count} &lt;-&gt; ${coNum}: ${c.dist.toFixed(0)}ft${badge}</span></div>`;
+        lines.push(`${c.count} <-> ${coNum}: ${c.dist.toFixed(0)}ft${badgeTxt}`);
+      }
     });
-    const summary=flagged.length===0?'All readings consistent.':`${flagged.length} reading${flagged.length>1?'s':''} stand out \u2014 review flagged counts.`;
-    $('otdrResultCard').innerHTML=`<div class="otdr-card-header"><div class="otdr-job">${esc(jobCode)}</div><div class="otdr-meta">Counts ${range.from}\u2013${range.to} &nbsp;|&nbsp; ${summary}</div></div>${rows}<div class="otdr-card-footer">Generated ${new Date().toLocaleString()}</div>`;
-    const lines=[`OTDR Notes \u2014 ${jobCode}`,`Counts: ${range.from}\u2013${range.to}`,`Generated: ${new Date().toLocaleString()}`,`\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500`];
-    counts.forEach(c=>{if(c.skipped)lines.push(`Count ${c.count}: skipped`);else{const diff=c.dist-median,sign=diff>=0?'+':'',flag=Math.abs(diff)>25?`  \u26a0 (${sign}${diff.toFixed(0)} ft from group)`:'';lines.push(`Count ${c.count}: ${c.dist.toFixed(0)} ft${flag}`)}});
+    $('otdrResultCard').innerHTML=`<div class="otdr-card-header"><div class="otdr-title">${esc(projectCode)} \u2192 ${range.from} to ${range.to}</div><div class="otdr-subtitle">${esc(cableId)}\u2192${coRange.from} to ${coRange.to}</div><div class="otdr-tone-light-label">Tone/Light</div></div>${rows}<div class="otdr-card-footer">Generated ${new Date().toLocaleString()}</div>`;
     otdrSession.plainText=lines.join('\n');refreshOpenSections();
   }
   function otdrRestart(){
     otdrSession=null;$('otdrStep2').style.display='none';$('otdrStep3').style.display='none';$('otdrStep1').style.display='block';
-    $('otdrJobCode').value='';$('otdrRangeStart').value='';$('otdrRangeEnd').value='';clearError(null,$('otdrStep1Error'));refreshOpenSections();
+    $('otdrProjectCode').value='';$('otdrCableId').value='';$('otdrRangeStart').value='';$('otdrRangeEnd').value='';
+    $('otdrCoRangeStart').value='';$('otdrCoRangeEnd').value='';$('otdrToneCount').value='';$('otdrLightCount').value='';
+    clearError(null,$('otdrStep1Error'));refreshOpenSections();
   }
 
   /* RIBBON */
@@ -848,18 +872,19 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     $('otdrDownloadBtn').addEventListener('click',()=>{
       if(!otdrSession?.plainText)return;
       const blob=new Blob([otdrSession.plainText],{type:'text/plain'}),a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);a.download=`OTDR_${(otdrSession.jobCode||'note').replace(/[^a-z0-9_-]/gi,'_')}_${Date.now()}.txt`;
+      a.href=URL.createObjectURL(blob);a.download=`OTDR_${(otdrSession.projectCode||'note').replace(/[^a-z0-9_-]/gi,'_')}_${Date.now()}.txt`;
       document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
     });
     $('otdrSaveBtn').addEventListener('click',()=>{
       if(!otdrSession?.plainText)return;
       const saved=JSON.parse(localStorage.getItem(LS_NOTES)||'[]');
-      saved.push({id:Date.now(),label:`OTDR ${otdrSession.jobCode} \u2013 ${new Date().toLocaleString()}`,text:otdrSession.plainText});
+      saved.push({id:Date.now(),label:`OTDR ${otdrSession.projectCode} \u2013 ${new Date().toLocaleString()}`,text:otdrSession.plainText});
       localStorage.setItem(LS_NOTES,JSON.stringify(saved));
       $('otdrSaveBtn').textContent='Saved \u2713';setTimeout(()=>$('otdrSaveBtn').textContent='Save',1500);
     });
     $('otdrDistInput').addEventListener('keydown',e=>{if(e.key==='Enter')otdrRecordAndAdvance(false)});
     $('otdrRangeEnd').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart()});
+    $('otdrLightCount').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart()});
     $('aceStep1Next').addEventListener('click',aceStep1Next);
     $('aceStep2Back').addEventListener('click',()=>aceShowStep(1));
     $('aceStep2Confirm').addEventListener('click',aceStep2Confirm);
