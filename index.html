@@ -1,266 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>L.E.N.S.</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <style>
-/* ═══ TOKENS ═══ */
-:root{
-  --label-dark-blue:#0099cc;
-  --result-dark-blue:#00bfff;
-  --label-light-blue:#005f99;
-  --result-light-blue:#0077cc;
-  --radius:6px;
-  --input-w:160px;
-  --focus:0 0 0 3px rgba(0,191,255,.28);
-  --tooltip-bg:rgba(0,0,0,.85);
-  --tooltip-color:#fff;
-  --min-touch:44px;
-}
-*,*::before,*::after{box-sizing:border-box}
+/* ── BEAUTIFIER BASE ── */
 body{
-  margin:0;
-  background:#0a0f14;
-  font-family:Arial,sans-serif;
-  color:#fff;
-  text-align:center;
-  overscroll-behavior:none;
-  transition:background-color .5s ease,color .5s ease;
+margin:0;
+background:#0a0f14;
+font-family:Segoe UI;
+color:#fff;
 }
 
-/* ═══ HEADER ═══ */
 .header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 18px;
-  background:#121820;
-  border-bottom:2px solid #ff3b3b;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 18px;
+background:#121820;
+border-bottom:2px solid #ff3b3b;
 }
-.brand{display:flex;align-items:center;gap:10px}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
 .mech{
-  width:42px;height:42px;
-  border-radius:6px;
-  background:linear-gradient(#333,#111);
-  border:1px solid #666;
-  box-shadow:0 0 10px rgba(255,60,60,.7);
+width:42px;
+height:42px;
+border-radius:6px;
+background:linear-gradient(#333,#111);
+border:1px solid #666;
+box-shadow:0 0 10px rgba(255,60,60,0.7);
 }
-.title{font-size:22px;color:#ff3b3b;font-weight:700;text-align:left}
-.subtitle{font-size:10px;opacity:.6;text-align:left}
-#themeToggle{
-  background:#1b2128;
-  border:1px solid #ff3b3b;
-  color:#ff3b3b;
-  padding:5px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:18px;
-  line-height:1;
-  min-height:36px;
-  margin-top:0;
-  transition:.2s;
-}
-#themeToggle:hover{background:#ff3b3b;color:#fff;transform:none;box-shadow:none}
 
-/* ═══ TILE GRID ═══ */
+.title{
+font-size:22px;
+color:#ff3b3b;
+font-weight:700;
+}
+
+.subtitle{
+font-size:10px;
+opacity:0.6;
+}
+
 .grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-  padding:18px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:14px;
+padding:18px;
 }
+
 .tile{
-  padding:20px;
-  text-align:center;
-  border-radius:8px;
-  background:#1b2128;
-  border:1px solid #2c333b;
-  cursor:pointer;
-  transition:.2s;
-  font-weight:600;
-  box-shadow:inset 0 0 8px #000;
-  user-select:none;
-  -webkit-tap-highlight-color:transparent;
+padding:20px;
+text-align:center;
+border-radius:8px;
+background:#1b2128;
+border:1px solid #2c333b;
+cursor:pointer;
+transition:.2s;
+font-weight:600;
+box-shadow:inset 0 0 8px #000;
+user-select:none;
+-webkit-tap-highlight-color:transparent;
 }
-.tile:hover{transform:translateY(-2px)}
-.tile.red:hover,.tile.active.red{box-shadow:0 0 14px #ff3b3b;border-color:#ff3b3b}
-.tile.orange:hover,.tile.active.orange{box-shadow:0 0 14px #ff7b3b;border-color:#ff7b3b}
-.tile.blue:hover,.tile.active.blue{box-shadow:0 0 14px #3bbcff;border-color:#3bbcff}
-.tile.green:hover,.tile.active.green{box-shadow:0 0 14px #3bff9e;border-color:#3bff9e}
-.tile.yellow:hover,.tile.active.yellow{box-shadow:0 0 14px #ffd83b;border-color:#ffd83b}
-.tile.purple:hover,.tile.active.purple{box-shadow:0 0 14px #a33bff;border-color:#a33bff}
 
-/* ═══ TOOL PANELS ═══ */
-#tools{padding:0 18px 18px}
+.tile:hover{
+transform:translateY(-2px);
+}
+
+.tile.red:hover,.tile.active.red{box-shadow:0 0 14px #ff3b3b;border-color:#ff3b3b;}
+.tile.orange:hover,.tile.active.orange{box-shadow:0 0 14px #ff7b3b;border-color:#ff7b3b;}
+.tile.blue:hover,.tile.active.blue{box-shadow:0 0 14px #3bbcff;border-color:#3bbcff;}
+.tile.green:hover,.tile.active.green{box-shadow:0 0 14px #3bff9e;border-color:#3bff9e;}
+.tile.yellow:hover,.tile.active.yellow{box-shadow:0 0 14px #ffd83b;border-color:#ffd83b;}
+.tile.purple:hover,.tile.active.purple{box-shadow:0 0 14px #a33bff;border-color:#a33bff;}
+
 .tool{
-  display:none;
-  padding:18px;
-  background:#151b22;
-  border:1px solid #333;
-  border-radius:6px;
-  text-align:left;
+display:none;
+margin:18px;
+padding:18px;
+background:#151b22;
+border:1px solid #333;
+border-radius:6px;
+text-align:left;
 }
 
-/* ═══ FORMS ═══ */
-.form-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0}
-label{display:inline-flex;align-items:center;gap:8px;color:var(--label-dark-blue);font-weight:700;font-size:1.05em}
-input,select,textarea{
-  margin:0;padding:8px 10px;
-  border-radius:var(--radius);
-  font-size:max(16px,1em);
-  background:#111;color:#00bfff;
-  border:1px solid #333;
+/* ── THEME TOGGLE ── */
+#themeToggle{
+background:#1b2128;
+border:1px solid #ff3b3b;
+color:#ff3b3b;
+padding:5px 12px;
+border-radius:6px;
+cursor:pointer;
+font-size:18px;
+line-height:1;
+transition:.2s;
+font-family:inherit;
 }
-textarea{min-height:160px;max-width:100%;width:100%;resize:vertical}
-input[type=number]{width:var(--input-w)}
-input:focus,select:focus,textarea:focus{box-shadow:var(--focus);outline:none}
-button{
-  padding:10px 18px;min-height:var(--min-touch);min-width:44px;
-  margin-top:12px;border-radius:var(--radius);cursor:pointer;
-  transition:all .18s ease;border:1px solid #00ff00;
-  background:#111;color:#00ff00;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  font-size:.95em;user-select:none;
-}
-button:hover{background:#00ff00;color:#000;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
-button:focus{outline:none;box-shadow:var(--focus)}
-button:active{transform:translateY(0)}
-button[disabled]{opacity:.5;cursor:not-allowed;transform:none}
-.result-out{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line;color:var(--result-dark-blue)}
-.result-out.show{opacity:1;transform:translateY(0)}
-.input-error{border:2px solid #ff0000!important;animation:shake .25s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.error-msg{color:#ff0000;font-size:.92em;margin-top:4px;font-weight:700}
-.small-note{font-size:.9em;color:inherit;opacity:.9}
-.btn-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+#themeToggle:hover{background:#ff3b3b;color:#fff;}
 
-/* ═══ LIGHT THEME ═══ */
-body.light{background:#f4f4f4;color:#000}
-body.light .header{background:#e8e8e8;border-bottom-color:#cc0000}
-body.light .title{color:#cc0000}
-body.light .mech{background:linear-gradient(#ccc,#999);border-color:#aaa;box-shadow:0 0 10px rgba(180,0,0,.3)}
-body.light .tile{background:#fff;border-color:#ddd;color:#333;box-shadow:inset 0 0 8px rgba(0,0,0,.05)}
-body.light .tool{background:#fff;border-color:#ddd}
-body.light input,body.light select,body.light textarea{background:#f0f0f0;color:#000;border-color:#000}
-body.light button{background:#eee;color:#000;border-color:#000}
-body.light button:hover{background:#000;color:#fff}
-body.light .result-out{color:var(--result-light-blue)}
-body.light label{color:var(--label-light-blue)}
-body.light .splice-list-row{background:rgba(0,0,0,.03)}
-body.light #themeToggle{background:#eee;border-color:#cc0000;color:#cc0000}
-body.light #themeToggle:hover{background:#cc0000;color:#fff}
-body.light .otdr-result-card{border-color:rgba(0,100,180,.3)}
-body.light .otdr-card-header .otdr-title{color:#003}
-body.light .otdr-card-header .otdr-subtitle{color:#333}
-body.light .conv-result-card{border-color:rgba(0,100,180,.3);box-shadow:0 0 16px rgba(0,100,180,.1)}
-body.light .conv-result-card .cr-value{color:#0055aa;text-shadow:none}
-body.light .ace-preview-box{background:#f4f8ff;border-color:rgba(0,100,180,.2);color:#003}
-body.light .ace-event-block{border-color:rgba(0,100,180,.15)}
-body.light .ace-field-row label{color:var(--label-light-blue)}
-body.light .fixer-thresh-card{border-color:rgba(0,100,180,.25)}
-body.light .ftc-rule{color:#0055aa}
-body.light .ftc-change-btn{border-color:rgba(0,100,180,.4);color:#0055aa}
-body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
+/* ── LIGHT THEME ── */
+body.light{background:#f4f4f4;color:#000;}
+body.light .header{background:#e8e8e8;border-bottom-color:#cc0000;}
+body.light .title{color:#cc0000;}
+body.light .mech{background:linear-gradient(#ccc,#999);border-color:#aaa;box-shadow:0 0 10px rgba(180,0,0,.3);}
+body.light .tile{background:#fff;border-color:#ddd;color:#333;box-shadow:inset 0 0 8px rgba(0,0,0,.05);}
+body.light .tool{background:#fff;border-color:#ddd;}
+body.light input,body.light select,body.light textarea{background:#f0f0f0;color:#000;border-color:#999;}
+body.light button{background:#eee;color:#000;border-color:#000;}
+body.light button:hover{background:#000;color:#fff;}
+body.light label{color:#005f99;}
+body.light .result-out{color:#0077cc;}
+body.light .splice-list-row{background:rgba(0,0,0,.03);}
+body.light #themeToggle{background:#eee;border-color:#cc0000;color:#cc0000;}
+body.light #themeToggle:hover{background:#cc0000;color:#fff;}
+body.light .otdr-result-card{border-color:rgba(0,100,180,.3);}
+body.light .otdr-card-header .otdr-title{color:#003;}
+body.light .otdr-card-header .otdr-subtitle{color:#333;}
+body.light .conv-result-card{border-color:rgba(0,100,180,.3);}
+body.light .conv-result-card .cr-value{color:#0055aa;text-shadow:none;}
+body.light .ace-preview-box{background:#f4f8ff;border-color:rgba(0,100,180,.2);color:#003;}
+body.light .ace-event-block{border-color:rgba(0,100,180,.15);}
+body.light .ace-field-row label{color:#005f99;}
+body.light .fixer-thresh-card{border-color:rgba(0,100,180,.25);}
+body.light .ftc-rule{color:#0055aa;}
+body.light .ftc-change-btn{border-color:rgba(0,100,180,.4);color:#0055aa;}
 
-/* ═══ TOOLTIP ═══ */
-.km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:var(--tooltip-bg);color:var(--tooltip-color);font-size:.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease}
-.km-tooltip.show{opacity:1}
+/* ── TOOLTIP ── */
+.km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.85);color:#fff;font-size:.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease;}
+.km-tooltip.show{opacity:1;}
 
-/* ═══ CUSTOM SPLICES ═══ */
-.custom-splices{margin:8px auto 0;border-radius:6px;padding:10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;max-width:760px}
-.splice-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
-.splice-row input[type="text"]{width:200px}
-.splice-row input[type="number"]{width:110px}
-.splice-actions{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
-.splice-list-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:8px;border-radius:6px;margin:2px 0;background:rgba(255,255,255,.03)}
-.splice-list-row .col{padding:4px}
-.splice-list-row .col.label{width:200px;text-align:left}
-.splice-list-row .col.count{width:110px;text-align:left}
-.splice-list-row .col.loss{width:110px;text-align:left}
-.splice-list-row .col.actions{width:140px;text-align:left;display:flex;gap:6px}
-.splice-editing{background:rgba(0,191,255,.06)!important;border:1px dashed rgba(0,191,255,.3)!important}
-.splice-list-row input{min-height:36px;font-size:.9em}
+/* ── FORMS ── */
+*,*::before,*::after{box-sizing:border-box;}
+.form-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0;}
+label{display:inline-flex;align-items:center;gap:8px;color:#0099cc;font-weight:700;font-size:1.05em;}
+input,select,textarea{margin:0;padding:8px 10px;border-radius:6px;border:1px solid #333;font-size:max(16px,1em);background:#111;color:#00bfff;font-family:inherit;}
+textarea{min-height:160px;max-width:100%;width:100%;resize:vertical;}
+input[type=number]{width:160px;}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,191,255,.28);outline:none;}
+button{padding:10px 18px;min-height:44px;min-width:44px;margin-top:12px;border-radius:6px;cursor:pointer;transition:all .18s ease;border:1px solid #00ff00;background:#111;color:#00ff00;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-size:.95em;user-select:none;font-family:inherit;}
+button:hover{background:#00ff00;color:#000;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.12);}
+button:focus{outline:none;box-shadow:0 0 0 3px rgba(0,191,255,.28);}
+button:active{transform:translateY(0);}
+button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
+.result-out{margin-top:16px;font-size:1.05em;font-weight:700;opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;white-space:pre-line;color:#00bfff;}
+.result-out.show{opacity:1;transform:translateY(0);}
+.input-error{border:2px solid #ff0000!important;animation:shake .25s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+.error-msg{color:#ff0000;font-size:.92em;margin-top:4px;font-weight:700;}
+.small-note{font-size:.9em;color:inherit;opacity:.9;}
+.btn-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;}
 
-/* ═══ DISTANCE CONVERTER ═══ */
-@keyframes ribbonPop{from{opacity:0;transform:scale(.88) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.conv-result-card{display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:16px auto 0;padding:16px 28px;border-radius:12px;border:1px solid rgba(0,191,255,.35);box-shadow:0 0 16px rgba(0,191,255,.12);animation:ribbonPop .25s cubic-bezier(.175,.885,.32,1.275)}
-.conv-result-card .cr-value{font-size:1.7em;font-weight:900;color:#00bfff;text-shadow:0 0 10px rgba(0,191,255,.5);letter-spacing:.02em}
-.conv-result-card .cr-from{font-size:.85em;opacity:.6}
-.conv-result-card .cr-preview{font-size:.82em;opacity:.5;font-style:italic}
+/* ── CUSTOM SPLICES ── */
+.custom-splices{margin:8px auto 0;border-radius:6px;padding:10px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;max-width:760px;}
+.splice-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.splice-row input[type="text"]{width:200px;}
+.splice-row input[type="number"]{width:110px;}
+.splice-actions{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;}
+.splice-list-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:8px;border-radius:6px;margin:2px 0;background:rgba(255,255,255,.03);}
+.splice-list-row .col{padding:4px;}
+.splice-list-row .col.label{width:200px;text-align:left;}
+.splice-list-row .col.count{width:110px;text-align:left;}
+.splice-list-row .col.loss{width:110px;text-align:left;}
+.splice-list-row .col.actions{width:140px;text-align:left;display:flex;gap:6px;}
+.splice-editing{background:rgba(0,191,255,.06)!important;border:1px dashed rgba(0,191,255,.3)!important;}
+.splice-list-row input{min-height:36px;font-size:.9em;}
 
-/* ═══ RIBBON FINDER ═══ */
-.ribbon-result-card{display:inline-flex;flex-direction:column;align-items:center;gap:10px;margin:18px auto 0;padding:18px 28px;border-radius:12px;border:2px solid var(--ribbon-color,#888);box-shadow:0 0 18px var(--ribbon-glow,rgba(128,128,128,.3)),inset 0 0 30px rgba(0,0,0,.2);animation:ribbonPop .3s cubic-bezier(.175,.885,.32,1.275)}
-.ribbon-result-card .rc-swatch{width:60px;height:60px;border-radius:10px;border:3px solid rgba(255,255,255,.2);box-shadow:0 0 14px var(--ribbon-glow,rgba(128,128,128,.5))}
-.ribbon-result-card .rc-color-name{font-size:1.55em;font-weight:900;letter-spacing:.04em;color:var(--ribbon-color,#888);text-shadow:0 0 12px var(--ribbon-glow,rgba(128,128,128,.5))}
-.ribbon-result-card .rc-details{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
-.ribbon-result-card .rc-detail{display:flex;flex-direction:column;align-items:center;gap:2px}
-.ribbon-result-card .rc-detail-label{font-size:.7em;opacity:.55;text-transform:uppercase;letter-spacing:.09em}
-.ribbon-result-card .rc-detail-value{font-size:1.15em;font-weight:700;color:var(--ribbon-color,#888)}
-.ribbon-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:14px auto 0;max-width:600px}
-.ribbon-swatch{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default}
-.ribbon-swatch .swatch-box{width:38px;height:38px;border-radius:6px;border:2px solid rgba(255,255,255,.15);box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.ribbon-swatch .swatch-label{font-size:.7em;font-weight:700;text-align:center;max-width:42px;word-break:break-word;white-space:pre}
+/* ── DISTANCE CONVERTER ── */
+@keyframes ribbonPop{from{opacity:0;transform:scale(.88) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.conv-result-card{display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin:16px auto 0;padding:16px 28px;border-radius:12px;border:1px solid rgba(0,191,255,.35);box-shadow:0 0 16px rgba(0,191,255,.12);animation:ribbonPop .25s cubic-bezier(.175,.885,.32,1.275);}
+.conv-result-card .cr-value{font-size:1.7em;font-weight:900;color:#00bfff;text-shadow:0 0 10px rgba(0,191,255,.5);letter-spacing:.02em;}
+.conv-result-card .cr-from{font-size:.85em;opacity:.6;}
+.conv-result-card .cr-preview{font-size:.82em;opacity:.5;font-style:italic;}
 
-/* ═══ OTDR ═══ */
-.otdr-result-card{margin:12px auto 0;max-width:600px;border-radius:12px;border:1px solid rgba(0,191,255,.35);overflow:hidden;animation:ribbonPop .3s cubic-bezier(.175,.885,.32,1.275)}
-.otdr-card-header{padding:14px 18px 10px;border-bottom:1px solid rgba(0,191,255,.2)}
-.otdr-card-header .otdr-title{font-size:1.6em;font-weight:900;color:#fff;letter-spacing:.04em}
-.otdr-card-header .otdr-subtitle{font-size:1em;font-weight:700;color:#ccc;margin-top:3px}
-.otdr-card-header .otdr-tone-light-label{font-size:.85em;color:#888;margin-top:4px}
-.otdr-row{display:flex;align-items:center;padding:9px 18px;border-bottom:1px solid rgba(0,191,255,.08);font-size:.95em}
-.otdr-row:last-child{border-bottom:none}
-.otdr-row .pair-label{flex:1;font-weight:700}
-.otdr-row.flag-skip .pair-label{opacity:.4;font-style:italic}
-.tone-badge{color:#ffe000;text-shadow:0 0 8px rgba(255,224,0,.9),0 0 16px rgba(255,200,0,.5);font-weight:900}
-.light-badge{color:#ff2222;font-weight:900}
-.otdr-card-footer{padding:10px 18px;font-size:.82em;opacity:.5;border-top:1px solid rgba(0,191,255,.1)}
+/* ── RIBBON FINDER ── */
+.ribbon-result-card{display:inline-flex;flex-direction:column;align-items:center;gap:10px;margin:18px auto 0;padding:18px 28px;border-radius:12px;border:2px solid var(--ribbon-color,#888);box-shadow:0 0 18px var(--ribbon-glow,rgba(128,128,128,.3)),inset 0 0 30px rgba(0,0,0,.2);animation:ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);}
+.ribbon-result-card .rc-swatch{width:60px;height:60px;border-radius:10px;border:3px solid rgba(255,255,255,.2);box-shadow:0 0 14px var(--ribbon-glow,rgba(128,128,128,.5));}
+.ribbon-result-card .rc-color-name{font-size:1.55em;font-weight:900;letter-spacing:.04em;color:var(--ribbon-color,#888);text-shadow:0 0 12px var(--ribbon-glow,rgba(128,128,128,.5));}
+.ribbon-result-card .rc-details{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;}
+.ribbon-result-card .rc-detail{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ribbon-result-card .rc-detail-label{font-size:.7em;opacity:.55;text-transform:uppercase;letter-spacing:.09em;}
+.ribbon-result-card .rc-detail-value{font-size:1.15em;font-weight:700;color:var(--ribbon-color,#888);}
+.ribbon-strip{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:14px auto 0;max-width:600px;}
+.ribbon-swatch{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;}
+.ribbon-swatch .swatch-box{width:38px;height:38px;border-radius:6px;border:2px solid rgba(255,255,255,.15);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.ribbon-swatch .swatch-label{font-size:.7em;font-weight:700;text-align:center;max-width:42px;word-break:break-word;white-space:pre;}
 
-/* ═══ FIXER ═══ */
-.fixer-thresh-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 16px}
-.fixer-thresh-card{border:1px solid rgba(0,191,255,.25);border-radius:8px;padding:10px 12px}
-.ftc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px}
-.ftc-name{font-size:.75em;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.07em}
-.ftc-rule{font-size:1.1em;font-weight:900;color:#00bfff}
-.ftc-dir{font-size:.74em;opacity:.45;margin-top:3px}
-.ftc-change-btn{background:none;border:1px solid rgba(0,191,255,.4);color:#00bfff;font-size:.68em;font-weight:700;padding:2px 7px;border-radius:4px;cursor:pointer;margin-top:0;min-height:unset;line-height:1.5;flex-shrink:0}
-.ftc-change-btn:hover{background:rgba(0,191,255,.15);transform:none;box-shadow:none}
-.ftc-edit-row{display:flex;align-items:center;gap:5px;margin-top:8px}
-.ftc-edit-input{font-size:.85em;padding:4px 6px;width:88px;min-height:unset;margin:0}
-.ftc-save-btn,.ftc-cancel-btn{font-size:.75em;padding:3px 8px;min-height:unset;margin-top:0}
+/* ── OTDR ── */
+.otdr-result-card{margin:12px auto 0;max-width:600px;border-radius:12px;border:1px solid rgba(0,191,255,.35);overflow:hidden;animation:ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);}
+.otdr-card-header{padding:14px 18px 10px;border-bottom:1px solid rgba(0,191,255,.2);}
+.otdr-card-header .otdr-title{font-size:1.6em;font-weight:900;color:#fff;letter-spacing:.04em;}
+.otdr-card-header .otdr-subtitle{font-size:1em;font-weight:700;color:#ccc;margin-top:3px;}
+.otdr-card-header .otdr-tone-light-label{font-size:.85em;color:#888;margin-top:4px;}
+.otdr-row{display:flex;align-items:center;padding:9px 18px;border-bottom:1px solid rgba(0,191,255,.08);font-size:.95em;}
+.otdr-row:last-child{border-bottom:none;}
+.otdr-row .pair-label{flex:1;font-weight:700;}
+.otdr-row.flag-skip .pair-label{opacity:.4;font-style:italic;}
+.tone-badge{color:#ffe000;text-shadow:0 0 8px rgba(255,224,0,.9),0 0 16px rgba(255,200,0,.5);font-weight:900;}
+.light-badge{color:#ff2222;font-weight:900;}
+.otdr-card-footer{padding:10px 18px;font-size:.82em;opacity:.5;border-top:1px solid rgba(0,191,255,.1);}
 
-/* ═══ ACE ═══ */
-.ace-step{max-width:760px;margin:0 auto;text-align:left}
-.ace-step-title{font-size:1.1em;font-weight:900;color:#00bfff;text-shadow:0 0 8px rgba(0,191,255,.4);margin:0 0 12px;text-align:center}
-.ace-field-group{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.ace-field-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.ace-field-row label{font-size:.9em;font-weight:700;min-width:160px;flex-shrink:0;color:var(--label-dark-blue)}
-.ace-field-row input,.ace-field-row select{flex:1;min-width:0}
-.ace-section-divider{border:none;border-top:1px solid rgba(0,191,255,.15);margin:16px 0}
-.ace-event-block{border:1px solid rgba(0,191,255,.15);border-radius:8px;padding:12px 14px;margin-bottom:10px}
-.ace-event-title{font-size:.88em;font-weight:700;color:#00bfff;margin-bottom:10px;opacity:.8}
-.ace-confirm-msg{text-align:center;font-size:1.05em;line-height:1.9;margin-bottom:20px;color:#00bfff}
-.ace-progress{font-size:.82em;opacity:.55;text-align:center;margin-bottom:8px}
-.ace-preview-box{background:rgba(0,0,0,.3);border:1px solid rgba(0,191,255,.2);border-radius:8px;padding:14px;font-family:'Courier New',monospace;font-size:.8em;white-space:pre-wrap;max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch;user-select:text;line-height:1.5;margin-top:10px;width:100%;min-height:300px;resize:vertical}
+/* ── FIXER ── */
+.fixer-thresh-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0 0 16px;}
+.fixer-thresh-card{border:1px solid rgba(0,191,255,.25);border-radius:8px;padding:10px 12px;}
+.ftc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.ftc-name{font-size:.75em;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.07em;}
+.ftc-rule{font-size:1.1em;font-weight:900;color:#00bfff;}
+.ftc-dir{font-size:.74em;opacity:.45;margin-top:3px;}
+.ftc-change-btn{background:none;border:1px solid rgba(0,191,255,.4);color:#00bfff;font-size:.68em;font-weight:700;padding:2px 7px;border-radius:4px;cursor:pointer;margin-top:0;min-height:unset;line-height:1.5;flex-shrink:0;}
+.ftc-change-btn:hover{background:rgba(0,191,255,.15);transform:none;box-shadow:none;}
+.ftc-edit-row{display:flex;align-items:center;gap:5px;margin-top:8px;}
+.ftc-edit-input{font-size:.85em;padding:4px 6px;width:88px;min-height:unset;margin:0;}
+.ftc-save-btn,.ftc-cancel-btn{font-size:.75em;padding:3px 8px;min-height:unset;margin-top:0;}
 
-/* ═══ RESPONSIVE ═══ */
+/* ── ACE ── */
+.ace-step{max-width:760px;margin:0 auto;text-align:left;}
+.ace-step-title{font-size:1.1em;font-weight:900;color:#00bfff;text-shadow:0 0 8px rgba(0,191,255,.4);margin:0 0 12px;text-align:center;}
+.ace-field-group{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.ace-field-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.ace-field-row label{font-size:.9em;font-weight:700;min-width:160px;flex-shrink:0;color:#0099cc;}
+.ace-field-row input,.ace-field-row select{flex:1;min-width:0;}
+.ace-section-divider{border:none;border-top:1px solid rgba(0,191,255,.15);margin:16px 0;}
+.ace-event-block{border:1px solid rgba(0,191,255,.15);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.ace-event-title{font-size:.88em;font-weight:700;color:#00bfff;margin-bottom:10px;opacity:.8;}
+.ace-confirm-msg{text-align:center;font-size:1.05em;line-height:1.9;margin-bottom:20px;color:#00bfff;}
+.ace-progress{font-size:.82em;opacity:.55;text-align:center;margin-bottom:8px;}
+.ace-preview-box{background:rgba(0,0,0,.3);border:1px solid rgba(0,191,255,.2);border-radius:8px;padding:14px;font-family:'Courier New',monospace;font-size:.8em;white-space:pre-wrap;max-height:360px;overflow-y:auto;-webkit-overflow-scrolling:touch;user-select:text;line-height:1.5;margin-top:10px;width:100%;min-height:300px;resize:vertical;}
+
+/* ── RESPONSIVE ── */
 @media(max-width:720px){
-  .grid{grid-template-columns:repeat(2,1fr)}
-  .form-row{flex-direction:column;align-items:stretch;gap:10px}
-  label{width:100%;justify-content:space-between}
-  label input[type=number],label select{flex:1;width:auto;min-width:0}
-  input[type=number]{width:100%}
-  .splice-list-row{flex-direction:column;align-items:flex-start}
-  .splice-list-row .col{width:100%;text-align:left}
-  .splice-list-row .col.actions{flex-wrap:wrap}
-  .splice-actions{flex-direction:column;align-items:stretch}
-  .splice-actions input,.splice-actions button{width:100%}
-  .splice-row input[type="text"],.splice-row input[type="number"]{width:100%}
-  .btn-row{flex-direction:column;align-items:stretch}
-  .btn-row button{width:100%;margin-top:8px}
-  .ribbon-swatch .swatch-box{width:30px;height:30px}
-  .ace-field-row{flex-direction:column;align-items:stretch}
-  .ace-field-row label{min-width:unset;width:100%}
+  .grid{grid-template-columns:repeat(2,1fr);}
+  .form-row{flex-direction:column;align-items:stretch;gap:10px;}
+  label{width:100%;justify-content:space-between;}
+  label input[type=number],label select{flex:1;width:auto;min-width:0;}
+  input[type=number]{width:100%;}
+  .splice-list-row{flex-direction:column;align-items:flex-start;}
+  .splice-list-row .col{width:100%;text-align:left;}
+  .splice-list-row .col.actions{flex-wrap:wrap;}
+  .splice-actions{flex-direction:column;align-items:stretch;}
+  .splice-actions input,.splice-actions button{width:100%;}
+  .splice-row input[type="text"],.splice-row input[type="number"]{width:100%;}
+  .btn-row{flex-direction:column;align-items:stretch;}
+  .btn-row button{width:100%;margin-top:8px;}
+  .ribbon-swatch .swatch-box{width:30px;height:30px;}
+  .ace-field-row{flex-direction:column;align-items:stretch;}
+  .ace-field-row label{min-width:unset;width:100%;}
 }
 </style>
 </head>
@@ -275,23 +265,23 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
     </div>
   </div>
   <div class="controls">
-    <button id="themeToggle" type="button">&#9728;</button>
+    <button id="themeToggle">&#9728;</button>
   </div>
 </div>
 
 <div class="grid">
-  <div class="tile red"    data-tool="otdrTool">OTDR</div>
-  <div class="tile orange" data-tool="resultsTool">RESULTS</div>
-  <div class="tile blue"   data-tool="distanceTool">DISTANCE</div>
-  <div class="tile green"  data-tool="ribbonTool">RIBBON</div>
-  <div class="tile yellow" data-tool="lossTool">LOSS</div>
-  <div class="tile purple" data-tool="fireTool">FIRE</div>
+  <div class="tile red"    data-tool="otdr">OTDR</div>
+  <div class="tile orange" data-tool="results">RESULTS</div>
+  <div class="tile blue"   data-tool="distance">DISTANCE</div>
+  <div class="tile green"  data-tool="ribbon">RIBBON</div>
+  <div class="tile yellow" data-tool="loss">LOSS</div>
+  <div class="tile purple" data-tool="fire">FIRE</div>
 </div>
 
 <div id="tools">
 
   <!-- 1. OTDR NOTE MAKER -->
-  <div id="otdrTool" class="tool">
+  <div id="otdr" class="tool">
     <div id="otdrStep1">
       <p class="small-note" style="margin-bottom:12px;text-align:center">Enter job info to generate your OTDR notes.</p>
       <div class="form-row">
@@ -342,7 +332,7 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
   </div>
 
   <!-- 2. RESULTS CORRECTOR -->
-  <div id="resultsTool" class="tool">
+  <div id="results" class="tool">
     <p class="small-note" style="margin-bottom:12px;text-align:center">Upload or paste a results file &mdash; LENS finds any values outside these thresholds and replaces them with believable passing readings.</p>
     <div id="fixerThreshGrid" class="fixer-thresh-grid"></div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
@@ -367,7 +357,7 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
   </div>
 
   <!-- 3. DISTANCE CONVERTER -->
-  <div id="distanceTool" class="tool">
+  <div id="distance" class="tool">
     <div class="form-row">
       <label for="convValue">Value: <input id="convValue" type="number" inputmode="decimal" placeholder="Enter value" aria-label="Value to convert"></label>
       <label for="convFrom">From:
@@ -393,7 +383,7 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
   </div>
 
   <!-- 4. FIBER RIBBON FINDER -->
-  <div id="ribbonTool" class="tool">
+  <div id="ribbon" class="tool">
     <div class="form-row">
       <label for="strand">Strand Number: <input id="strand" type="number" inputmode="numeric" placeholder="Enter strand #" min="1" aria-label="Strand number"></label>
     </div>
@@ -406,9 +396,9 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
   </div>
 
   <!-- 5. FIBER LOSS CALCULATOR -->
-  <div id="lossTool" class="tool">
+  <div id="loss" class="tool">
     <div class="form-row">
-      <label for="distance">Distance: <input id="distance" type="number" inputmode="decimal" placeholder="Enter value" min="0" aria-label="Distance value"></label>
+      <label for="distInput">Distance: <input id="distInput" type="number" inputmode="decimal" placeholder="Enter value" min="0" aria-label="Distance value"></label>
       <label for="unit">Unit:
         <select id="unit" aria-label="Distance unit">
           <option value="km">km</option><option value="mi">miles</option>
@@ -472,7 +462,7 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
   </div>
 
   <!-- 6. ACE FIRE TOOL -->
-  <div id="fireTool" class="tool">
+  <div id="fire" class="tool">
     <div id="aceStep1" class="ace-step">
       <p class="ace-step-title">Step 1 &#8212; Job Setup</p>
       <div class="ace-field-group">
@@ -546,6 +536,24 @@ body.light .ftc-change-btn:hover{background:rgba(0,100,180,.1)}
 <div id="kmTooltip" class="km-tooltip" role="status" aria-hidden="true"></div>
 
 <script>
+/* ── TILE NAVIGATION (beautifier script.js) ── */
+document.querySelectorAll('.tile').forEach(tile=>{
+  tile.onclick=()=>{
+    const id=tile.dataset.tool;
+    const current=document.querySelector('.tool[style*="block"]');
+    if(current&&current.id===id){
+      current.style.display='none';
+      document.querySelectorAll('.tile').forEach(t=>t.classList.remove('active'));
+    }else{
+      document.querySelectorAll('.tool').forEach(t=>t.style.display='none');
+      document.querySelectorAll('.tile').forEach(t=>t.classList.remove('active'));
+      document.getElementById(id).style.display='block';
+      tile.classList.add('active');
+    }
+  };
+});
+
+/* ── APP LOGIC ── */
 (function(){
 'use strict';
 
@@ -560,41 +568,32 @@ const $=id=>document.getElementById(id);
 const clampInt=(v,min=0)=>{const n=parseInt(v,10);return Number.isFinite(n)?Math.max(min,n):min};
 const clampFloat=(v,min=0)=>{const n=parseFloat(v);return Number.isFinite(n)?Math.max(min,n):min};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function showResult(el,text){if(!el)return;el.textContent=text;el.classList.add('show')}
-function hideResult(el){if(el)el.classList.remove('show')}
-function setError(inputEl,msgEl,msg){if(inputEl)inputEl.classList.add('input-error');if(msgEl){msgEl.textContent=msg;msgEl.style.display='block'}}
-function clearError(inputEl,msgEl){if(inputEl)inputEl.classList.remove('input-error');if(msgEl){msgEl.textContent='';msgEl.style.display='none'}}
-function refreshOpenSections(){}
-
-/* ── TILE NAVIGATION ── */
-function openTool(id){
-  document.querySelectorAll('.tool').forEach(t=>t.style.display='none');
-  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('active'));
-  const panel=$(id);if(panel)panel.style.display='block';
-  const tile=document.querySelector(`.tile[data-tool="${id}"]`);if(tile)tile.classList.add('active');
-}
+function showResult(el,text){if(!el)return;el.textContent=text;el.classList.add('show');}
+function hideResult(el){if(el)el.classList.remove('show');}
+function setError(inputEl,msgEl,msg){if(inputEl)inputEl.classList.add('input-error');if(msgEl){msgEl.textContent=msg;msgEl.style.display='block';}}
+function clearError(inputEl,msgEl){if(inputEl)inputEl.classList.remove('input-error');if(msgEl){msgEl.textContent='';msgEl.style.display='none';}}
 
 /* ── TOOLTIP ── */
 const tooltip=$('kmTooltip');
-function showTip(x,y,t){tooltip.textContent=t;tooltip.style.left=x+'px';tooltip.style.top=y+'px';tooltip.classList.add('show');tooltip.setAttribute('aria-hidden','false')}
-function hideTip(){tooltip.classList.remove('show');tooltip.setAttribute('aria-hidden','true')}
-function attachTip(el,fn){if(!el)return;el.addEventListener('mouseenter',e=>{const t=fn();if(t)showTip(e.clientX,e.clientY,t)});el.addEventListener('mousemove',e=>{const t=fn();if(t)showTip(e.clientX,e.clientY,t)});el.addEventListener('mouseleave',hideTip);el.addEventListener('focus',e=>{const r=el.getBoundingClientRect();const t=fn();if(t)showTip(r.left+r.width/2,r.top,t)});el.addEventListener('blur',hideTip)}
+function showTip(x,y,t){tooltip.textContent=t;tooltip.style.left=x+'px';tooltip.style.top=y+'px';tooltip.classList.add('show');tooltip.setAttribute('aria-hidden','false');}
+function hideTip(){tooltip.classList.remove('show');tooltip.setAttribute('aria-hidden','true');}
+function attachTip(el,fn){if(!el)return;el.addEventListener('mouseenter',e=>{const t=fn();if(t)showTip(e.clientX,e.clientY,t);});el.addEventListener('mousemove',e=>{const t=fn();if(t)showTip(e.clientX,e.clientY,t);});el.addEventListener('mouseleave',hideTip);el.addEventListener('focus',e=>{const r=el.getBoundingClientRect();const t=fn();if(t)showTip(r.left+r.width/2,r.top,t);});el.addEventListener('blur',hideTip);}
 
 /* ── UNIT HELPERS ── */
-function toKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v*MI_TO_KM:u==='kft'?v*KFT_TO_KM:u==='ft'?v*FT_TO_KM:v}
-function fromKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v/MI_TO_KM:u==='kft'?v/KFT_TO_KM:u==='ft'?v/FT_TO_KM:v}
-function toFeet(v,u){return toKm(v,u)*KM_TO_FT}
-function getPreviewUnit(){const s=localStorage.getItem(LS_PREVIEW);return(s==='ft'||s==='km')?s:'ft'}
-function setPreviewUnit(u){if(u!=='ft'&&u!=='km')return;localStorage.setItem(LS_PREVIEW,u);const sel=$('previewUnit');if(sel)sel.value=u;updateDistanceHint()}
-function updateDistanceHint(){const v=clampFloat($('distance').value||0,0),u=$('unit').value||'km',pu=getPreviewUnit(),h=$('distanceHint');if(!h)return;h.textContent=pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`}
+function toKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v*MI_TO_KM:u==='kft'?v*KFT_TO_KM:u==='ft'?v*FT_TO_KM:v;}
+function fromKm(v,u){v=Number(v)||0;return u==='km'?v:u==='mi'?v/MI_TO_KM:u==='kft'?v/KFT_TO_KM:u==='ft'?v/FT_TO_KM:v;}
+function toFeet(v,u){return toKm(v,u)*KM_TO_FT;}
+function getPreviewUnit(){const s=localStorage.getItem(LS_PREVIEW);return(s==='ft'||s==='km')?s:'ft';}
+function setPreviewUnit(u){if(u!=='ft'&&u!=='km')return;localStorage.setItem(LS_PREVIEW,u);const sel=$('previewUnit');if(sel)sel.value=u;updateDistanceHint();}
+function updateDistanceHint(){const v=clampFloat($('distInput').value||0,0),u=$('unit').value||'km',pu=getPreviewUnit(),h=$('distanceHint');if(!h)return;h.textContent=pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;}
 
 /* ── CUSTOM SPLICES ── */
 const spliceStore=[];let spliceNextId=1;
 function renderSpliceList(){
   const list=$('spliceList'),summary=$('spliceCustomResult');
   list.innerHTML='';
-  if(spliceStore.length===0){summary.textContent='No custom splices added.';summary.classList.remove('show')}
-  else{summary.textContent=`${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;summary.classList.add('show')}
+  if(spliceStore.length===0){summary.textContent='No custom splices added.';summary.classList.remove('show');}
+  else{summary.textContent=`${spliceStore.length} custom splice entr${spliceStore.length===1?'y':'ies'} — totals applied in calculation`;summary.classList.add('show');}
   spliceStore.forEach(s=>{
     const row=document.createElement('div');row.className='splice-list-row';row.dataset.id=s.id;
     row.innerHTML=`<div class="col label">${esc(s.label)}</div><div class="col count">${s.count}</div><div class="col loss">${Number(s.loss).toFixed(3)}</div><div class="col actions"><button type="button" class="editSplice">Edit</button><button type="button" class="removeSplice">Remove</button></div>`;
@@ -609,17 +608,17 @@ function addCustomSplice(){
   $('newSpliceLabel').value='';$('newSpliceCount').value=1;$('newSpliceLoss').value=0.05;
   renderSpliceList();
 }
-function removeSplice(id){const i=spliceStore.findIndex(s=>s.id===id);if(i>-1)spliceStore.splice(i,1);renderSpliceList()}
+function removeSplice(id){const i=spliceStore.findIndex(s=>s.id===id);if(i>-1)spliceStore.splice(i,1);renderSpliceList();}
 function openInlineEdit(id){
   const list=$('spliceList'),row=list.querySelector(`.splice-list-row[data-id="${id}"]`),s=spliceStore.find(x=>x.id===id);
   if(!row||!s)return;
   row.classList.add('splice-editing');
   row.innerHTML=`<div class="col label"><input class="edit-label" type="text" value="${esc(s.label)}" style="width:100%"></div><div class="col count"><input class="edit-count" type="number" inputmode="numeric" min="0" value="${s.count}" style="width:100%"></div><div class="col loss"><input class="edit-loss" type="number" inputmode="decimal" step="0.001" min="0" value="${s.loss}" style="width:100%"></div><div class="col actions"><button type="button" class="saveSplice">Save</button><button type="button" class="cancelSplice">Cancel</button></div>`;
-  row.querySelector('.saveSplice').addEventListener('click',()=>{s.label=row.querySelector('.edit-label').value.trim()||s.label;s.count=clampInt(row.querySelector('.edit-count').value,0);s.loss=clampFloat(row.querySelector('.edit-loss').value,0);renderSpliceList()});
+  row.querySelector('.saveSplice').addEventListener('click',()=>{s.label=row.querySelector('.edit-label').value.trim()||s.label;s.count=clampInt(row.querySelector('.edit-count').value,0);s.loss=clampFloat(row.querySelector('.edit-loss').value,0);renderSpliceList();});
   row.querySelector('.cancelSplice').addEventListener('click',()=>renderSpliceList());
   row.querySelector('.edit-label').focus();
 }
-function clearCustomSplices(){spliceStore.length=0;renderSpliceList()}
+function clearCustomSplices(){spliceStore.length=0;renderSpliceList();}
 
 /* ── LOSS CALCULATOR ── */
 function computeTotalLoss({distance,unit,wavelength,connectors,connectorLoss,splices,spliceLoss,customSplices}){
@@ -629,23 +628,23 @@ function computeTotalLoss({distance,unit,wavelength,connectors,connectorLoss,spl
   return{distKm:dk,fiberLoss:fl,connLoss:cl,splcLoss:sl,custTotal:ct,total:fl+cl+sl+ct};
 }
 function calcLoss(){
-  const di=$('distance'),err=$('distanceError');clearError(di,err);
+  const di=$('distInput'),err=$('distanceError');clearError(di,err);
   const dist=parseFloat(di.value);
-  if(!di.value||isNaN(dist)||dist<=0){setError(di,err,'⚠ Please enter a valid distance greater than 0.');di.focus();return}
+  if(!di.value||isNaN(dist)||dist<=0){setError(di,err,'⚠ Please enter a valid distance greater than 0.');di.focus();return;}
   const unit=$('unit').value||'km',wl=$('wavelength').value||'1550';
   const conn=clampInt($('connectors').value||0,0),cLoss=clampFloat($('connectorLoss').value||0,0);
   const spl=clampInt($('splices').value||0,0),sLoss=clampFloat($('spliceLoss').value||0,0);
   const res=computeTotalLoss({distance:dist,unit,wavelength:wl,connectors:conn,connectorLoss:cLoss,splices:spl,spliceLoss:sLoss,customSplices:spliceStore});
   const pu=getPreviewUnit(),pv=pu==='ft'?toFeet(dist,unit):toKm(dist,unit),pl=pu==='ft'?`${pv.toFixed(2)} ft`:`${pv.toFixed(6)} km`;
   const lines=[`Distance: ${dist} ${unit} (${pu}: ${pl})`,`Wavelength: ${wl} nm`,`Fiber attenuation: ${ATTENUATION[wl]??0.20} dB/km → ${res.fiberLoss.toFixed(3)} dB`,`Connectors: ${conn} × ${cLoss.toFixed(3)} dB → ${res.connLoss.toFixed(3)} dB`,`Splices (input): ${spl} × ${sLoss.toFixed(3)} dB → ${res.splcLoss.toFixed(3)} dB`];
-  if(spliceStore.length>0){lines.push(`Custom splices (${spliceStore.length} entr${spliceStore.length===1?'y':'ies'}):`);spliceStore.forEach(s=>lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count*s.loss).toFixed(3)} dB`));lines.push(`Custom splices total: ${res.custTotal.toFixed(3)} dB`)}
+  if(spliceStore.length>0){lines.push(`Custom splices (${spliceStore.length} entr${spliceStore.length===1?'y':'ies'}):`);spliceStore.forEach(s=>lines.push(` • ${s.label}: ${s.count} × ${Number(s.loss).toFixed(3)} dB = ${(s.count*s.loss).toFixed(3)} dB`));lines.push(`Custom splices total: ${res.custTotal.toFixed(3)} dB`);}
   else lines.push(`Custom splices total: 0.000 dB`);
   lines.push(`Total estimated loss: ${res.total.toFixed(3)} dB`);
   const re=$('result');re.innerHTML='';
-  lines.forEach((ln,i)=>{const p=document.createElement('div');p.style.margin='6px 0';if(i===0){const sp=document.createElement('span');sp.textContent=ln.replace(/\s*\([^)]+\)$/,'');sp.tabIndex=0;sp.dataset.preview=ln.match(/\(([^)]+)\)$/)?.[1]||'';sp.style.cursor='help';p.appendChild(sp);attachTip(sp,()=>sp.dataset.preview||'')}else p.textContent=ln;re.appendChild(p)});
+  lines.forEach((ln,i)=>{const p=document.createElement('div');p.style.margin='6px 0';if(i===0){const sp=document.createElement('span');sp.textContent=ln.replace(/\s*\([^)]+\)$/,'');sp.tabIndex=0;sp.dataset.preview=ln.match(/\(([^)]+)\)$/)?.[1]||'';sp.style.cursor='help';p.appendChild(sp);attachTip(sp,()=>sp.dataset.preview||'');}else p.textContent=ln;re.appendChild(p);});
   re.classList.add('show');
 }
-function resetLossFields(){$('distance').value='';$('connectors').value='';$('splices').value='';clearError($('distance'),$('distanceError'));hideResult($('result'));clearCustomSplices();updateDistanceHint()}
+function resetLossFields(){$('distInput').value='';$('connectors').value='';$('splices').value='';clearError($('distInput'),$('distanceError'));hideResult($('result'));clearCustomSplices();updateDistanceHint();}
 
 /* ── DISTANCE CONVERTER ── */
 function convertDistance(){
@@ -655,31 +654,34 @@ function convertDistance(){
   const out=$('convertResult');
   out.style.cssText='opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;margin-top:16px;';
   out.innerHTML=`<div class="conv-result-card"><div class="cr-from">${val} ${from} =</div><div class="cr-value">${conv.toFixed(6)} ${to}</div><div class="cr-preview">≈ ${prev}</div></div>`;
-  requestAnimationFrame(()=>{out.style.opacity='1';out.style.transform='translateY(0)'});
+  requestAnimationFrame(()=>{out.style.opacity='1';out.style.transform='translateY(0)';});
   out.dataset.plain=`${val} ${from} = ${conv.toFixed(6)} ${to}  (≈ ${prev})`;
   attachTip(out,()=>prev);
 }
-function copyConvertResult(){const out=$('convertResult');if(!out||!out.dataset.plain)return;copyToClipboard(out.dataset.plain,out,'Copied ✓')}
+function copyConvertResult(){const out=$('convertResult');if(!out||!out.dataset.plain)return;copyToClipboard(out.dataset.plain,out,'Copied ✓');}
 function applyConvertedToCalculator(){
-  $('distance').value=clampFloat($('convValue').value||0,0);
+  $('distInput').value=clampFloat($('convValue').value||0,0);
   $('unit').value=$('convFrom').value||'km';
   updateDistanceHint();
-  openTool('lossTool');
+  document.querySelectorAll('.tool').forEach(t=>t.style.display='none');
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('active'));
+  $('loss').style.display='block';
+  document.querySelector('.tile[data-tool="loss"]').classList.add('active');
   calcLoss();
 }
 
 /* ── CLIPBOARD ── */
 function copyToClipboard(text,feedbackEl,msg){
   const restore=feedbackEl?feedbackEl.textContent:'';
-  const done=()=>{if(feedbackEl){feedbackEl.textContent=msg;setTimeout(()=>{if(feedbackEl.textContent===msg)feedbackEl.textContent=restore},1500)}};
+  const done=()=>{if(feedbackEl){feedbackEl.textContent=msg;setTimeout(()=>{if(feedbackEl.textContent===msg)feedbackEl.textContent=restore;},1500);}};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,feedbackEl));
   else fallbackCopy(text,feedbackEl);
 }
 function fallbackCopy(text,feedbackEl){
   const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;top:0;left:0';
   document.body.appendChild(ta);ta.focus();ta.select();
-  try{document.execCommand('copy');if(feedbackEl){feedbackEl.textContent='Copied!';setTimeout(()=>feedbackEl.textContent='',1500)}}
-  catch(e){if(feedbackEl)feedbackEl.textContent='Unable to copy'}
+  try{document.execCommand('copy');if(feedbackEl){feedbackEl.textContent='Copied!';setTimeout(()=>feedbackEl.textContent='',1500);}}
+  catch(e){if(feedbackEl)feedbackEl.textContent='Unable to copy';}
   document.body.removeChild(ta);
 }
 
@@ -690,27 +692,14 @@ const FIXER_THRESHOLDS=[
   {name:'Event Reflectance', limit:-40.0, mode:'max', dp:1, dir:'more negative is better',offsets:[1.1,1.5,2.0,2.4,0.8,3.1,1.8,2.7,1.3,3.4,0.9,2.2,1.6,2.9,1.0,3.8,1.4,2.5], recent:[]},
   {name:'Strand ORL',        limit:28.0,  mode:'min', dp:1, dir:'higher is better',       offsets:[0.2,0.4,0.7,1.1,0.3,0.8,1.4,0.5,0.9,1.2,0.6,1.3,0.4,1.0,0.3,0.6], recent:[]},
 ];
-function fixerRuleText(t){const sign=t.mode==='max'?'≤':'≥';return`${sign} ${t.limit.toFixed(t.dp)} dB`}
+function fixerRuleText(t){return`${t.mode==='max'?'≤':'≥'} ${t.limit.toFixed(t.dp)} dB`;}
 function fixerRenderCards(){
   const grid=$('fixerThreshGrid');
   grid.innerHTML=FIXER_THRESHOLDS.map((t,i)=>`<div class="fixer-thresh-card"><div class="ftc-header"><div class="ftc-name">${esc(t.name)}</div><button class="ftc-change-btn" type="button" data-idx="${i}">Change</button></div><div class="ftc-rule" id="ftc-rule-${i}">${fixerRuleText(t)}</div><div class="ftc-dir">${t.dir}</div><div class="ftc-edit-row" id="ftc-edit-${i}" style="display:none"><input class="ftc-edit-input" id="ftc-input-${i}" type="number" inputmode="decimal" step="any" value="${Math.abs(t.limit)}"><button class="ftc-save-btn" type="button" data-idx="${i}">✓</button><button class="ftc-cancel-btn" type="button" data-idx="${i}">×</button></div></div>`).join('');
-  grid.querySelectorAll('.ftc-change-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    const i=+btn.dataset.idx;$(`ftc-edit-${i}`).style.display='flex';$(`ftc-input-${i}`).focus();
-  }));
-  grid.querySelectorAll('.ftc-cancel-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    $(`ftc-edit-${+btn.dataset.idx}`).style.display='none';
-  }));
-  grid.querySelectorAll('.ftc-save-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    const i=+btn.dataset.idx,raw=parseFloat($(`ftc-input-${i}`).value);
-    if(isNaN(raw)||raw<=0)return;
-    FIXER_THRESHOLDS[i].limit=FIXER_THRESHOLDS[i].limit<0?-raw:raw;
-    fixerRenderCards();
-  }));
-  grid.querySelectorAll('.ftc-edit-input').forEach(inp=>inp.addEventListener('keydown',e=>{
-    const card=inp.closest('.fixer-thresh-card');
-    if(e.key==='Enter')card.querySelector('.ftc-save-btn').click();
-    if(e.key==='Escape')card.querySelector('.ftc-cancel-btn').click();
-  }));
+  grid.querySelectorAll('.ftc-change-btn').forEach(btn=>btn.addEventListener('click',()=>{const i=+btn.dataset.idx;$(`ftc-edit-${i}`).style.display='flex';$(`ftc-input-${i}`).focus();}));
+  grid.querySelectorAll('.ftc-cancel-btn').forEach(btn=>btn.addEventListener('click',()=>{$(`ftc-edit-${+btn.dataset.idx}`).style.display='none';}));
+  grid.querySelectorAll('.ftc-save-btn').forEach(btn=>btn.addEventListener('click',()=>{const i=+btn.dataset.idx,raw=parseFloat($(`ftc-input-${i}`).value);if(isNaN(raw)||raw<=0)return;FIXER_THRESHOLDS[i].limit=FIXER_THRESHOLDS[i].limit<0?-raw:raw;fixerRenderCards();}));
+  grid.querySelectorAll('.ftc-edit-input').forEach(inp=>inp.addEventListener('keydown',e=>{const card=inp.closest('.fixer-thresh-card');if(e.key==='Enter')card.querySelector('.ftc-save-btn').click();if(e.key==='Escape')card.querySelector('.ftc-cancel-btn').click();}));
 }
 function fixerPickThreshold(val){
   if(val<0)return FIXER_THRESHOLDS.find(t=>t.name==='Event Reflectance');
@@ -721,24 +710,17 @@ function fixerPickThreshold(val){
 }
 function fixerGetReplacement(t,decimals){
   let candidate,attempts=0;
-  do{
-    const off=t.offsets[Math.floor(Math.random()*t.offsets.length)];
-    const raw=t.mode==='max'?t.limit-off:t.limit+off;
-    candidate=raw.toFixed(Math.max(decimals,1));
-    attempts++;
-  }while(t.recent.includes(candidate)&&attempts<15);
+  do{const off=t.offsets[Math.floor(Math.random()*t.offsets.length)];const raw=t.mode==='max'?t.limit-off:t.limit+off;candidate=raw.toFixed(Math.max(decimals,1));attempts++;}while(t.recent.includes(candidate)&&attempts<15);
   t.recent.push(candidate);if(t.recent.length>5)t.recent.shift();
   return candidate;
 }
 function fixerRun(){
-  const text=$('fixerInput').value,err=$('fixerError');
-  clearError(null,err);
-  if(!text.trim()){setError(null,err,'⚠ Paste or upload a file first.');return}
+  const text=$('fixerInput').value,err=$('fixerError');clearError(null,err);
+  if(!text.trim()){setError(null,err,'⚠ Paste or upload a file first.');return;}
   FIXER_THRESHOLDS.forEach(t=>t.recent=[]);
   const counts={};
   const result=text.replace(/(?<![.\d])-?\d+\.\d+(?![.\d])/g,(match)=>{
-    const val=parseFloat(match);
-    const t=fixerPickThreshold(val);
+    const val=parseFloat(match),t=fixerPickThreshold(val);
     if(!t)return match;
     const violates=t.mode==='max'?val>t.limit:val<t.limit;
     if(!violates)return match;
@@ -747,15 +729,11 @@ function fixerRun(){
     return fixerGetReplacement(t,decimals);
   });
   const total=Object.values(counts).reduce((a,b)=>a+b,0);
-  const detail=Object.entries(counts).map(([k,v])=>`${v} ${k}`).join(', ');
   $('fixerResult').value=result;
-  $('fixerSummary').textContent=total?`${total} value${total!==1?'s':''} corrected — ${detail}.`:'No values exceeded thresholds.';
+  $('fixerSummary').textContent=total?`${total} value${total!==1?'s':''} corrected — ${Object.entries(counts).map(([k,v])=>`${v} ${k}`).join(', ')}.`:'No values exceeded thresholds.';
   $('fixerOutput').style.display='block';
 }
-function fixerClear(){
-  $('fixerInput').value='';$('fixerResult').value='';$('fixerOutput').style.display='none';
-  clearError(null,$('fixerError'));
-}
+function fixerClear(){$('fixerInput').value='';$('fixerResult').value='';$('fixerOutput').style.display='none';clearError(null,$('fixerError'));}
 
 /* ── OTDR ── */
 let otdrSession=null;
@@ -764,14 +742,13 @@ function otdrStart(){
   const fr=clampInt($('otdrRangeStart').value,1),to=clampInt($('otdrRangeEnd').value,1);
   const coFr=clampInt($('otdrCoRangeStart').value,1),coTo=clampInt($('otdrCoRangeEnd').value,1);
   const toneCount=clampInt($('otdrToneCount').value,0)||null,lightCount=clampInt($('otdrLightCount').value,0)||null;
-  const err=$('otdrStep1Error');
-  clearError(null,err);
-  if(!proj){setError(null,err,'⚠ Enter a project code.');return}
-  if(!cable){setError(null,err,'⚠ Enter a cable ID.');return}
-  if(fr<1||to<fr){setError(null,err,'⚠ Check your field count range.');return}
-  if(coFr<1||coTo<coFr||(coTo-coFr)!==(to-fr)){setError(null,err,`⚠ C.O. range must span the same number of counts as the field range (${to-fr+1}).`);return}
-  if(toneCount&&(toneCount<fr||toneCount>to)){setError(null,err,`⚠ TONE count must be between ${fr} and ${to}.`);return}
-  if(lightCount&&(lightCount<fr||lightCount>to)){setError(null,err,`⚠ LIGHT count must be between ${fr} and ${to}.`);return}
+  const err=$('otdrStep1Error');clearError(null,err);
+  if(!proj){setError(null,err,'⚠ Enter a project code.');return;}
+  if(!cable){setError(null,err,'⚠ Enter a cable ID.');return;}
+  if(fr<1||to<fr){setError(null,err,'⚠ Check your field count range.');return;}
+  if(coFr<1||coTo<coFr||(coTo-coFr)!==(to-fr)){setError(null,err,`⚠ C.O. range must span the same number of counts as the field range (${to-fr+1}).`);return;}
+  if(toneCount&&(toneCount<fr||toneCount>to)){setError(null,err,`⚠ TONE count must be between ${fr} and ${to}.`);return;}
+  if(lightCount&&(lightCount<fr||lightCount>to)){setError(null,err,`⚠ LIGHT count must be between ${fr} and ${to}.`);return;}
   otdrSession={projectCode:proj,cableId:cable,counts:[],range:{from:fr,to:to},coRange:{from:coFr,to:coTo},toneCount,lightCount,current:fr};
   $('otdrStep1').style.display='none';$('otdrStep2').style.display='block';
   otdrUpdateStep2();
@@ -788,7 +765,7 @@ function otdrUpdateStep2(){
 function otdrRecordAndAdvance(skip=false){
   if(!otdrSession)return;
   const dist=skip?null:parseFloat($('otdrDistInput').value);
-  if(!skip&&(isNaN(dist)||dist<=0)){$('otdrDiffHint').textContent='⚠ Enter a valid distance or tap Skip.';$('otdrDistInput').focus();return}
+  if(!skip&&(isNaN(dist)||dist<=0)){$('otdrDiffHint').textContent='⚠ Enter a valid distance or tap Skip.';$('otdrDistInput').focus();return;}
   otdrSession.counts.push({count:otdrSession.current,dist,skipped:skip});
   otdrSession.current++;
   if(otdrSession.current>otdrSession.range.to)otdrFinish();
@@ -826,13 +803,13 @@ function otdrRestart(){
 /* ── RIBBON ── */
 function findRibbon(){
   const n=clampInt($('strand').value||0,0),out=$('ribbonResult');
-  if(!n||n<1){out.innerHTML='';showResult(out,'Enter a valid strand number (≥ 1).');return}
+  if(!n||n<1){out.innerHTML='';showResult(out,'Enter a valid strand number (≥ 1).');return;}
   const pos=((n-1)%12)+1,rib=Math.floor((n-1)/12)+1,color=COLORS12[pos-1]||'Unknown',hex=SWATCH_HEX[color]||'#888';
   const glowMap={Blue:'rgba(51,153,255,.55)',Orange:'rgba(255,136,0,.55)',Green:'rgba(51,204,51,.55)',Brown:'rgba(139,69,19,.45)',Slate:'rgba(112,128,144,.45)',White:'rgba(220,220,220,.4)',Red:'rgba(255,34,34,.55)',Black:'rgba(160,160,160,.3)',Yellow:'rgba(255,221,0,.55)',Violet:'rgba(153,102,255,.55)',Rose:'rgba(255,102,170,.55)',Aqua:'rgba(0,229,255,.55)'};
   const glow=glowMap[color]||'rgba(128,128,128,.4)';
   out.style.cssText='opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .25s ease;';
   out.innerHTML=`<div class="ribbon-result-card" style="--ribbon-color:${hex};--ribbon-glow:${glow}"><div class="rc-swatch" style="background:${hex}${color==='White'?';border:2px solid #aaa':''}"></div><div class="rc-color-name">${color}</div><div class="rc-details"><div class="rc-detail"><span class="rc-detail-label">Strand</span><span class="rc-detail-value">${n}</span></div><div class="rc-detail"><span class="rc-detail-label">Ribbon</span><span class="rc-detail-value">${rib}</span></div><div class="rc-detail"><span class="rc-detail-label">Position</span><span class="rc-detail-value">${pos} of 12</span></div></div></div>`;
-  requestAnimationFrame(()=>{out.style.opacity='1';out.style.transform='translateY(0)'});
+  requestAnimationFrame(()=>{out.style.opacity='1';out.style.transform='translateY(0)';});
 }
 function buildRibbonStrip(){
   const strip=$('ribbonStrip');if(!strip)return;
@@ -860,23 +837,22 @@ function toggleTheme(){
 
 /* ── ACE ── */
 let aceData={header:{},cableId:'',strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
-function aceShowStep(n){[1,2,3,4].forEach(i=>{const el=$('aceStep'+i);if(el)el.style.display=i===n?'block':'none'})}
+function aceShowStep(n){[1,2,3,4].forEach(i=>{const el=$('aceStep'+i);if(el)el.style.display=i===n?'block':'none';});}
 function aceStep1Next(){
   const err=$('aceStep1Error');clearError(null,err);
   const cfas=($('aceCfas').value||'').trim(),cableId=($('aceCableId').value||'').trim();
   const from=clampInt($('aceStrandFrom').value,0),to=clampInt($('aceStrandTo').value,0),evts=clampInt($('aceEventCount').value,2);
-  if(!cfas){setError(null,err,'⚠ CLO # is required.');return}
-  if(!cableId){setError(null,err,'⚠ Fiber Cable Name is required.');return}
-  if(!from||!to){setError(null,err,'⚠ Enter the strand range.');return}
-  if(to<from){setError(null,err,'⚠ "To" strand must be ≥ "From" strand.');return}
+  if(!cfas){setError(null,err,'⚠ CLO # is required.');return;}
+  if(!cableId){setError(null,err,'⚠ Fiber Cable Name is required.');return;}
+  if(!from||!to){setError(null,err,'⚠ Enter the strand range.');return;}
+  if(to<from){setError(null,err,'⚠ "To" strand must be ≥ "From" strand.');return;}
   aceData.header={tester:'',wireCenterClli:'',cfas,aLoc:'',zLoc:'',dateTested:$('aceDateTested').value||new Date().toISOString().split('T')[0],model:'FTBx-720D-SM1',serialNumber:'1869003',version:'1.0',calibrationDate:$('aceCalDate').value||''};
-  aceData.cableId=cableId;
-  aceData.strandFrom=from;aceData.strandTo=to;aceData.eventCount=evts;aceData.strands=[];aceData.currentStrand=0;
+  aceData.cableId=cableId;aceData.strandFrom=from;aceData.strandTo=to;aceData.eventCount=evts;aceData.strands=[];aceData.currentStrand=0;
   const count=to-from+1,list=Array.from({length:count},(_,i)=>from+i).join(', ');
   $('aceConfirmMsg').innerHTML=`We're working with strand${count>1?'s':''} <strong>${list}</strong> on cable <strong>${esc(cableId)}</strong>.<br>That's <strong>${count} strand${count>1?'s':''}</strong> total, each with <strong>${evts} event${evts!==1?'s':''}</strong> (including the first connector and the end event).<br><br>Calibration date: <strong>${$('aceCalDate').value||'(not set)'}</strong> — correct?`;
   aceShowStep(2);
 }
-function aceStep2Confirm(){aceLoadStrand(0);aceShowStep(3)}
+function aceStep2Confirm(){aceLoadStrand(0);aceShowStep(3);}
 function aceLoadStrand(idx){
   const from=aceData.strandFrom,total=aceData.strandTo-from+1,sn=from+idx;
   $('aceStep3Title').textContent=`Step 3 — Strand ${sn} (${idx+1} of ${total})`;
@@ -905,32 +881,20 @@ function aceCollectStrand(){
   const err=$('aceStep3Error');clearError(null,err);
   const sl=clampInt($('aceSpanLength').value,0),pf=$('acePassFail').value;
   const l1=parseFloat($('aceLm1310Loss').value),o1=parseFloat($('aceLm1310Orl').value),l5=parseFloat($('aceLm1550Loss').value),o5=parseFloat($('aceLm1550Orl').value);
-  if([l1,o1,l5,o5].some(isNaN)){setError(null,err,'⚠ Fill in all four link measurement values.');return null}
+  if([l1,o1,l5,o5].some(isNaN)){setError(null,err,'⚠ Fill in all four link measurement values.');return null;}
   const lm=[{wavelength:1310,totalLoss:l1,totalORL:o1},{wavelength:1550,totalLoss:l5,totalORL:o5}];
   const blocks=$('aceEventsContainer').querySelectorAll('.ace-event-block'),events=[],tot=blocks.length;
-  const p=v=>{const n=parseFloat(v);return isNaN(n)?null:n};
+  const p=v=>{const n=parseFloat(v);return isNaN(n)?null:n;};
   const rawLoss1310=[],rawLoss1550=[];
-  for(let i=0;i<tot;i++){
-    const b=blocks[i],isEnd=i===tot-1;
-    if(isEnd){rawLoss1310.push(null);rawLoss1550.push(null)}
-    else{rawLoss1310.push(p(b.querySelector('.ev-loss-1310')?.value));rawLoss1550.push(p(b.querySelector('.ev-loss-1550')?.value))}
-  }
+  for(let i=0;i<tot;i++){const b=blocks[i],isEnd=i===tot-1;if(isEnd){rawLoss1310.push(null);rawLoss1550.push(null);}else{rawLoss1310.push(p(b.querySelector('.ev-loss-1310')?.value));rawLoss1550.push(p(b.querySelector('.ev-loss-1550')?.value));}}
   let cum1310=0,cum1550=0;
   for(let i=0;i<tot;i++){
     const b=blocks[i],isStart=i===0,isEnd=i===tot-1,dist=p(b.querySelector('.ev-dist')?.value)||0;
-    const attrs=isStart?['start','Connector','Connector']:isEnd?[]:[];
+    const attrs=isStart?['start','Connector','Connector']:[];
     const type=isStart?'Group':isEnd?'end':'Splice';
     let m;
-    if(isEnd){
-      m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-end-ref-1310')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null},
-         {wavelength:1550,reflectance:p(b.querySelector('.ev-end-ref-1550')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null}];
-    }else{
-      const l1r=rawLoss1310[i],l5r=rawLoss1550[i];
-      if(l1r!=null)cum1310=Math.round((cum1310+l1r)*1000)/1000;
-      if(l5r!=null)cum1550=Math.round((cum1550+l5r)*1000)/1000;
-      m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-ref-1310')?.value),loss:l1r,lossToEvent:l1r!=null?cum1310:null,spanLossThruEvent:null},
-         {wavelength:1550,reflectance:p(b.querySelector('.ev-ref-1550')?.value),loss:l5r,lossToEvent:l5r!=null?cum1550:null,spanLossThruEvent:null}];
-    }
+    if(isEnd){m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-end-ref-1310')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null},{wavelength:1550,reflectance:p(b.querySelector('.ev-end-ref-1550')?.value),loss:null,lossToEvent:null,spanLossThruEvent:null}];}
+    else{const l1r=rawLoss1310[i],l5r=rawLoss1550[i];if(l1r!=null)cum1310=Math.round((cum1310+l1r)*1000)/1000;if(l5r!=null)cum1550=Math.round((cum1550+l5r)*1000)/1000;m=[{wavelength:1310,reflectance:p(b.querySelector('.ev-ref-1310')?.value),loss:l1r,lossToEvent:l1r!=null?cum1310:null,spanLossThruEvent:null},{wavelength:1550,reflectance:p(b.querySelector('.ev-ref-1550')?.value),loss:l5r,lossToEvent:l5r!=null?cum1550:null,spanLossThruEvent:null}];}
     events.push({eventNumber:i,distanceFromA:dist,eventType:type,eventAttributes:attrs,measurements:m});
   }
   return{strand:aceData.strandFrom+aceData.currentStrand,spanLength:sl,passFail:pf,linkMeasurements:lm,events};
@@ -938,25 +902,25 @@ function aceCollectStrand(){
 function aceStep3Next(){
   const s=aceCollectStrand();if(!s)return;
   aceData.strands[aceData.currentStrand]=s;aceData.currentStrand++;
-  if(aceData.currentStrand<(aceData.strandTo-aceData.strandFrom+1)){aceLoadStrand(aceData.currentStrand)}
-  else{try{$('aceJsonPreview').value=JSON.stringify({Label:{...aceData.header,...ACE_THRESHOLDS,cableId:aceData.cableId,Tested:aceData.strands}},null,2)}catch(e){$('aceJsonPreview').value='// Error: '+e.message}aceShowStep(4)}
+  if(aceData.currentStrand<(aceData.strandTo-aceData.strandFrom+1))aceLoadStrand(aceData.currentStrand);
+  else{try{$('aceJsonPreview').value=JSON.stringify({Label:{...aceData.header,...ACE_THRESHOLDS,cableId:aceData.cableId,Tested:aceData.strands}},null,2);}catch(e){$('aceJsonPreview').value='// Error: '+e.message;}aceShowStep(4);}
 }
 function aceValidate(){
   const err=$('aceStep4Error');clearError(null,err);
-  try{JSON.parse($('aceJsonPreview').value);err.textContent='✅ Valid JSON';err.style.display='block';err.style.color='#00ff00';setTimeout(()=>{err.style.display='none';err.style.color=''},2000)}
-  catch(e){setError(null,err,'⚠ Invalid JSON — '+e.message)}
+  try{JSON.parse($('aceJsonPreview').value);err.textContent='✅ Valid JSON';err.style.display='block';err.style.color='#00ff00';setTimeout(()=>{err.style.display='none';err.style.color='';},2000);}
+  catch(e){setError(null,err,'⚠ Invalid JSON — '+e.message);}
 }
 function aceDownload(){
   const err=$('aceStep4Error');clearError(null,err);
   const jt=$('aceJsonPreview').value;
-  try{JSON.parse(jt)}catch(e){setError(null,err,'⚠ Fix JSON errors before downloading.');return}
+  try{JSON.parse(jt);}catch(e){setError(null,err,'⚠ Fix JSON errors before downloading.');return;}
   const fname=`${aceData.header.cfas||'output'}.json`.replace(/[^a-z0-9_\-\.]/gi,'_');
   const blob=new Blob([jt],{type:'application/json'}),a=document.createElement('a');
   a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
 }
 function aceRestart(){
   aceData={header:{},cableId:'',strandFrom:1,strandTo:1,eventCount:7,strands:[],currentStrand:0};
-  ['aceCfas','aceCableId'].forEach(id=>{const el=$(id);if(el)el.value=''});
+  ['aceCfas','aceCableId'].forEach(id=>{const el=$(id);if(el)el.value='';});
   $('aceStrandFrom').value='';$('aceStrandTo').value='';$('aceEventCount').value=7;
   $('aceDateTested').value=new Date().toISOString().split('T')[0];$('aceCalDate').value='';
   clearError(null,$('aceStep1Error'));clearError(null,$('aceStep3Error'));clearError(null,$('aceStep4Error'));
@@ -968,88 +932,55 @@ document.addEventListener('DOMContentLoaded',()=>{
   applySavedTheme();
   $('themeToggle').addEventListener('click',toggleTheme);
 
-  document.querySelectorAll('.tile').forEach(tile=>{
-    tile.addEventListener('click',()=>{
-      const id=tile.dataset.tool;
-      const panel=$(id);
-      if(panel&&panel.style.display==='block'){
-        panel.style.display='none';tile.classList.remove('active');
-      }else{
-        openTool(id);
-      }
-    });
-  });
-
   fixerRenderCards();
 
-  const ps=$('previewUnit');if(ps){ps.value=getPreviewUnit();ps.addEventListener('change',e=>setPreviewUnit(e.target.value))}
+  const ps=$('previewUnit');if(ps){ps.value=getPreviewUnit();ps.addEventListener('change',e=>setPreviewUnit(e.target.value));}
   $('addSpliceBtn').addEventListener('click',addCustomSplice);
   $('clearCustomBtn').addEventListener('click',clearCustomSplices);
   $('calcBtn').addEventListener('click',calcLoss);
   $('resetLossBtn').addEventListener('click',resetLossFields);
-  $('distance').addEventListener('keydown',e=>{if(e.key==='Enter')calcLoss()});
-  $('newSpliceCount').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice()});
-  $('newSpliceLoss').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice()});
-  $('distance').addEventListener('input',updateDistanceHint);
+  $('distInput').addEventListener('keydown',e=>{if(e.key==='Enter')calcLoss();});
+  $('newSpliceCount').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice();});
+  $('newSpliceLoss').addEventListener('keydown',e=>{if(e.key==='Enter')addCustomSplice();});
+  $('distInput').addEventListener('input',updateDistanceHint);
   $('unit').addEventListener('change',updateDistanceHint);
   updateDistanceHint();
-  attachTip($('distance'),()=>{const v=clampFloat($('distance').value||0,0),u=$('unit').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`});
+  attachTip($('distInput'),()=>{const v=clampFloat($('distInput').value||0,0),u=$('unit').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;});
 
   $('convertBtn').addEventListener('click',convertDistance);
   $('copyConvBtn').addEventListener('click',copyConvertResult);
   $('applyToCalcBtn').addEventListener('click',applyConvertedToCalculator);
-  $('convValue').addEventListener('input',()=>{if($('convValue').value)convertDistance()});
-  $('convFrom').addEventListener('change',()=>{if($('convValue').value)convertDistance()});
-  attachTip($('convValue'),()=>{const v=clampFloat($('convValue').value||0,0),u=$('convFrom').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`});
+  $('convValue').addEventListener('input',()=>{if($('convValue').value)convertDistance();});
+  $('convFrom').addEventListener('change',()=>{if($('convValue').value)convertDistance();});
+  attachTip($('convValue'),()=>{const v=clampFloat($('convValue').value||0,0),u=$('convFrom').value||'km',pu=getPreviewUnit();return pu==='ft'?`≈ ${toFeet(v,u).toFixed(2)} ft`:`≈ ${toKm(v,u).toFixed(6)} km`;});
 
   $('findBtn').addEventListener('click',findRibbon);
-  $('strand').addEventListener('keydown',e=>{if(e.key==='Enter')findRibbon()});
+  $('strand').addEventListener('keydown',e=>{if(e.key==='Enter')findRibbon();});
 
   $('fixerUploadBtn').addEventListener('click',()=>$('fixerFileInput').click());
-  $('fixerFileInput').addEventListener('change',e=>{
-    const f=e.target.files?.[0];if(!f)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{$('fixerInput').value=ev.target.result};
-    reader.readAsText(f);e.target.value='';
-  });
+  $('fixerFileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{$('fixerInput').value=ev.target.result;};reader.readAsText(f);e.target.value='';});
   $('fixerRunBtn').addEventListener('click',fixerRun);
   $('fixerClearBtn').addEventListener('click',fixerClear);
-  $('fixerCopyBtn').addEventListener('click',()=>{if($('fixerResult').value)copyToClipboard($('fixerResult').value,$('fixerCopyBtn'),'Copied ✓')});
-  $('fixerDownloadBtn').addEventListener('click',()=>{
-    const txt=$('fixerResult').value;if(!txt)return;
-    const blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download=`LENS_Fixed_${Date.now()}.txt`;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
-  });
+  $('fixerCopyBtn').addEventListener('click',()=>{if($('fixerResult').value)copyToClipboard($('fixerResult').value,$('fixerCopyBtn'),'Copied ✓');});
+  $('fixerDownloadBtn').addEventListener('click',()=>{const txt=$('fixerResult').value;if(!txt)return;const blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`LENS_Fixed_${Date.now()}.txt`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);});
 
   $('otdrStartBtn').addEventListener('click',otdrStart);
   $('otdrNextBtn').addEventListener('click',()=>otdrRecordAndAdvance(false));
   $('otdrSkipBtn').addEventListener('click',()=>otdrRecordAndAdvance(true));
   $('otdrRestartBtn').addEventListener('click',otdrRestart);
-  $('otdrCopyBtn').addEventListener('click',()=>{if(otdrSession?.plainText)copyToClipboard(otdrSession.plainText,$('otdrCopyBtn'),'Copied ✓')});
-  $('otdrDownloadBtn').addEventListener('click',()=>{
-    if(!otdrSession?.plainText)return;
-    const blob=new Blob([otdrSession.plainText],{type:'text/plain'}),a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);a.download=`OTDR_${(otdrSession.projectCode||'note').replace(/[^a-z0-9_-]/gi,'_')}_${Date.now()}.txt`;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
-  });
-  $('otdrSaveBtn').addEventListener('click',()=>{
-    if(!otdrSession?.plainText)return;
-    const saved=JSON.parse(localStorage.getItem(LS_NOTES)||'[]');
-    saved.push({id:Date.now(),label:`OTDR ${otdrSession.projectCode} – ${new Date().toLocaleString()}`,text:otdrSession.plainText});
-    localStorage.setItem(LS_NOTES,JSON.stringify(saved));
-    $('otdrSaveBtn').textContent='Saved ✓';setTimeout(()=>$('otdrSaveBtn').textContent='Save',1500);
-  });
-  $('otdrDistInput').addEventListener('keydown',e=>{if(e.key==='Enter')otdrRecordAndAdvance(false)});
-  $('otdrRangeEnd').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart()});
-  $('otdrLightCount').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart()});
+  $('otdrCopyBtn').addEventListener('click',()=>{if(otdrSession?.plainText)copyToClipboard(otdrSession.plainText,$('otdrCopyBtn'),'Copied ✓');});
+  $('otdrDownloadBtn').addEventListener('click',()=>{if(!otdrSession?.plainText)return;const blob=new Blob([otdrSession.plainText],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`OTDR_${(otdrSession.projectCode||'note').replace(/[^a-z0-9_-]/gi,'_')}_${Date.now()}.txt`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);});
+  $('otdrSaveBtn').addEventListener('click',()=>{if(!otdrSession?.plainText)return;const saved=JSON.parse(localStorage.getItem(LS_NOTES)||'[]');saved.push({id:Date.now(),label:`OTDR ${otdrSession.projectCode} – ${new Date().toLocaleString()}`,text:otdrSession.plainText});localStorage.setItem(LS_NOTES,JSON.stringify(saved));$('otdrSaveBtn').textContent='Saved ✓';setTimeout(()=>$('otdrSaveBtn').textContent='Save',1500);});
+  $('otdrDistInput').addEventListener('keydown',e=>{if(e.key==='Enter')otdrRecordAndAdvance(false);});
+  $('otdrRangeEnd').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart();});
+  $('otdrLightCount').addEventListener('keydown',e=>{if(e.key==='Enter')otdrStart();});
 
   $('aceStep1Next').addEventListener('click',aceStep1Next);
   $('aceStep2Back').addEventListener('click',()=>aceShowStep(1));
   $('aceStep2Confirm').addEventListener('click',aceStep2Confirm);
-  $('aceStep3Back').addEventListener('click',()=>{aceData.currentStrand=Math.max(0,aceData.currentStrand-1);aceLoadStrand(aceData.currentStrand);aceShowStep(3)});
+  $('aceStep3Back').addEventListener('click',()=>{aceData.currentStrand=Math.max(0,aceData.currentStrand-1);aceLoadStrand(aceData.currentStrand);aceShowStep(3);});
   $('aceStep3Next').addEventListener('click',aceStep3Next);
-  $('aceStep4Back').addEventListener('click',()=>{aceData.currentStrand=aceData.strandTo-aceData.strandFrom;aceLoadStrand(aceData.currentStrand);aceShowStep(3)});
+  $('aceStep4Back').addEventListener('click',()=>{aceData.currentStrand=aceData.strandTo-aceData.strandFrom;aceLoadStrand(aceData.currentStrand);aceShowStep(3);});
   $('aceValidateBtn').addEventListener('click',aceValidate);
   $('aceDownloadBtn').addEventListener('click',aceDownload);
   $('aceRestartBtn').addEventListener('click',aceRestart);
