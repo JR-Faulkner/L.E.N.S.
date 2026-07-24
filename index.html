@@ -170,6 +170,18 @@ body.light .conv-result-card .cr-value { color: #0055aa; text-shadow: none; }
 body.light .otdr-result-card { border-color: rgba(0,100,180,.3); }
 body.light .otdr-card-header .otdr-title { color: #003; }
 body.light .otdr-card-header .otdr-subtitle { color: #333; }
+/* FIXER */
+.fixer-thresh-list { margin: 6px 0 12px; border: 1px solid rgba(0,191,255,.15); border-radius: 8px; overflow: hidden; }
+.fixer-thresh-row { display:flex; align-items:center; gap:10px; padding:7px 12px; border-bottom:1px solid rgba(0,191,255,.1); font-size:.9em; }
+.fixer-thresh-row:last-child { border-bottom:none; }
+.fixer-thresh-label { flex:1; font-weight:700; }
+.fixer-thresh-max { color:#00bfff; font-weight:700; }
+.fixer-thresh-unit { opacity:.55; min-width:24px; }
+.fixer-thresh-remove { background:none; border:1px solid rgba(255,85,85,.4); color:#ff5555; cursor:pointer; font-size:1em; padding:1px 7px; border-radius:4px; line-height:1.4; }
+.fixer-thresh-remove:hover { background:rgba(255,85,85,.15); }
+body.light .fixer-thresh-list { border-color:rgba(0,100,180,.2); }
+body.light .fixer-thresh-row { border-color:rgba(0,100,180,.1); }
+body.light .fixer-thresh-max { color:#0055aa; }
 /* ACE */
 .ace-step { max-width: 760px; margin: 0 auto; text-align: left; }
 .ace-step-title { font-size: 1.1em; font-weight: 900; color: #00bfff; text-shadow: 0 0 8px rgba(0,191,255,.4); margin: 0 0 12px; text-align: center; }
@@ -277,7 +289,47 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
   </div>
 </div>
 
-<!-- 2. DISTANCE CONVERTER -->
+<!-- 2. RESULTS CORRECTOR -->
+
+<div class="section-header-wrap">
+  <h2 id="fixerHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="fixerSection">Results Corrector &#9660;</h2>
+</div>
+<div id="fixerSection" class="section">
+  <div class="section-inner">
+    <p class="small-note" style="margin-bottom:12px">Upload or paste a results file &mdash; LENS will find any values exceeding your thresholds and replace them with believable under-limit readings.</p>
+    <div id="fixerThreshList" class="fixer-thresh-list" style="display:none"></div>
+    <div class="form-row" style="flex-wrap:wrap;gap:8px;align-items:flex-end">
+      <label for="fixerThreshName" style="flex:1;min-width:130px">Label: <input id="fixerThreshName" type="text" placeholder="e.g. Splice Loss" autocomplete="off"></label>
+      <label for="fixerThreshMax" style="min-width:110px">Max Value: <input id="fixerThreshMax" type="number" inputmode="decimal" step="0.001" min="0" placeholder="0.500"></label>
+      <label for="fixerThreshUnit" style="min-width:80px">Unit: <input id="fixerThreshUnit" type="text" placeholder="dB" autocomplete="off"></label>
+      <button id="fixerAddThreshBtn" type="button" style="margin-top:4px">+ Add Threshold</button>
+    </div>
+    <div id="fixerThreshError" class="error-msg" style="display:none"></div>
+    <div style="margin-top:16px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <button id="fixerUploadBtn" type="button">&#128193; Upload File</button>
+        <input id="fixerFileInput" type="file" accept=".txt,.csv,.log,.rpt,.dat,.sor" style="display:none">
+        <span class="small-note">or paste content below</span>
+      </div>
+      <textarea id="fixerInput" class="ace-preview-box" placeholder="Paste your results file content here..." style="min-height:150px;resize:vertical"></textarea>
+    </div>
+    <div id="fixerError" class="error-msg" style="display:none"></div>
+    <div class="btn-row" style="margin-top:10px">
+      <button id="fixerRunBtn" type="button">Fix Results</button>
+      <button id="fixerClearBtn" type="button">Clear</button>
+    </div>
+    <div id="fixerOutput" style="display:none;margin-top:16px">
+      <p class="small-note" id="fixerSummary" style="margin-bottom:8px"></p>
+      <textarea id="fixerResult" class="ace-preview-box" readonly style="min-height:150px"></textarea>
+      <div class="btn-row" style="margin-top:8px">
+        <button id="fixerCopyBtn" type="button">Copy</button>
+        <button id="fixerDownloadBtn" type="button">Download .txt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. DISTANCE CONVERTER -->
 
 <div class="section-header-wrap">
   <h2 id="converterHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="converterSection">Distance Converter &#9660;</h2>
@@ -623,6 +675,62 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     document.body.removeChild(ta);
   }
 
+  /* RESULTS CORRECTOR */
+  let fixerThresholds=[],fixerThreshNextId=1,fixerRecentReplacements=[];
+  function fixerRenderThresholds(){
+    const el=$('fixerThreshList');
+    if(!fixerThresholds.length){el.style.display='none';el.innerHTML='';return}
+    el.style.display='block';
+    el.innerHTML=fixerThresholds.map(t=>`<div class="fixer-thresh-row"><span class="fixer-thresh-label">${esc(t.name)}</span><span class="fixer-thresh-max">&le; ${t.max}</span><span class="fixer-thresh-unit">${esc(t.unit)}</span><button class="fixer-thresh-remove" type="button" data-id="${t.id}">&times;</button></div>`).join('');
+    el.querySelectorAll('.fixer-thresh-remove').forEach(btn=>btn.addEventListener('click',()=>{fixerThresholds=fixerThresholds.filter(t=>t.id!==+btn.dataset.id);fixerRenderThresholds();refreshOpenSections()}));
+  }
+  function fixerAddThreshold(){
+    const name=($('fixerThreshName').value||'').trim(),max=parseFloat($('fixerThreshMax').value),unit=($('fixerThreshUnit').value||'').trim()||'dB',err=$('fixerThreshError');
+    clearError(null,err);
+    if(!name){setError(null,err,'⚠ Enter a label for this threshold.');return}
+    if(isNaN(max)||max<=0){setError(null,err,'⚠ Enter a valid max value greater than 0.');return}
+    fixerThresholds.push({id:fixerThreshNextId++,name,max,unit});
+    $('fixerThreshName').value='';$('fixerThreshMax').value='';$('fixerThreshUnit').value='';
+    fixerRenderThresholds();refreshOpenSections();
+  }
+  function fixerGetReplacement(maxVal,decimals){
+    const offsets=[0.028,0.019,0.013,0.024,0.017,0.022,0.015,0.027,0.011,0.021,0.016,0.025,0.012,0.029,0.018,0.020,0.014,0.026,0.010,0.023];
+    let candidate,attempts=0;
+    do{
+      const off=offsets[Math.floor(Math.random()*offsets.length)];
+      candidate=(maxVal-off).toFixed(Math.max(decimals,2));
+      attempts++;
+    }while(fixerRecentReplacements.includes(candidate)&&attempts<15);
+    fixerRecentReplacements.push(candidate);
+    if(fixerRecentReplacements.length>5)fixerRecentReplacements.shift();
+    return candidate;
+  }
+  function fixerRun(){
+    const text=$('fixerInput').value,err=$('fixerError');
+    clearError(null,err);
+    if(!text.trim()){setError(null,err,'⚠ Paste or upload a file first.');return}
+    if(!fixerThresholds.length){setError(null,err,'⚠ Add at least one threshold before running.');return}
+    fixerRecentReplacements=[];
+    const sorted=[...fixerThresholds].sort((a,b)=>a.max-b.max);
+    let changeCount=0;
+    const result=text.replace(/\b(\d+\.\d+)\b/g,(match)=>{
+      const val=parseFloat(match);
+      const violated=sorted.find(t=>val>t.max);
+      if(!violated)return match;
+      const decimals=match.length-match.indexOf('.')-1;
+      changeCount++;
+      return fixerGetReplacement(violated.max,decimals);
+    });
+    $('fixerResult').value=result;
+    $('fixerSummary').textContent=`${changeCount} value${changeCount!==1?'s':''} corrected across ${fixerThresholds.length} threshold${fixerThresholds.length!==1?'s':''}.`;
+    $('fixerOutput').style.display='block';
+    refreshOpenSections();
+  }
+  function fixerClear(){
+    $('fixerInput').value='';$('fixerResult').value='';$('fixerOutput').style.display='none';
+    clearError(null,$('fixerError'));refreshOpenSections();
+  }
+
   /* OTDR */
   let otdrSession=null;
   function otdrStart(){
@@ -839,6 +947,7 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     applySavedTheme();
     $('themeToggle').addEventListener('change',toggleTheme);
     wireHeader('otdrHeader','otdrSection');
+    wireHeader('fixerHeader','fixerSection');
     wireHeader('converterHeader','converterSection');
     wireHeader('ribbonHeader','ribbonSection');
     wireHeader('lossHeader','lossSection');
@@ -864,6 +973,25 @@ body.light .ace-field-row label { color: var(--label-light-blue); }
     attachTip($('convValue'),()=>{const v=clampFloat($('convValue').value||0,0),u=$('convFrom').value||'km',pu=getPreviewUnit();return pu==='ft'?`\u2248 ${toFeet(v,u).toFixed(2)} ft`:`\u2248 ${toKm(v,u).toFixed(6)} km`});
     $('findBtn').addEventListener('click',findRibbon);
     $('strand').addEventListener('keydown',e=>{if(e.key==='Enter')findRibbon()});
+    $('fixerAddThreshBtn').addEventListener('click',fixerAddThreshold);
+    $('fixerThreshMax').addEventListener('keydown',e=>{if(e.key==='Enter')fixerAddThreshold()});
+    $('fixerThreshUnit').addEventListener('keydown',e=>{if(e.key==='Enter')fixerAddThreshold()});
+    $('fixerUploadBtn').addEventListener('click',()=>$('fixerFileInput').click());
+    $('fixerFileInput').addEventListener('change',e=>{
+      const f=e.target.files?.[0];if(!f)return;
+      const reader=new FileReader();
+      reader.onload=ev=>{$('fixerInput').value=ev.target.result;refreshOpenSections()};
+      reader.readAsText(f);e.target.value='';
+    });
+    $('fixerRunBtn').addEventListener('click',fixerRun);
+    $('fixerClearBtn').addEventListener('click',fixerClear);
+    $('fixerCopyBtn').addEventListener('click',()=>{if($('fixerResult').value)copyToClipboard($('fixerResult').value,$('fixerCopyBtn'),'Copied ✓')});
+    $('fixerDownloadBtn').addEventListener('click',()=>{
+      const txt=$('fixerResult').value;if(!txt)return;
+      const blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download=`LENS_Fixed_${Date.now()}.txt`;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+    });
     $('otdrStartBtn').addEventListener('click',otdrStart);
     $('otdrNextBtn').addEventListener('click',()=>otdrRecordAndAdvance(false));
     $('otdrSkipBtn').addEventListener('click',()=>otdrRecordAndAdvance(true));
