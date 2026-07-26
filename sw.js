@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lens-v6';
+const CACHE_NAME = 'lens-v7';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -26,7 +26,16 @@ const PRECACHE_URLS = [
   '/assets/icons/reference.svg',
   '/assets/icons/documents.svg',
   '/assets/icons/history.svg',
-  '/assets/icons/settings.svg'
+  '/assets/icons/settings.svg',
+  '/favicon.ico',
+  '/assets/svg/lens-core-icon-outline.svg',
+  '/assets/svg/lens-core-icon.svg',
+  '/assets/svg/lens-core-icon-maskable.svg',
+  '/assets/png/apple-touch-icon.png',
+  '/assets/png/icon-192x192.png',
+  '/assets/png/icon-512x512.png',
+  '/assets/png/maskable-icon-192x192.png',
+  '/assets/png/maskable-icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {

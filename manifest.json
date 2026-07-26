@@ -4,10 +4,20 @@
   "description": "Fiber optic field tools for OTDR notes, loss calculations, distance conversion, and more.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#07080d",
-  "theme_color": "#e8430a",
+  "background_color": "#080a0e",
+  "theme_color": "#ff4b2f",
   "orientation": "portrait-primary",
   "icons": [
-    { "src": "assets/banner/LENS_banner_no_theme.webp", "sizes": "1983x793", "type": "image/webp", "purpose": "any" }
+    { "src": "assets/png/icon-72x72.png",            "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-96x96.png",            "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-128x128.png",          "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-144x144.png",          "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-152x152.png",          "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-192x192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-256x256.png",          "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-384x384.png",          "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/icon-512x512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/png/maskable-icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/png/maskable-icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
