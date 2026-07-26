@@ -1,0 +1,13 @@
+{
+  "name": "L.E.N.S. — Loss Estimator & Network Systems",
+  "short_name": "L.E.N.S.",
+  "description": "Fiber optic field tools for OTDR notes, loss calculations, distance conversion, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07080d",
+  "theme_color": "#e8430a",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "assets/banner/LENS_banner_no_theme.webp", "sizes": "1983x793", "type": "image/webp", "purpose": "any" }
+  ]
+}
