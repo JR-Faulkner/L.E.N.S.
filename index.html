@@ -48,8 +48,8 @@ body{margin:0;background:var(--bg0);font-family:'Segoe UI',system-ui,sans-serif;
 #lensToast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 /* === TILE GRID === */
-.lens-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px 18px;}
-@media(min-width:900px){.lens-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.lens-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px 18px;max-width:620px;margin-inline:auto;}
+@media(min-width:900px){.lens-module-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:18px;max-width:840px;}}
 .lens-module{appearance:none;border:0;background:transparent;padding:0;width:100%;cursor:pointer;}
 .lens-module__image{width:100%;height:auto;display:block;transition:opacity .12s;}
 .lens-module:focus-visible{outline:3px solid #18c9ff;outline-offset:5px;border-radius:24px;}
