@@ -99,10 +99,7 @@ body.light .ftc-rule{color:#0055aa;}
 body.light .ftc-change-btn{border-color:rgba(0,100,180,.4);color:#0055aa;}
 body.light .sa-scope,body.light .sa-card{border-color:rgba(0,100,180,.25);}
 body.light .sa-table td,body.light .sa-table tr{border-top-color:rgba(0,0,0,.1);}
-body.light .sa-badge--pass{background:rgba(0,140,70,.12);color:#00794a;}
-body.light .sa-badge--fail{background:rgba(200,40,0,.12);color:#c02800;}
-body.light .sa-badge--missing{background:rgba(170,120,0,.14);color:#8a6200;}
-body.light .sa-bad{color:#c02800;}
+body.light body.light body.light body.light .sa-bad{color:#c02800;}
 
 /* === TOOLTIP === */
 .km-tooltip{position:fixed;pointer-events:none;padding:6px 8px;border-radius:6px;background:rgba(0,0,0,.85);color:#fff;font-size:.9em;z-index:9999;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .12s ease;}
@@ -198,15 +195,8 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
 .sa-scope__hint{font-size:.74em;opacity:.45;margin-top:6px;}
 .sa-summary{text-align:center;font-size:.9em;margin:0 0 10px;}
 .sa-card{border:1px solid rgba(0,191,255,.2);border-left-width:3px;border-radius:8px;padding:10px 12px;margin-bottom:8px;}
-.sa-card--pass{border-left-color:#3bff9e;}
-.sa-card--fail{border-left-color:#ff4b2f;}
-.sa-card--missing{border-left-color:#ffd83b;}
 .sa-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
 .sa-strand{font-weight:900;font-size:1.02em;}
-.sa-badge{font-size:.68em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px;white-space:nowrap;}
-.sa-badge--pass{background:rgba(59,255,158,.15);color:#3bff9e;}
-.sa-badge--fail{background:rgba(255,75,47,.16);color:#ff6b4f;}
-.sa-badge--missing{background:rgba(255,216,59,.15);color:#ffd83b;}
 .sa-note{font-size:.82em;opacity:.7;}
 .sa-table-wrap{overflow-x:auto;}
 .sa-table{width:100%;border-collapse:collapse;font-size:.8em;}
@@ -214,20 +204,12 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
 .sa-table td{padding:3px 8px 3px 0;border-top:1px solid rgba(255,255,255,.07);font-variant-numeric:tabular-nums;}
 .sa-table .sa-num{text-align:right;white-space:nowrap;}
 .sa-bad{color:#ff6b4f;font-weight:700;}
-.sa-badge-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.sa-audit{display:flex;align-items:center;gap:7px;font-size:.76em;opacity:.7;margin:6px 0 2px;width:auto;justify-content:flex-start;cursor:pointer;}
-.sa-audit input{width:auto;margin:0;flex-shrink:0;}
-.sa-badge--edited{background:rgba(0,191,255,.15);color:#00bfff;}
-.sa-re__toggle{font-size:.72em;font-weight:700;letter-spacing:.05em;padding:4px 10px;margin-top:8px;min-height:unset;background:none;border:1px solid rgba(0,191,255,.4);color:#00bfff;border-radius:4px;cursor:pointer;}
-.sa-re__toggle:hover{background:rgba(0,191,255,.15);transform:none;box-shadow:none;}
 .sa-re{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,191,255,.25);}
-.sa-re__hint{font-size:.74em;opacity:.5;margin-bottom:8px;}
 .sa-re__row{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;}
 .sa-re__label{font-size:.78em;flex:1 1 220px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;width:auto;}
 .sa-re__where{opacity:.5;}
 .sa-re__was{opacity:.55;font-variant-numeric:tabular-nums;}
 .sa-re__input{width:130px;font-size:.85em;padding:4px 7px;min-height:unset;margin:0;flex-shrink:0;}
-.sa-re__note{width:100%;font-size:.85em;padding:5px 8px;min-height:unset;margin:8px 0 0;}
 .sa-re__apply{font-size:.76em;padding:5px 12px;min-height:unset;margin-top:9px;}
 .sa-re__err{margin-top:6px;}
 
@@ -399,10 +381,10 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
     <div class="sa-scope">
       <div class="sa-scope__head">Strand Scope</div>
       <div class="sa-scope__row">
-        <input id="fixerStrandScope" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 3, 7-12, 15" aria-label="Strand numbers to analyze">
-        <button id="fixerAnalyzeBtn" type="button">Analyze Strands</button>
+        <input id="fixerStrandScope" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 3, 7-12, 15" aria-label="Strand numbers to find">
+        <button id="fixerAnalyzeBtn" type="button">Find Strands</button>
       </div>
-      <div class="sa-scope__hint">Checks only the strands you list against the thresholds above. Leave blank to check every strand in the file.</div>
+      <div class="sa-scope__hint">Lists only the strands you enter. Leave blank for every strand in the file.</div>
     </div>
     <div class="btn-row" style="margin-top:10px">
       <button id="fixerRunBtn" type="button">Fix Results</button>
@@ -412,12 +394,9 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
       <p class="sa-summary" id="fixerAnalysisSummary"></p>
       <div id="fixerAnalysisCards"></div>
       <div class="btn-row" style="margin-top:10px">
-        <button id="fixerAnalysisCopyBtn" type="button">Copy Report</button>
-        <button id="fixerRegenBtn" type="button" style="display:none">Export Corrected Record</button>
+        <button id="fixerRegenBtn" type="button">Show Result</button>
       </div>
       <div id="fixerCorrectedOutput" style="display:none;margin-top:14px">
-        <div class="sa-scope__head">Corrected record</div>
-        <label class="sa-audit"><input type="checkbox" id="fixerAuditDetail" checked> Full correction detail &mdash; timestamps, notes, and per-reading spec status</label>
         <textarea id="fixerCorrectedResult" class="ace-preview-box" readonly style="min-height:180px"></textarea>
         <div class="btn-row" style="margin-top:8px">
           <button id="fixerCorrectedCopyBtn" type="button">Copy</button>
@@ -1048,39 +1027,9 @@ function fixerViolation(name,val){
   return{name,limit:t.limit,dp:t.dp,value:val,delta:Math.abs(val-t.limit)};
 }
 const fixerInSpec=(n,v)=>fixerViolation(n,v)===null;
-function fixerAnalyzeStrand(rec,lines){
-  const issues=[];
-  if(rec.lineIdx){
-    rec.lineIdx.forEach(li=>{
-      const text=lines[li];
-      TEXT_PATTERNS.forEach(p=>{
-        const re=new RegExp(p.re.source,'ig');let m;
-        while((m=re.exec(text))!==null){
-          const v=fixerViolation(p.key,parseFloat(m[1]));
-          if(v)issues.push(Object.assign(v,{where:`Line ${li+1}`,tLine:li,tStart:m.index+m[0].lastIndexOf(m[1]),tLen:m[1].length}));
-        }
-      });
-    });
-    return issues;
-  }
-  rec.events.forEach(ev=>{
-    const lossName=ev.type==='connector'?'Connector Loss':'Splice Loss';
-    ev.meas.forEach(m=>{
-      const where=`Event ${ev.n}`+(m.wl?` @ ${m.wl}nm`:'');
-      if(ev.type!=='end'){const v=fixerViolation(lossName,m.loss);if(v)issues.push(Object.assign(v,{where,src:m.src,field:'loss',norm:m,nfield:'loss'}));}
-      const r=fixerViolation('Event Reflectance',m.refl);
-      if(r)issues.push(Object.assign(r,{where,src:m.src,field:'reflectance',norm:m,nfield:'refl'}));
-    });
-  });
-  rec.link.forEach(m=>{
-    const v=fixerViolation('Strand ORL',m.totalORL);
-    if(v)issues.push(Object.assign(v,{where:'Link ORL'+(m.wl?` @ ${m.wl}nm`:''),src:m.src,field:'totalORL',norm:m,nfield:'totalORL'}));
-  });
-  return issues;
-}
 
-/* live analysis state — rows are rebuilt after every applied correction */
-let fixerState={format:'text',data:null,lines:null,records:[],rows:[],missing:[],corrections:[],report:''};
+/* live state — rows are rebuilt after every applied change */
+let fixerState={format:'text',data:null,lines:null,records:[],rows:[],missing:[]};
 
 function fixerAnalyze(){
   const text=$('fixerInput').value,err=$('fixerError');clearError(null,err);
@@ -1095,10 +1044,10 @@ function fixerAnalyze(){
   if(!picked.length){setError(null,err,`⚠ None of those strands are in this file. It has: ${parsed.records.map(r=>r.strand).sort((a,b)=>a-b).join(', ')}`);return;}
   const found=new Set(picked.map(r=>r.strand));
   fixerState={format:parsed.format,data:parsed.data,lines:parsed.lines,records:picked,rows:[],
-    missing:wanted?[...wanted].filter(n=>!found.has(n)).sort((a,b)=>a-b):[],corrections:[],report:''};
+    missing:wanted?[...wanted].filter(n=>!found.has(n)).sort((a,b)=>a-b):[]};
   fixerRefresh();
 }
-/* every reading in a strand, in spec or not — all of them are editable */
+/* every reading in a strand — all of them are editable */
 function fixerAllReadings(rec,lines){
   const T=n=>FIXER_THRESHOLDS.find(x=>x.name===n),out=[];
   const add=(name,where,value,extra)=>{
@@ -1128,133 +1077,62 @@ function fixerAllReadings(rec,lines){
   rec.link.forEach(m=>add('Strand ORL','Link ORL'+(m.wl?` @ ${m.wl}nm`:''),m.totalORL,{src:m.src,field:'totalORL',norm:m,nfield:'totalORL'}));
   return out;
 }
-/* re-derive findings from current (possibly corrected) data and repaint */
+/* re-read values from current data and repaint */
 function fixerRefresh(){
   fixerState.rows=fixerState.records
-    .map(rec=>({rec,issues:fixerAnalyzeStrand(rec,fixerState.lines),readings:fixerAllReadings(rec,fixerState.lines)}))
+    .map(rec=>({rec,readings:fixerAllReadings(rec,fixerState.lines)}))
     .sort((a,b)=>a.rec.strand-b.rec.strand);
   fixerRenderAnalysis();
 }
-function fixerCorrectedStrands(){return new Set(fixerState.corrections.map(r=>r.strand));}
-
 function fixerRenderAnalysis(){
-  const rows=fixerState.rows,missing=fixerState.missing,done=fixerCorrectedStrands();
-  const failing=rows.filter(r=>r.issues.length);
-  const totalIssues=failing.reduce((n,r)=>n+r.issues.length,0);
-  const missCard=missing.length?`<div class="sa-card sa-card--missing"><div class="sa-head"><span class="sa-strand">Not in file</span><span class="sa-badge sa-badge--missing">${missing.length} strand${missing.length!==1?'s':''}</span></div><div class="sa-note">No records found for strand${missing.length!==1?'s':''} ${missing.join(', ')}.</div></div>`:'';
-  const cards=rows.map(({rec,issues,readings},ri)=>{
-    const edited=done.has(rec.strand)?'<span class="sa-badge sa-badge--edited">Edited</span>':'';
-    const status=issues.length
-      ?`<span class="sa-badge sa-badge--fail">${issues.length} out of spec</span>`
-      :`<span class="sa-badge sa-badge--pass">In spec</span>`;
-    const table=issues.length
-      ?`<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Check</th><th>Where</th><th class="sa-num">Measured</th><th class="sa-num">Limit</th><th class="sa-num">Out by</th></tr></thead><tbody>`
-        +issues.map(i=>`<tr><td class="sa-check">${esc(i.name)}</td><td class="sa-where">${esc(i.where)}</td><td class="sa-num sa-bad" data-l="Measured">${i.value.toFixed(i.dp)}</td><td class="sa-num" data-l="Limit">${i.limit.toFixed(i.dp)}</td><td class="sa-num" data-l="Out by">${i.delta.toFixed(i.dp)}</td></tr>`).join('')
-        +`</tbody></table></div>`
-      :'';
-    /* every reading is listed, so in-spec values can be changed too */
-    const form=readings.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was${i.inSpec?'':' sa-bad'}">${i.value.toFixed(i.dp)}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="number" step="any" inputmode="decimal" data-ri="${ri}" data-ii="${ii}" placeholder="new value"></div>`).join('');
-    const editor=readings.length
-      ?`<button class="sa-re__toggle" type="button" data-ri="${ri}">Change readings</button>`
-       +`<div class="sa-re" id="sa-re-${ri}" style="display:none"><div class="sa-re__hint">Enter a new value for any reading. Blank fields are left unchanged.</div>${form}<input class="sa-re__note" id="sa-re-note-${ri}" type="text" placeholder="Note (optional)"><button class="sa-re__apply" type="button" data-ri="${ri}">Apply to strand ${rec.strand}</button><div class="error-msg sa-re__err" id="sa-re-err-${ri}" style="display:none"></div></div>`
-      :'';
-    return`<div class="sa-card sa-card--${issues.length?'fail':'pass'}"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span><span class="sa-badge-group">${edited}${status}</span></div>${table}${editor}</div>`;
+  const rows=fixerState.rows,missing=fixerState.missing;
+  const miss=missing.length?`<div class="sa-card"><div class="sa-note">Not in file: ${missing.join(', ')}</div></div>`:'';
+  const cards=rows.map(({rec,readings},ri)=>{
+    if(!readings.length)
+      return`<div class="sa-card"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span></div><div class="sa-note">No readings found.</div></div>`;
+    const list=readings.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was${i.inSpec?'':' sa-bad'}">${i.value.toFixed(i.dp)}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="number" step="any" inputmode="decimal" data-ri="${ri}" data-ii="${ii}" placeholder="new value"></div>`).join('');
+    return`<div class="sa-card"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span></div>${list}<button class="sa-re__apply" type="button" data-ri="${ri}">Apply to strand ${rec.strand}</button><div class="error-msg sa-re__err" id="sa-re-err-${ri}" style="display:none"></div></div>`;
   }).join('');
-  $('fixerAnalysisCards').innerHTML=missCard+cards;
-  $('fixerAnalysisSummary').textContent=failing.length
-    ?`${rows.length} strand${rows.length!==1?'s':''} checked — ${failing.length} out of spec (${totalIssues} reading${totalIssues!==1?'s':''}): ${failing.map(r=>r.rec.strand).join(', ')}.`
-    :`${rows.length} strand${rows.length!==1?'s':''} checked — all readings within spec.`;
-  fixerState.report=fixerBuildReport();
-  $('fixerRegenBtn').style.display=fixerState.corrections.length?'':'none';
+  $('fixerAnalysisCards').innerHTML=miss+cards;
+  $('fixerAnalysisSummary').textContent=rows.length
+    ?`Strand${rows.length!==1?'s':''} ${rows.map(r=>r.rec.strand).join(', ')}`:'';
   $('fixerAnalysisOutput').style.display='block';
 }
 
-/* apply user-entered readings for one strand */
+/* write the values the user typed into the selected strand */
 function fixerApplyCorrection(ri){
   const row=fixerState.rows[ri];if(!row)return;
   const err=$(`sa-re-err-${ri}`);clearError(null,err);
-  const entries=[];
-  row.readings.forEach((issue,ii)=>{
+  const entries=[];let bad=false;
+  row.readings.forEach((reading,ii)=>{
     const el=$(`sa-re-${ri}-${ii}`);if(!el)return;
     const v=el.value.trim();if(!v)return;
     const n=parseFloat(v);
-    if(!Number.isFinite(n)){entries.push(null);return;}
-    entries.push({issue,value:n});
+    if(!Number.isFinite(n)){bad=true;return;}
+    entries.push({reading,value:n});
   });
-  if(entries.some(e=>e===null)){setError(null,err,'⚠ One of those readings isn\'t a number.');return;}
-  const clean=entries.filter(Boolean);
-  if(!clean.length){setError(null,err,'⚠ Enter at least one reading.');return;}
-  const stamp=new Date().toISOString().replace(/\.\d+Z$/,'Z');
-  const note=($(`sa-re-note-${ri}`).value||'').trim();
-  const readings=clean.map(({issue,value})=>({check:issue.name,where:issue.where,from:issue.value,to:value,inSpec:fixerInSpec(issue.name,value)}));
+  if(bad){setError(null,err,'⚠ One of those values isn\'t a number.');return;}
+  if(!entries.length){setError(null,err,'⚠ Enter at least one value.');return;}
   if(fixerState.format==='json'){
-    clean.forEach(({issue,value})=>{issue.src[issue.field]=value;issue.norm[issue.nfield]=value;});
-    /* the corrections[] block is written at export time so the detail
-       toggle stays idempotent across repeated exports */
+    entries.forEach(({reading,value})=>{reading.src[reading.field]=value;reading.norm[reading.nfield]=value;});
   }else{
     /* right-to-left so earlier offsets on the same line stay valid */
-    clean.slice().sort((a,b)=>b.issue.tLine-a.issue.tLine||b.issue.tStart-a.issue.tStart)
-      .forEach(({issue,value})=>{
-        const L=fixerState.lines[issue.tLine];
-        fixerState.lines[issue.tLine]=L.slice(0,issue.tStart)+String(value)+L.slice(issue.tStart+issue.tLen);
+    entries.slice().sort((a,b)=>b.reading.tLine-a.reading.tLine||b.reading.tStart-a.reading.tStart)
+      .forEach(({reading,value})=>{
+        const L=fixerState.lines[reading.tLine];
+        fixerState.lines[reading.tLine]=L.slice(0,reading.tStart)+String(value)+L.slice(reading.tStart+reading.tLen);
       });
   }
-  fixerState.corrections.push({strand:row.rec.strand,when:stamp,note,readings});
-  const stillOut=readings.filter(r=>!r.inSpec).length;
-  showToast(stillOut?`Strand ${row.rec.strand} corrected — ${stillOut} still out of spec`:`Strand ${row.rec.strand} corrected — now in spec`);
+  showToast(`Strand ${row.rec.strand} updated`);
   fixerRefresh();
 }
 
-/* detail=false trims timestamps, notes and spec status; the list of
-   changed readings and their previous values is always present */
-function fixerCorrectionLog(detail){
-  if(!fixerState.corrections.length)return'';
-  const L=['','=== CORRECTION LOG ===','The following readings were changed by the operator.',''];
-  fixerState.corrections.forEach(r=>{
-    L.push(detail?`Strand ${r.strand} — corrected ${r.when}`:`Strand ${r.strand}`);
-    if(detail&&r.note)L.push(`  Note: ${r.note}`);
-    r.readings.forEach(d=>L.push(`  ${d.check} @ ${d.where}: ${d.from} -> ${d.to}`+(detail?`  [${d.inSpec?'within spec':'STILL OUT OF SPEC'}]`:'')));
-    L.push('');
-  });
-  return L.join('\n');
-}
-function fixerInjectCorrections(detail){
-  const by={};
-  fixerState.corrections.forEach(c=>{(by[c.strand]=by[c.strand]||[]).push(c);});
-  fixerState.records.forEach(r=>{
-    if(!r.src)return;
-    delete r.src.corrections;/* rebuilt each export so toggling is idempotent */
-    const list=by[r.strand];
-    if(!list)return;
-    r.src.corrections=list.map(c=>detail
-      ?{correctedAt:c.when,note:c.note,readings:c.readings.map(d=>({check:d.check,location:d.where,previousValue:d.from,newValue:d.to,withinSpec:d.inSpec}))}
-      :{readings:c.readings.map(d=>({check:d.check,location:d.where,previousValue:d.from,newValue:d.to}))});
-  });
-}
 function fixerRegenerate(){
-  const detail=$('fixerAuditDetail').checked;
-  let out;
-  if(fixerState.format==='json'){
-    fixerInjectCorrections(detail);
-    out=JSON.stringify(fixerState.data,null,2)+'\n'+fixerCorrectionLog(detail).replace(/^(?=.)/gm,'// ');
-  }else{
-    out=fixerState.lines.join('\n')+'\n'+fixerCorrectionLog(detail);
-  }
-  $('fixerCorrectedResult').value=out;
+  $('fixerCorrectedResult').value=fixerState.format==='json'
+    ?JSON.stringify(fixerState.data,null,2)
+    :fixerState.lines.join('\n');
   $('fixerCorrectedOutput').style.display='block';
   $('fixerCorrectedResult').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function fixerBuildReport(){
-  const L=['L.E.N.S. — Strand Analysis',`Source format: ${fixerState.format==='json'?'JSON':'text scan'}`,''];
-  FIXER_THRESHOLDS.forEach(t=>L.push(`  ${t.name}: ${t.mode==='max'?'<=':'>='} ${t.limit.toFixed(t.dp)} dB`));
-  L.push('');
-  fixerState.rows.forEach(({rec,issues})=>{
-    if(!issues.length){L.push(`Strand ${rec.strand}: IN SPEC`);return;}
-    L.push(`Strand ${rec.strand}: ${issues.length} out of spec`);
-    issues.forEach(i=>L.push(`    ${i.name} @ ${i.where} — measured ${i.value.toFixed(i.dp)}, limit ${i.limit.toFixed(i.dp)}, out by ${i.delta.toFixed(i.dp)}`));
-  });
-  if(fixerState.missing.length)L.push('',`Not found in file: ${fixerState.missing.join(', ')}`);
-  return L.join('\n')+fixerCorrectionLog(true);
 }
 
 /* ── OTDR ── */
@@ -1485,9 +1363,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('fixerClearBtn').addEventListener('click',fixerClear);
   $('fixerAnalyzeBtn').addEventListener('click',fixerAnalyze);
   $('fixerStrandScope').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fixerAnalyze();}});
-  $('fixerAnalysisCopyBtn').addEventListener('click',()=>{if(fixerState.report)copyToClipboard(fixerState.report,$('fixerAnalysisCopyBtn'),'Copied ✓');});
   $('fixerRegenBtn').addEventListener('click',fixerRegenerate);
-  $('fixerAuditDetail').addEventListener('change',()=>{if($('fixerCorrectedOutput').style.display==='block')fixerRegenerate();});
   $('fixerCorrectedCopyBtn').addEventListener('click',()=>{if($('fixerCorrectedResult').value)copyToClipboard($('fixerCorrectedResult').value,$('fixerCorrectedCopyBtn'),'Copied ✓');});
   $('fixerCorrectedDownloadBtn').addEventListener('click',()=>{
     const txt=$('fixerCorrectedResult').value;if(!txt)return;
@@ -1496,10 +1372,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     a.href=URL.createObjectURL(blob);a.download=`LENS_Corrected_${Date.now()}.${ext}`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
   });
-  /* delegated — analysis cards are re-rendered after every applied correction */
+  /* delegated — cards are re-rendered after every applied change */
   $('fixerAnalysisCards').addEventListener('click',e=>{
-    const t=e.target.closest('.sa-re__toggle');
-    if(t){const p=$('sa-re-'+t.dataset.ri);const open=p.style.display!=='none';p.style.display=open?'none':'block';t.textContent=open?'Change readings':'Hide readings';return;}
     const ap=e.target.closest('.sa-re__apply');
     if(ap)fixerApplyCorrection(+ap.dataset.ri);
   });

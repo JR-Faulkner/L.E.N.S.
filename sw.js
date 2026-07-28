@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lens-v14';
+const CACHE_NAME = 'lens-v15';
 const BASE = '/L.E.N.S.';
 const PRECACHE_URLS = [
   BASE + '/',
