@@ -189,6 +189,12 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
 /* strand scope analysis */
 .sa-scope{border:1px solid rgba(0,191,255,.25);border-radius:8px;padding:10px 12px;margin-top:12px;}
 .sa-scope__head{font-size:.75em;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+.wb-bridge{max-width:400px;margin-top:22px;padding-top:16px;border-top:1px solid var(--border);}
+.wb-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+.wb-row select{margin-top:2px;}
+.wb-row button{flex-shrink:0;}
+.wb-preview{font-family:'Courier New',monospace;font-size:.72em;opacity:.55;margin-top:10px;word-break:break-all;line-height:1.5;min-height:1.2em;}
+body.light .wb-bridge{border-top-color:#c8cfe0;}
 .sa-scope__row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .sa-scope__row input{flex:1 1 180px;min-width:0;margin:0;}
 .sa-scope__row button{margin-top:0;flex-shrink:0;}
@@ -679,6 +685,19 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
       <button id="wsClearBtn" type="button">Clear</button>
     </div>
   </div>
+
+  <div class="wb-bridge">
+    <div class="sa-scope__head" style="margin-bottom:2px">Send to Waldo</div>
+    <p class="small-note" style="margin:0 0 10px">Opens Waldo and searches by the field below. One-way handoff &mdash; each send opens a new Waldo window.</p>
+    <div class="wb-row">
+      <label style="flex:1 1 160px;display:flex;flex-direction:column;gap:4px;font-size:.85em">
+        Search by
+        <select id="wbCategory" style="margin-top:2px"></select>
+      </label>
+      <button id="wbSendBtn" type="button" disabled>Send to Waldo</button>
+    </div>
+    <div class="wb-preview" id="wbPreview">&nbsp;</div>
+  </div>
 </div>
 
 <div id="settings-panel" class="tool" style="display:none">
@@ -800,6 +819,55 @@ document.querySelectorAll('.tile').forEach(tile=>{
   window.LENS=window.LENS||{};
   window.LENS.session=lensSession;
 
+  /* ── WALDO BRIDGE v1 ─────────────────────────────────────────────
+     One-way handoff: L.E.N.S. opens Waldo on a search via its
+     registered waldoprod:// protocol handler. Waldo is a native app
+     with no local server, so nothing comes back — this only launches.
+     Each launch spawns a fresh Waldo window, so it is always a
+     deliberate button press, never automatic.
+
+     `category` is the string placed in searchCategory. The values are
+     Waldo's own dropdown labels; if Waldo turns out to want an internal
+     token instead, only these strings change.
+     Starred categories (needsWireCenter) are scoped to a wire center in
+     Waldo's UI, which the session does not yet carry — flagged for v2. */
+  const WALDO_SCHEME='waldoprod://', WALDO_ROUTE='findItems';
+  const WALDO_CATEGORIES=[
+    {label:'Project Number',   category:'Project Number',   field:'project'},
+    {label:'Cable ID, Lo-Hi',  category:'Cable ID, Lo-Hi',  field:'cable',     needsWireCenter:true},
+    {label:'CLLI',             category:'CLLI',             field:'structure'},
+    {label:'Facility Address', category:'Facility Address', field:'structure', needsWireCenter:true}
+  ];
+  function waldoBuildUrl(category,value){
+    return WALDO_SCHEME+WALDO_ROUTE+'/?searchCategory='+encodeURIComponent(category)
+      +'&searchString='+encodeURIComponent(value);
+  }
+  /* an anchor click hands the URL to the OS without navigating the PWA */
+  function waldoLaunch(url){
+    const a=document.createElement('a');
+    a.href=url;a.style.display='none';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+  }
+  const lensWaldo={
+    categories:WALDO_CATEGORIES.map(c=>Object.assign({},c)),
+    buildUrl:waldoBuildUrl,
+    /* send({category, value}) or send({field}) pulling from the session */
+    send(opts){
+      opts=opts||{};
+      let cat=opts.category, val=opts.value;
+      if(!cat&&opts.field){
+        const def=WALDO_CATEGORIES.find(c=>c.field===opts.field);
+        if(def){cat=def.category;if(val==null)val=lensSession.get()[def.field];}
+      }
+      cat=(cat||'').trim();val=(val==null?'':String(val)).trim();
+      if(!cat||!val)return null;
+      const url=waldoBuildUrl(cat,val);
+      waldoLaunch(url);
+      return url;
+    }
+  };
+  window.LENS.waldo=lensWaldo;
+
   const ROUTE_PANELS={workspace:'workspace-panel',reference:'reference-panel',history:'history-panel',settings:'settings-panel'};
   function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),2200);}
   window.showToast=showToast;/* shared with the tool scope below */
@@ -831,6 +899,32 @@ document.querySelectorAll('.tile').forEach(tile=>{
   {
     const c=document.getElementById('wsClearBtn');
     if(c)c.addEventListener('click',()=>{lensSession.clear();wsFill();showToast('Workspace cleared');});
+  }
+  /* Send-to-Waldo control */
+  {
+    const sel=document.getElementById('wbCategory'),
+          btn=document.getElementById('wbSendBtn'),
+          prev=document.getElementById('wbPreview');
+    if(sel&&btn&&prev){
+      lensWaldo.categories.forEach((c,i)=>{
+        const o=document.createElement('option');
+        o.value=String(i);o.textContent=c.label+(c.needsWireCenter?' *':'');
+        sel.appendChild(o);
+      });
+      const chosen=()=>lensWaldo.categories[+sel.value]||lensWaldo.categories[0];
+      function wbSync(){
+        const c=chosen(),val=(lensSession.get()[c.field]||'').trim();
+        btn.disabled=!val;
+        prev.textContent=val?waldoBuildUrl(c.category,val):`Enter a ${c.field} value above to enable this.`;
+      }
+      sel.addEventListener('change',wbSync);
+      btn.addEventListener('click',()=>{
+        const c=chosen(),url=lensWaldo.send({field:c.field});
+        if(url)showToast('Opening Waldo — '+c.label);
+      });
+      window.addEventListener('lens:session-change',wbSync);
+      wbSync();
+    }
   }
   /* keeps the panel honest if another tab or tool writes the session */
   window.addEventListener('lens:session-change',wsFill);
