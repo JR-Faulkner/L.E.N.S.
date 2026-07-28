@@ -651,6 +651,36 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
   </table>
 </div>
 
+<div id="workspace-panel" class="tool" style="display:none">
+  <h3 style="color:var(--fire);font-size:1em;letter-spacing:.08em;margin:0 0 4px">WORKSPACE</h3>
+  <p class="small-note" style="margin:0 0 14px">Job context for this session. Held on this device and readable by the other tools.</p>
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:400px">
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:.85em">
+      Project Code
+      <input type="text" id="wsProject" autocomplete="off" placeholder="e.g. 24-0417" style="margin-top:2px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:.85em">
+      Cable ID
+      <input type="text" id="wsCable" autocomplete="off" placeholder="e.g. C-1042" style="margin-top:2px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:.85em">
+      Span
+      <input type="text" id="wsSpan" autocomplete="off" placeholder="e.g. A-12 to A-19" style="margin-top:2px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:.85em">
+      Fiber
+      <input type="text" id="wsFiber" autocomplete="off" placeholder="e.g. 7 or 7-12" style="margin-top:2px">
+    </label>
+    <label style="display:flex;flex-direction:column;gap:4px;font-size:.85em">
+      Structure
+      <input type="text" id="wsStructure" autocomplete="off" placeholder="e.g. MH-204" style="margin-top:2px">
+    </label>
+    <div class="btn-row" style="justify-content:flex-start">
+      <button id="wsClearBtn" type="button">Clear</button>
+    </div>
+  </div>
+</div>
+
 <div id="settings-panel" class="tool" style="display:none">
   <h3 style="color:var(--fire);font-size:1em;letter-spacing:.08em;margin:0 0 14px">SETTINGS</h3>
   <div style="display:flex;flex-direction:column;gap:12px;max-width:400px">
@@ -732,7 +762,45 @@ document.querySelectorAll('.tile').forEach(tile=>{
 (function(){
   const toast=document.getElementById('lensToast');
   let t;
-  const ROUTE_PANELS={reference:'reference-panel',history:'history-panel',settings:'settings-panel'};
+
+  /* ── SHARED SESSION ──────────────────────────────────────────────
+     Technician context for the current job, held on this device.
+     Any tool can read it; the Waldo bridge will read it too once the
+     transport is settled. Changes fire lens:session-change.        */
+  const LS_SESSION='lens-session';
+  const SESSION_FIELDS=['project','cable','span','fiber','structure'];
+  const blankSession=()=>SESSION_FIELDS.reduce((o,k)=>(o[k]='',o),{});
+  function readSession(){
+    let s={};
+    try{s=JSON.parse(localStorage.getItem(LS_SESSION)||'{}');}catch(e){}
+    const out=blankSession();
+    SESSION_FIELDS.forEach(k=>{if(typeof s[k]==='string')out[k]=s[k];});
+    return out;
+  }
+  function writeSession(patch){
+    /* built from the whitelist so an outside caller (the bridge) cannot
+       push arbitrary keys into the session */
+    const cur=readSession(),p=patch||{},next=blankSession();
+    SESSION_FIELDS.forEach(k=>{
+      const v=Object.prototype.hasOwnProperty.call(p,k)?p[k]:cur[k];
+      next[k]=String(v==null?'':v).trim();
+    });
+    try{localStorage.setItem(LS_SESSION,JSON.stringify(next));}catch(e){}
+    window.dispatchEvent(new CustomEvent('lens:session-change',{detail:Object.assign({},next)}));
+    return next;
+  }
+  const lensSession={
+    fields:SESSION_FIELDS.slice(),
+    get(){return readSession();},
+    set(patch){return writeSession(patch);},
+    clear(){return writeSession(blankSession());},
+    /* true when there is any job context worth handing to another tool */
+    isSet(){const s=readSession();return SESSION_FIELDS.some(k=>s[k]!=='');}
+  };
+  window.LENS=window.LENS||{};
+  window.LENS.session=lensSession;
+
+  const ROUTE_PANELS={workspace:'workspace-panel',reference:'reference-panel',history:'history-panel',settings:'settings-panel'};
   function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),2200);}
   window.showToast=showToast;/* shared with the tool scope below */
   function showPanel(panelId){
@@ -747,6 +815,27 @@ document.querySelectorAll('.tile').forEach(tile=>{
     document.getElementById('toolsTileGrid').style.removeProperty('display');
     document.getElementById('tools').style.removeProperty('display');
   }
+  /* WORKSPACE panel <-> shared session */
+  const WS_INPUTS={project:'wsProject',cable:'wsCable',span:'wsSpan',fiber:'wsFiber',structure:'wsStructure'};
+  function wsFill(){
+    const s=lensSession.get();
+    Object.entries(WS_INPUTS).forEach(([k,id])=>{
+      const el=document.getElementById(id);
+      if(el&&el.value!==s[k])el.value=s[k];
+    });
+  }
+  Object.entries(WS_INPUTS).forEach(([k,id])=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('input',()=>lensSession.set({[k]:el.value}));
+  });
+  {
+    const c=document.getElementById('wsClearBtn');
+    if(c)c.addEventListener('click',()=>{lensSession.clear();wsFill();showToast('Workspace cleared');});
+  }
+  /* keeps the panel honest if another tab or tool writes the session */
+  window.addEventListener('lens:session-change',wsFill);
+  wsFill();
+
   // FF-X003 Classic Rail — set active state and dispatch navigate event
   document.querySelectorAll('.lens-rail__item').forEach(btn=>{
     btn.addEventListener('click',()=>{
