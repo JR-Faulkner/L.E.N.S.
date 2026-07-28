@@ -1098,10 +1098,40 @@ function fixerAnalyze(){
     missing:wanted?[...wanted].filter(n=>!found.has(n)).sort((a,b)=>a-b):[],corrections:[],report:''};
   fixerRefresh();
 }
+/* every reading in a strand, in spec or not — all of them are editable */
+function fixerAllReadings(rec,lines){
+  const T=n=>FIXER_THRESHOLDS.find(x=>x.name===n),out=[];
+  const add=(name,where,value,extra)=>{
+    if(value==null||!Number.isFinite(value))return;
+    const t=T(name);if(!t)return;
+    out.push(Object.assign({name,where,value,limit:t.limit,dp:t.dp,inSpec:fixerInSpec(name,value)},extra));
+  };
+  if(rec.lineIdx){
+    rec.lineIdx.forEach(li=>{
+      const text=lines[li];
+      TEXT_PATTERNS.forEach(p=>{
+        const re=new RegExp(p.re.source,'ig');let m;
+        while((m=re.exec(text))!==null)
+          add(p.key,`Line ${li+1}`,parseFloat(m[1]),{tLine:li,tStart:m.index+m[0].lastIndexOf(m[1]),tLen:m[1].length});
+      });
+    });
+    return out;
+  }
+  rec.events.forEach(ev=>{
+    const lossName=ev.type==='connector'?'Connector Loss':'Splice Loss';
+    ev.meas.forEach(m=>{
+      const where=`Event ${ev.n}`+(m.wl?` @ ${m.wl}nm`:'');
+      if(ev.type!=='end')add(lossName,where,m.loss,{src:m.src,field:'loss',norm:m,nfield:'loss'});
+      add('Event Reflectance',where,m.refl,{src:m.src,field:'reflectance',norm:m,nfield:'refl'});
+    });
+  });
+  rec.link.forEach(m=>add('Strand ORL','Link ORL'+(m.wl?` @ ${m.wl}nm`:''),m.totalORL,{src:m.src,field:'totalORL',norm:m,nfield:'totalORL'}));
+  return out;
+}
 /* re-derive findings from current (possibly corrected) data and repaint */
 function fixerRefresh(){
   fixerState.rows=fixerState.records
-    .map(rec=>({rec,issues:fixerAnalyzeStrand(rec,fixerState.lines)}))
+    .map(rec=>({rec,issues:fixerAnalyzeStrand(rec,fixerState.lines),readings:fixerAllReadings(rec,fixerState.lines)}))
     .sort((a,b)=>a.rec.strand-b.rec.strand);
   fixerRenderAnalysis();
 }
@@ -1112,15 +1142,23 @@ function fixerRenderAnalysis(){
   const failing=rows.filter(r=>r.issues.length);
   const totalIssues=failing.reduce((n,r)=>n+r.issues.length,0);
   const missCard=missing.length?`<div class="sa-card sa-card--missing"><div class="sa-head"><span class="sa-strand">Not in file</span><span class="sa-badge sa-badge--missing">${missing.length} strand${missing.length!==1?'s':''}</span></div><div class="sa-note">No records found for strand${missing.length!==1?'s':''} ${missing.join(', ')}.</div></div>`:'';
-  const cards=rows.map(({rec,issues},ri)=>{
+  const cards=rows.map(({rec,issues,readings},ri)=>{
     const edited=done.has(rec.strand)?'<span class="sa-badge sa-badge--edited">Edited</span>':'';
-    if(!issues.length)return`<div class="sa-card sa-card--pass"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span><span class="sa-badge-group">${edited}<span class="sa-badge sa-badge--pass">In spec</span></span></div></div>`;
-    const body=issues.map(i=>`<tr><td class="sa-check">${esc(i.name)}</td><td class="sa-where">${esc(i.where)}</td><td class="sa-num sa-bad" data-l="Measured">${i.value.toFixed(i.dp)}</td><td class="sa-num" data-l="Limit">${i.limit.toFixed(i.dp)}</td><td class="sa-num" data-l="Out by">${i.delta.toFixed(i.dp)}</td></tr>`).join('');
-    const form=issues.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was">was ${i.value.toFixed(i.dp)}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="number" step="any" inputmode="decimal" data-ri="${ri}" data-ii="${ii}" placeholder="new reading"></div>`).join('');
-    return`<div class="sa-card sa-card--fail"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span><span class="sa-badge-group">${edited}<span class="sa-badge sa-badge--fail">${issues.length} out of spec</span></span></div>`
-      +`<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Check</th><th>Where</th><th class="sa-num">Measured</th><th class="sa-num">Limit</th><th class="sa-num">Out by</th></tr></thead><tbody>${body}</tbody></table></div>`
-      +`<button class="sa-re__toggle" type="button" data-ri="${ri}">Select readings to replace</button>`
-      +`<div class="sa-re" id="sa-re-${ri}" style="display:none"><div class="sa-re__hint">Enter a replacement value for each reading you want to correct. Blank fields are left unchanged. Values are written exactly as entered.</div>${form}<input class="sa-re__note" id="sa-re-note-${ri}" type="text" placeholder="Note (optional)"><button class="sa-re__apply" type="button" data-ri="${ri}">Replace selected values on strand ${rec.strand}</button><div class="error-msg sa-re__err" id="sa-re-err-${ri}" style="display:none"></div></div></div>`;
+    const status=issues.length
+      ?`<span class="sa-badge sa-badge--fail">${issues.length} out of spec</span>`
+      :`<span class="sa-badge sa-badge--pass">In spec</span>`;
+    const table=issues.length
+      ?`<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Check</th><th>Where</th><th class="sa-num">Measured</th><th class="sa-num">Limit</th><th class="sa-num">Out by</th></tr></thead><tbody>`
+        +issues.map(i=>`<tr><td class="sa-check">${esc(i.name)}</td><td class="sa-where">${esc(i.where)}</td><td class="sa-num sa-bad" data-l="Measured">${i.value.toFixed(i.dp)}</td><td class="sa-num" data-l="Limit">${i.limit.toFixed(i.dp)}</td><td class="sa-num" data-l="Out by">${i.delta.toFixed(i.dp)}</td></tr>`).join('')
+        +`</tbody></table></div>`
+      :'';
+    /* every reading is listed, so in-spec values can be changed too */
+    const form=readings.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was${i.inSpec?'':' sa-bad'}">${i.value.toFixed(i.dp)}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="number" step="any" inputmode="decimal" data-ri="${ri}" data-ii="${ii}" placeholder="new value"></div>`).join('');
+    const editor=readings.length
+      ?`<button class="sa-re__toggle" type="button" data-ri="${ri}">Change readings</button>`
+       +`<div class="sa-re" id="sa-re-${ri}" style="display:none"><div class="sa-re__hint">Enter a new value for any reading. Blank fields are left unchanged.</div>${form}<input class="sa-re__note" id="sa-re-note-${ri}" type="text" placeholder="Note (optional)"><button class="sa-re__apply" type="button" data-ri="${ri}">Apply to strand ${rec.strand}</button><div class="error-msg sa-re__err" id="sa-re-err-${ri}" style="display:none"></div></div>`
+      :'';
+    return`<div class="sa-card sa-card--${issues.length?'fail':'pass'}"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span><span class="sa-badge-group">${edited}${status}</span></div>${table}${editor}</div>`;
   }).join('');
   $('fixerAnalysisCards').innerHTML=missCard+cards;
   $('fixerAnalysisSummary').textContent=failing.length
@@ -1136,7 +1174,7 @@ function fixerApplyCorrection(ri){
   const row=fixerState.rows[ri];if(!row)return;
   const err=$(`sa-re-err-${ri}`);clearError(null,err);
   const entries=[];
-  row.issues.forEach((issue,ii)=>{
+  row.readings.forEach((issue,ii)=>{
     const el=$(`sa-re-${ri}-${ii}`);if(!el)return;
     const v=el.value.trim();if(!v)return;
     const n=parseFloat(v);
@@ -1461,7 +1499,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   /* delegated — analysis cards are re-rendered after every applied correction */
   $('fixerAnalysisCards').addEventListener('click',e=>{
     const t=e.target.closest('.sa-re__toggle');
-    if(t){const p=$('sa-re-'+t.dataset.ri);const open=p.style.display!=='none';p.style.display=open?'none':'block';t.textContent=open?'Select readings to replace':'Hide replace form';return;}
+    if(t){const p=$('sa-re-'+t.dataset.ri);const open=p.style.display!=='none';p.style.display=open?'none':'block';t.textContent=open?'Change readings':'Hide readings';return;}
     const ap=e.target.closest('.sa-re__apply');
     if(ap)fixerApplyCorrection(+ap.dataset.ri);
   });
