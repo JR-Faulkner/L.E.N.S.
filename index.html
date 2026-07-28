@@ -946,7 +946,7 @@ function fixerRun(){
   $('fixerSummary').textContent=total?`${total} value${total!==1?'s':''} corrected — ${Object.entries(counts).map(([k,v])=>`${v} ${k}`).join(', ')}.`:'No values exceeded thresholds.';
   $('fixerOutput').style.display='block';
 }
-function fixerClear(){$('fixerInput').value='';$('fixerResult').value='';$('fixerOutput').style.display='none';$('fixerAnalysisOutput').style.display='none';$('fixerCorrectedOutput').style.display='none';$('fixerCorrectedResult').value='';clearError(null,$('fixerError'));}
+function fixerClear(){fixerUploadRaw=null;$('fixerInput').value='';$('fixerResult').value='';$('fixerOutput').style.display='none';$('fixerAnalysisOutput').style.display='none';$('fixerCorrectedOutput').style.display='none';$('fixerCorrectedResult').value='';clearError(null,$('fixerError'));}
 
 /* ── STRAND SCOPE ANALYSIS & CORRECTION ── */
 const numOrNull=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:null;};
@@ -977,17 +977,22 @@ function fixerEventKind(e){
   if(attrs.includes('connector')||type.includes('connector'))return'connector';
   return'splice';
 }
-function normalizeJsonStrand(s){
+function normalizeJsonStrand(s,numPos){
   if(!s||typeof s!=='object')return null;
   const raw=s.strand!=null?s.strand:s.strandNumber!=null?s.strandNumber:s.fiber!=null?s.fiber:s.fiberNumber;
   const num=parseInt(raw,10);
   if(!Number.isFinite(num))return null;
+  const posOf=(o,k)=>{const m=numPos.get(o);return m&&m[k]?{start:m[k][0],len:m[k][1]}:null;};
   const events=(Array.isArray(s.events)?s.events:[]).map((e,i)=>({
     n:e.eventNumber!=null?e.eventNumber:i,type:fixerEventKind(e),
-    meas:(Array.isArray(e.measurements)?e.measurements:[]).map(m=>({wl:m.wavelength!=null?m.wavelength:null,loss:numOrNull(m.loss),refl:numOrNull(m.reflectance),src:m}))
+    meas:(Array.isArray(e.measurements)?e.measurements:[]).map(m=>({
+      wl:m.wavelength!=null?m.wavelength:null,
+      loss:numOrNull(m.loss),lossPos:posOf(m,'loss'),
+      refl:numOrNull(m.reflectance),reflPos:posOf(m,'reflectance')}))
   }));
-  const link=(Array.isArray(s.linkMeasurements)?s.linkMeasurements:[]).map(m=>({wl:m.wavelength!=null?m.wavelength:null,totalORL:numOrNull(m.totalORL),src:m}));
-  return{strand:num,events,link,lineIdx:null,src:s};
+  const link=(Array.isArray(s.linkMeasurements)?s.linkMeasurements:[]).map(m=>({
+    wl:m.wavelength!=null?m.wavelength:null,totalORL:numOrNull(m.totalORL),orlPos:posOf(m,'totalORL')}));
+  return{strand:num,events,link,lines:null};
 }
 /* separator class excludes "-" so a leading minus stays with the number
    (reflectance is negative, and splice "gainer" events can be too) */
@@ -997,27 +1002,102 @@ const TEXT_PATTERNS=[
   {key:'Event Reflectance', re:/reflect\w*[^-\d]{0,14}(-?\d+\.\d+)/ig},
   {key:'Strand ORL',        re:/\borl\b[^-\d]{0,14}(-?\d+\.\d+)/ig},
 ];
-function parseTextStrands(lines){
-  const recs=[];let cur=null;
+/* records carry absolute offsets into the source so edits are surgical */
+function parseTextStrands(text){
+  const recs=[];let cur=null,off=0,n=0;
   const hdr=/\b(?:strand|fiber|fibre)\s*#?\s*[:=]?\s*(\d{1,5})\b/i;
-  lines.forEach((ln,i)=>{
-    const m=ln.match(hdr);
-    if(m){cur={strand:+m[1],events:[],link:[],lineIdx:[],src:null};recs.push(cur);}
-    if(cur)cur.lineIdx.push(i);
+  text.split('\n').forEach(rawLine=>{
+    const line=rawLine.replace(/\r$/,'');n++;
+    const m=line.match(hdr);
+    if(m){cur={strand:+m[1],events:[],link:[],lines:[]};recs.push(cur);}
+    if(cur)cur.lines.push({start:off,n,text:line});
+    off+=rawLine.length+1;
   });
   return recs;
+}
+/* position-tracking JSON parse: records the source span of every number
+   so untouched values can be written back byte for byte */
+function jsonParsePos(text){
+  let i=0;
+  const numPos=new Map();
+  const err=m=>{throw new SyntaxError(m+' at offset '+i);};
+  const ws=()=>{while(i<text.length&&(text[i]===' '||text[i]==='\t'||text[i]==='\n'||text[i]==='\r'))i++;};
+  const ESC={'"':'"','\\':'\\','/':'/',b:'\b',f:'\f',n:'\n',r:'\r',t:'\t'};
+  function str(){
+    if(text[i]!=='"')err('expected string');
+    let s='';i++;
+    while(i<text.length){
+      const c=text[i];
+      if(c==='"'){i++;return s;}
+      if(c==='\\'){i++;const e=text[i];
+        if(e==='u'){s+=String.fromCharCode(parseInt(text.substr(i+1,4),16));i+=5;}
+        else{s+=(e in ESC)?ESC[e]:e;i++;}
+        continue;}
+      s+=c;i++;
+    }
+    err('unterminated string');
+  }
+  function num(){
+    const st=i;
+    if(text[i]==='-')i++;
+    while(i<text.length&&text[i]>='0'&&text[i]<='9')i++;
+    if(text[i]==='.'){i++;while(i<text.length&&text[i]>='0'&&text[i]<='9')i++;}
+    if(text[i]==='e'||text[i]==='E'){i++;if(text[i]==='+'||text[i]==='-')i++;while(i<text.length&&text[i]>='0'&&text[i]<='9')i++;}
+    const r=text.slice(st,i);
+    if(!/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(r))err('bad number "'+r+'"');
+    return{v:parseFloat(r),st,len:i-st};
+  }
+  function val(){
+    ws();
+    const c=text[i];
+    if(c==='{')return{v:obj(),st:-1};
+    if(c==='[')return{v:arr(),st:-1};
+    if(c==='"')return{v:str(),st:-1};
+    if(text.startsWith('true',i)){i+=4;return{v:true,st:-1};}
+    if(text.startsWith('false',i)){i+=5;return{v:false,st:-1};}
+    if(text.startsWith('null',i)){i+=4;return{v:null,st:-1};}
+    return num();
+  }
+  const mark=(c,k,r)=>{if(r.st<0)return;let m=numPos.get(c);if(!m){m={};numPos.set(c,m);}m[k]=[r.st,r.len];};
+  function obj(){
+    const o={};i++;ws();
+    if(text[i]==='}'){i++;return o;}
+    for(;;){
+      ws();const k=str();ws();
+      if(text[i]!==':')err('expected ":"');
+      i++;const r=val();o[k]=r.v;mark(o,k,r);ws();
+      if(text[i]===','){i++;continue;}
+      if(text[i]==='}'){i++;return o;}
+      err('expected "," or "}"');
+    }
+  }
+  function arr(){
+    const a=[];i++;ws();
+    if(text[i]===']'){i++;return a;}
+    for(;;){
+      const r=val();a.push(r.v);mark(a,a.length-1,r);ws();
+      if(text[i]===','){i++;continue;}
+      if(text[i]===']'){i++;return a;}
+      err('expected "," or "]"');
+    }
+  }
+  const root=val();ws();
+  if(i!==text.length)err('trailing content');
+  return{data:root.v,numPos};
 }
 function fixerParseRecords(text){
   const t=String(text).trim();
   if(t.startsWith('{')||t.startsWith('[')){
     try{
-      const data=JSON.parse(t);
+      const{data,numPos}=jsonParsePos(text);
       const tested=Array.isArray(data)?data:Array.isArray(data.Tested)?data.Tested:(data.Label&&Array.isArray(data.Label.Tested))?data.Label.Tested:null;
-      if(tested){const recs=tested.map(normalizeJsonStrand).filter(Boolean);if(recs.length)return{format:'json',records:recs,data,lines:null};}
-    }catch(e){/* not JSON — fall through to the text scan */}
+      if(tested){
+        const recs=tested.map(s=>normalizeJsonStrand(s,numPos)).filter(Boolean);
+        if(recs.length)return{format:'json',records:recs};
+      }
+    }catch(e){/* not usable JSON — fall through to the text scan */}
   }
-  const lines=String(text).split(/\r?\n/);
-  return{format:'text',records:parseTextStrands(lines),data:null,lines};
+  return{format:'text',records:parseTextStrands(text)};
 }
 function fixerViolation(name,val){
   const t=FIXER_THRESHOLDS.find(x=>x.name===name);
@@ -1028,11 +1108,16 @@ function fixerViolation(name,val){
 }
 const fixerInSpec=(n,v)=>fixerViolation(n,v)===null;
 
-/* live state — rows are rebuilt after every applied change */
-let fixerState={format:'text',data:null,lines:null,records:[],rows:[],missing:[]};
+/* a textarea normalises CRLF to LF, so the uploaded text is kept aside
+   and used verbatim when it still matches what is in the box */
+let fixerUploadRaw=null;
+/* the source text is the source of truth; rows are re-derived from it */
+let fixerState={format:'text',raw:'',wanted:null,records:[],rows:[],missing:[]};
 
 function fixerAnalyze(){
-  const text=$('fixerInput').value,err=$('fixerError');clearError(null,err);
+  let text=$('fixerInput').value;
+  if(fixerUploadRaw&&fixerUploadRaw.replace(/\r\n/g,'\n')===text)text=fixerUploadRaw;
+  const err=$('fixerError');clearError(null,err);
   $('fixerAnalysisOutput').style.display='none';
   if(!text.trim()){setError(null,err,'⚠ Paste or upload a file first.');return;}
   const scope=parseStrandScope($('fixerStrandScope').value);
@@ -1040,28 +1125,26 @@ function fixerAnalyze(){
   const parsed=fixerParseRecords(text);
   if(!parsed.records.length){setError(null,err,'⚠ No strands found. Expecting JSON with a "Tested" array, or text with "Strand 7" style lines.');return;}
   const wanted=scope.set||null;
-  const picked=wanted?parsed.records.filter(r=>wanted.has(r.strand)):parsed.records;
-  if(!picked.length){setError(null,err,`⚠ None of those strands are in this file. It has: ${parsed.records.map(r=>r.strand).sort((a,b)=>a-b).join(', ')}`);return;}
-  const found=new Set(picked.map(r=>r.strand));
-  fixerState={format:parsed.format,data:parsed.data,lines:parsed.lines,records:picked,rows:[],
-    missing:wanted?[...wanted].filter(n=>!found.has(n)).sort((a,b)=>a-b):[]};
+  if(wanted&&!parsed.records.some(r=>wanted.has(r.strand))){
+    setError(null,err,`⚠ None of those strands are in this file. It has: ${parsed.records.map(r=>r.strand).sort((a,b)=>a-b).join(', ')}`);return;
+  }
+  fixerState={format:parsed.format,raw:text,wanted,records:[],rows:[],missing:[]};
   fixerRefresh();
 }
-/* every reading in a strand — all of them are editable */
-function fixerAllReadings(rec,lines){
+/* every reading in a strand, each with its exact span in the source */
+function fixerAllReadings(rec){
   const T=n=>FIXER_THRESHOLDS.find(x=>x.name===n),out=[];
-  const add=(name,where,value,extra)=>{
-    if(value==null||!Number.isFinite(value))return;
+  const add=(name,where,value,pos)=>{
+    if(value==null||!Number.isFinite(value)||!pos)return;
     const t=T(name);if(!t)return;
-    out.push(Object.assign({name,where,value,limit:t.limit,dp:t.dp,inSpec:fixerInSpec(name,value)},extra));
+    out.push({name,where,value,limit:t.limit,dp:t.dp,inSpec:fixerInSpec(name,value),start:pos.start,len:pos.len});
   };
-  if(rec.lineIdx){
-    rec.lineIdx.forEach(li=>{
-      const text=lines[li];
+  if(rec.lines){
+    rec.lines.forEach(({start,n,text})=>{
       TEXT_PATTERNS.forEach(p=>{
         const re=new RegExp(p.re.source,'ig');let m;
         while((m=re.exec(text))!==null)
-          add(p.key,`Line ${li+1}`,parseFloat(m[1]),{tLine:li,tStart:m.index+m[0].lastIndexOf(m[1]),tLen:m[1].length});
+          add(p.key,`Line ${n}`,parseFloat(m[1]),{start:start+m.index+m[0].lastIndexOf(m[1]),len:m[1].length});
       });
     });
     return out;
@@ -1070,67 +1153,65 @@ function fixerAllReadings(rec,lines){
     const lossName=ev.type==='connector'?'Connector Loss':'Splice Loss';
     ev.meas.forEach(m=>{
       const where=`Event ${ev.n}`+(m.wl?` @ ${m.wl}nm`:'');
-      if(ev.type!=='end')add(lossName,where,m.loss,{src:m.src,field:'loss',norm:m,nfield:'loss'});
-      add('Event Reflectance',where,m.refl,{src:m.src,field:'reflectance',norm:m,nfield:'refl'});
+      if(ev.type!=='end')add(lossName,where,m.loss,m.lossPos);
+      add('Event Reflectance',where,m.refl,m.reflPos);
     });
   });
-  rec.link.forEach(m=>add('Strand ORL','Link ORL'+(m.wl?` @ ${m.wl}nm`:''),m.totalORL,{src:m.src,field:'totalORL',norm:m,nfield:'totalORL'}));
+  rec.link.forEach(m=>add('Strand ORL','Link ORL'+(m.wl?` @ ${m.wl}nm`:''),m.totalORL,m.orlPos));
   return out;
 }
-/* re-read values from current data and repaint */
+/* re-parse the current source so every offset is freshly valid */
 function fixerRefresh(){
-  fixerState.rows=fixerState.records
-    .map(rec=>({rec,readings:fixerAllReadings(rec,fixerState.lines)}))
-    .sort((a,b)=>a.rec.strand-b.rec.strand);
+  const parsed=fixerParseRecords(fixerState.raw);
+  const wanted=fixerState.wanted;
+  const picked=wanted?parsed.records.filter(r=>wanted.has(r.strand)):parsed.records;
+  const found=new Set(picked.map(r=>r.strand));
+  fixerState.records=picked;
+  fixerState.missing=wanted?[...wanted].filter(n=>!found.has(n)).sort((a,b)=>a-b):[];
+  fixerState.rows=picked.map(rec=>({rec,readings:fixerAllReadings(rec)})).sort((a,b)=>a.rec.strand-b.rec.strand);
   fixerRenderAnalysis();
 }
+
 function fixerRenderAnalysis(){
   const rows=fixerState.rows,missing=fixerState.missing;
   const miss=missing.length?`<div class="sa-card"><div class="sa-note">Not in file: ${missing.join(', ')}</div></div>`:'';
   const cards=rows.map(({rec,readings},ri)=>{
     if(!readings.length)
       return`<div class="sa-card"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span></div><div class="sa-note">No readings found.</div></div>`;
-    const list=readings.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was${i.inSpec?'':' sa-bad'}">${i.value.toFixed(i.dp)}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="number" step="any" inputmode="decimal" data-ri="${ri}" data-ii="${ii}" placeholder="new value"></div>`).join('');
+    const list=readings.map((i,ii)=>`<div class="sa-re__row"><label class="sa-re__label" for="sa-re-${ri}-${ii}">${esc(i.name)} <span class="sa-re__where">${esc(i.where)}</span><span class="sa-re__was${i.inSpec?'':' sa-bad'}">${esc(fixerState.raw.substr(i.start,i.len))}</span></label><input class="sa-re__input" id="sa-re-${ri}-${ii}" type="text" inputmode="decimal" autocomplete="off" data-ri="${ri}" data-ii="${ii}" placeholder="new value"></div>`).join('');
     return`<div class="sa-card"><div class="sa-head"><span class="sa-strand">Strand ${rec.strand}</span></div>${list}<button class="sa-re__apply" type="button" data-ri="${ri}">Apply to strand ${rec.strand}</button><div class="error-msg sa-re__err" id="sa-re-err-${ri}" style="display:none"></div></div>`;
   }).join('');
   $('fixerAnalysisCards').innerHTML=miss+cards;
-  $('fixerAnalysisSummary').textContent=rows.length
-    ?`Strand${rows.length!==1?'s':''} ${rows.map(r=>r.rec.strand).join(', ')}`:'';
+  $('fixerAnalysisSummary').textContent=rows.length?`Strand${rows.length!==1?'s':''} ${rows.map(r=>r.rec.strand).join(', ')}`:'';
   $('fixerAnalysisOutput').style.display='block';
 }
 
-/* write the values the user typed into the selected strand */
+const JSON_NUM=/^-?\d+(\.\d+)?([eE][+-]?\d+)?$/;
+/* write the values the user typed into the selected strand, exactly as
+   typed, leaving every other byte of the file alone */
 function fixerApplyCorrection(ri){
   const row=fixerState.rows[ri];if(!row)return;
   const err=$(`sa-re-err-${ri}`);clearError(null,err);
-  const entries=[];let bad=false;
+  const edits=[];let bad=false;
   row.readings.forEach((reading,ii)=>{
     const el=$(`sa-re-${ri}-${ii}`);if(!el)return;
     const v=el.value.trim();if(!v)return;
-    const n=parseFloat(v);
-    if(!Number.isFinite(n)){bad=true;return;}
-    entries.push({reading,value:n});
+    if(!Number.isFinite(parseFloat(v))){bad=true;return;}
+    /* keep the typed text so trailing zeros survive; normalise only
+       forms JSON would reject */
+    edits.push({start:reading.start,len:reading.len,text:JSON_NUM.test(v)?v:String(parseFloat(v))});
   });
   if(bad){setError(null,err,'⚠ One of those values isn\'t a number.');return;}
-  if(!entries.length){setError(null,err,'⚠ Enter at least one value.');return;}
-  if(fixerState.format==='json'){
-    entries.forEach(({reading,value})=>{reading.src[reading.field]=value;reading.norm[reading.nfield]=value;});
-  }else{
-    /* right-to-left so earlier offsets on the same line stay valid */
-    entries.slice().sort((a,b)=>b.reading.tLine-a.reading.tLine||b.reading.tStart-a.reading.tStart)
-      .forEach(({reading,value})=>{
-        const L=fixerState.lines[reading.tLine];
-        fixerState.lines[reading.tLine]=L.slice(0,reading.tStart)+String(value)+L.slice(reading.tStart+reading.tLen);
-      });
-  }
+  if(!edits.length){setError(null,err,'⚠ Enter at least one value.');return;}
+  fixerState.raw=edits.slice().sort((a,b)=>b.start-a.start)
+    .reduce((s,e)=>s.slice(0,e.start)+e.text+s.slice(e.start+e.len),fixerState.raw);
   showToast(`Strand ${row.rec.strand} updated`);
   fixerRefresh();
+  if($('fixerCorrectedOutput').style.display==='block')fixerRegenerate();
 }
 
 function fixerRegenerate(){
-  $('fixerCorrectedResult').value=fixerState.format==='json'
-    ?JSON.stringify(fixerState.data,null,2)
-    :fixerState.lines.join('\n');
+  $('fixerCorrectedResult').value=fixerState.raw;
   $('fixerCorrectedOutput').style.display='block';
   $('fixerCorrectedResult').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -1358,15 +1439,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('strand').addEventListener('keydown',e=>{if(e.key==='Enter')findRibbon();});
 
   $('fixerUploadBtn').addEventListener('click',()=>$('fixerFileInput').click());
-  $('fixerFileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{$('fixerInput').value=ev.target.result;};reader.readAsText(f);e.target.value='';});
+  $('fixerFileInput').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const reader=new FileReader();reader.onload=ev=>{fixerUploadRaw=ev.target.result;$('fixerInput').value=ev.target.result;};reader.readAsText(f);e.target.value='';});
   $('fixerRunBtn').addEventListener('click',fixerRun);
   $('fixerClearBtn').addEventListener('click',fixerClear);
   $('fixerAnalyzeBtn').addEventListener('click',fixerAnalyze);
   $('fixerStrandScope').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fixerAnalyze();}});
   $('fixerRegenBtn').addEventListener('click',fixerRegenerate);
-  $('fixerCorrectedCopyBtn').addEventListener('click',()=>{if($('fixerCorrectedResult').value)copyToClipboard($('fixerCorrectedResult').value,$('fixerCorrectedCopyBtn'),'Copied ✓');});
+  /* both read fixerState.raw, not the preview box — a textarea would
+     normalise CRLF back to LF on the way out */
+  $('fixerCorrectedCopyBtn').addEventListener('click',()=>{if(fixerState.raw)copyToClipboard(fixerState.raw,$('fixerCorrectedCopyBtn'),'Copied ✓');});
   $('fixerCorrectedDownloadBtn').addEventListener('click',()=>{
-    const txt=$('fixerCorrectedResult').value;if(!txt)return;
+    const txt=fixerState.raw;if(!txt)return;
     const ext=fixerState.format==='json'?'json':'txt';
     const blob=new Blob([txt],{type:'text/plain'}),a=document.createElement('a');
     a.href=URL.createObjectURL(blob);a.download=`LENS_Corrected_${Date.now()}.${ext}`;
