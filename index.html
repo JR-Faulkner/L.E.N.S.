@@ -161,6 +161,50 @@ button[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
 .ribbon-swatch .swatch-label{font-size:.7em;font-weight:700;text-align:center;max-width:42px;word-break:break-word;white-space:pre;}
 
 /* === OTDR === */
+/* OTDR tabs (Notes / Test Log) */
+.otdr-tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);}
+.otdr-tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--text-sub);font-family:inherit;font-size:.82em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 16px;margin:0;cursor:pointer;border-radius:0;min-height:unset;}
+.otdr-tab:hover{color:var(--text);background:none;transform:none;box-shadow:none;}
+.otdr-tab.is-active{color:var(--fire);border-bottom-color:var(--fire);}
+.otdr-tabpanel{display:none;}
+.otdr-tabpanel.is-active{display:block;}
+body.light .otdr-tabs{border-bottom-color:#c8cfe0;}
+/* Test Log */
+.tl-issue-head{font-size:.75em;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.07em;margin:14px 0 6px;}
+.tl-issues{display:flex;flex-wrap:wrap;gap:7px;}
+.tl-issue{font-size:.82em;padding:7px 12px;min-height:unset;margin:0;background:var(--bg2);border:1px solid var(--border-hi);color:var(--text-sub);border-radius:6px;cursor:pointer;font-family:inherit;}
+.tl-issue:hover{color:var(--text);transform:none;box-shadow:none;background:var(--bg3);}
+.tl-issue.is-active{background:var(--fire-dim);border-color:var(--fire);color:var(--fire);font-weight:700;}
+.tl-autonext{display:flex;align-items:center;gap:8px;font-size:.82em;opacity:.85;margin-top:12px;cursor:pointer;width:auto;justify-content:flex-start;}
+.tl-autonext input{width:auto;margin:0;flex-shrink:0;}
+.tl-summary{display:flex;gap:8px;margin:20px 0 10px;flex-wrap:wrap;}
+.tl-stat{flex:1 1 70px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 6px;text-align:center;}
+.tl-stat strong{display:block;font-size:1.5em;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;}
+.tl-stat span{font-size:.68em;text-transform:uppercase;letter-spacing:.06em;opacity:.55;}
+.tl-stat.pass strong{color:var(--green);}
+.tl-stat.warn strong{color:var(--yellow);}
+.tl-stat.fail strong{color:var(--red);}
+.tl-log{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
+.tl-empty{text-align:center;opacity:.45;font-size:.88em;padding:22px 10px;border:1px dashed var(--border);border-radius:10px;}
+.tl-card{background:var(--bg2);border:1px solid var(--border);border-left-width:4px;border-radius:10px;padding:12px 14px;}
+.tl-card.pass{border-left-color:var(--green);}
+.tl-card.warn{border-left-color:var(--yellow);}
+.tl-card.fail{border-left-color:var(--red);}
+.tl-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.tl-strand{font-size:1.35em;font-weight:900;letter-spacing:.02em;line-height:1;}
+.tl-loc{font-size:.8em;opacity:.6;margin-top:3px;}
+.tl-pill{font-size:.7em;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:5px;white-space:nowrap;background:var(--bg3);color:var(--text-sub);}
+.tl-pill.pass{background:rgba(59,255,158,.15);color:var(--green);}
+.tl-pill.warn{background:rgba(255,216,59,.15);color:var(--yellow);}
+.tl-pill.fail{background:rgba(255,59,59,.16);color:#ff6b6b;}
+.tl-measures{display:flex;gap:20px;margin-top:9px;}
+.tl-measure span{font-size:.68em;text-transform:uppercase;letter-spacing:.05em;opacity:.5;display:block;}
+.tl-measure strong{font-size:1.05em;font-variant-numeric:tabular-nums;}
+.tl-note{font-size:.84em;opacity:.7;margin-top:8px;font-style:italic;}
+.tl-remove{margin-top:9px;font-size:.72em;padding:4px 10px;min-height:unset;background:none;border:1px solid var(--border-hi);color:var(--text-sub);border-radius:5px;cursor:pointer;font-family:inherit;}
+.tl-remove:hover{border-color:var(--red);color:#ff6b6b;transform:none;box-shadow:none;background:none;}
+body.light .tl-issue,body.light .tl-stat,body.light .tl-card{border-color:#c8cfe0;background:#fff;}
+body.light .tl-empty{border-color:#c8cfe0;}
 .otdr-result-card{margin:12px auto 0;max-width:600px;border-radius:12px;border:1px solid rgba(0,191,255,.35);overflow:hidden;animation:ribbonPop .3s cubic-bezier(.175,.885,.32,1.275);}
 .otdr-card-header{padding:14px 18px 10px;border-bottom:1px solid rgba(0,191,255,.2);}
 .otdr-card-header .otdr-title{font-size:1.6em;font-weight:900;color:#fff;letter-spacing:.04em;}
@@ -324,6 +368,12 @@ body.light .wb-bridge{border-top-color:#c8cfe0;}
 
   <!-- 1. OTDR NOTE MAKER -->
   <div id="otdr" class="tool">
+    <div class="otdr-tabs" role="tablist" aria-label="OTDR Note Maker sections">
+      <button class="otdr-tab is-active" type="button" data-otdrtab="notes" role="tab" aria-selected="true">Notes</button>
+      <button class="otdr-tab" type="button" data-otdrtab="testlog" role="tab" aria-selected="false">Test Log</button>
+    </div>
+
+    <div id="otdrNotesTab" class="otdr-tabpanel is-active" role="tabpanel">
     <div id="otdrStep1">
       <p class="small-note" style="margin-bottom:12px;text-align:center">Enter job info to generate your OTDR notes.</p>
       <div class="form-row">
@@ -371,6 +421,52 @@ body.light .wb-bridge{border-top-color:#c8cfe0;}
         <button id="otdrRestartBtn" type="button">New Reading</button>
       </div>
     </div>
+    </div><!-- /otdrNotesTab -->
+
+    <div id="otdrTestLogTab" class="otdr-tabpanel" role="tabpanel" hidden>
+      <p class="small-note" style="margin-bottom:12px;text-align:center">Log readings strand-by-strand from a PON sheet. Held on this device.</p>
+      <div class="form-row">
+        <label for="tlLocationType">Location: <select id="tlLocationType"><option>PFP</option><option>Terminal</option></select></label>
+        <label for="tlLocationId">ID: <input id="tlLocationId" type="text" autocomplete="off" placeholder="e.g. PFP-4"></label>
+      </div>
+      <div class="form-row">
+        <label for="tlStrand">Strand: <input id="tlStrand" type="number" inputmode="numeric" min="1" placeholder="#" style="width:90px"></label>
+        <label for="tlDistance">Distance: <input id="tlDistance" type="number" inputmode="decimal" min="0" placeholder="dist" style="width:110px"></label>
+        <label for="tlDistanceUnit">Unit: <select id="tlDistanceUnit"><option>ft</option><option>m</option><option>km</option><option>mi</option></select></label>
+      </div>
+      <div class="form-row">
+        <label for="tlNm1310">1310 nm: <input id="tlNm1310" type="text" inputmode="decimal" autocomplete="off" placeholder="dB" style="width:110px"></label>
+        <label for="tlNm1550">1550 nm: <input id="tlNm1550" type="text" inputmode="decimal" autocomplete="off" placeholder="dB" style="width:110px"></label>
+      </div>
+      <div class="tl-issue-head">Issue</div>
+      <div class="tl-issues" id="tlIssues">
+        <button class="tl-issue" type="button" data-issue="PASS">PASS</button>
+        <button class="tl-issue" type="button" data-issue="Dirty Connector">Dirty Connector</button>
+        <button class="tl-issue" type="button" data-issue="High Loss">High Loss</button>
+        <button class="tl-issue" type="button" data-issue="No Light">No Light</button>
+        <button class="tl-issue" type="button" data-issue="Open Fiber">Open Fiber</button>
+        <button class="tl-issue" type="button" data-issue="High Reflectance">High Reflectance</button>
+        <button class="tl-issue" type="button" data-issue="Other">Other</button>
+      </div>
+      <input id="tlOther" type="text" autocomplete="off" placeholder="Describe the issue" style="display:none;margin-top:8px;width:100%">
+      <label for="tlNotes" style="display:flex;flex-direction:column;gap:4px;font-size:.85em;margin-top:10px">Notes (optional)
+        <input id="tlNotes" type="text" autocomplete="off" placeholder="optional" style="margin-top:2px">
+      </label>
+      <label class="tl-autonext"><input type="checkbox" id="tlAutoNext" checked> Auto-advance to next strand after adding</label>
+      <div id="tlError" class="error-msg" style="display:none"></div>
+      <div class="btn-row" style="justify-content:flex-start;margin-top:10px">
+        <button id="tlAddBtn" type="button">Add Entry</button>
+        <button id="tlClearFormBtn" type="button">Clear Fields</button>
+      </div>
+
+      <div class="tl-summary" id="tlSummary"></div>
+      <div class="btn-row" style="justify-content:flex-start;margin-top:4px">
+        <button id="tlCopyBtn" type="button">Copy Log</button>
+        <button id="tlCsvBtn" type="button">Export CSV</button>
+        <button id="tlClearSessionBtn" type="button">Clear Session</button>
+      </div>
+      <div id="tlLog" class="tl-log"></div>
+    </div><!-- /otdrTestLogTab -->
   </div>
 
   <!-- 2. RESULTS CORRECTOR -->
@@ -1751,6 +1847,151 @@ document.addEventListener('DOMContentLoaded',()=>{
       renderHistory();
     });
   }
+})();
+
+/* ── OTDR TEST LOG ────────────────────────────────────────────────
+   Second tab inside the OTDR Note Maker. Strand-by-strand PON testing
+   with one-touch issue buttons and a running log. Entry shape is fixed
+   so the Waldo bridge can later prefill location/strand/distance.   */
+(function(){
+  const $=id=>document.getElementById(id);
+  if(!$('otdrTestLogTab'))return;
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const toast=m=>{if(window.showToast)window.showToast(m);};
+  const LS='lens-otdr-testlog';
+  const WARN=['Dirty Connector','High Loss','High Reflectance'];
+  const FAIL=['No Light','Open Fiber'];
+  const cls=i=>i==='PASS'?'pass':WARN.includes(i)?'warn':FAIL.includes(i)?'fail':'';
+
+  let entries=[];
+  try{entries=JSON.parse(localStorage.getItem(LS)||'[]');if(!Array.isArray(entries))entries=[];}catch(e){entries=[];}
+  let selectedIssue='PASS';
+  const save=()=>{try{localStorage.setItem(LS,JSON.stringify(entries));}catch(e){}};
+
+  /* tabs */
+  document.querySelectorAll('.otdr-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const tab=btn.dataset.otdrtab;
+      document.querySelectorAll('.otdr-tab').forEach(b=>{
+        const on=b===btn;b.classList.toggle('is-active',on);b.setAttribute('aria-selected',on?'true':'false');
+      });
+      document.querySelectorAll('.otdr-tabpanel').forEach(p=>{
+        const on=p.id==='otdr'+(tab==='notes'?'Notes':'TestLog')+'Tab';
+        p.classList.toggle('is-active',on);p.hidden=!on;
+      });
+    });
+  });
+
+  /* issue buttons */
+  function selectIssue(issue){
+    selectedIssue=issue;
+    document.querySelectorAll('.tl-issue').forEach(b=>b.classList.toggle('is-active',b.dataset.issue===issue));
+    const other=$('tlOther');
+    other.style.display=issue==='Other'?'block':'none';
+    if(issue==='Other')other.focus();
+  }
+  document.querySelectorAll('.tl-issue').forEach(b=>b.addEventListener('click',()=>selectIssue(b.dataset.issue)));
+  const effectiveIssue=()=>selectedIssue==='Other'?($('tlOther').value.trim()||'Other'):selectedIssue;
+
+  function render(){
+    const total=entries.length,
+          pass=entries.filter(e=>e.issue==='PASS').length,
+          warn=entries.filter(e=>WARN.includes(e.issue)).length,
+          fail=entries.filter(e=>FAIL.includes(e.issue)).length;
+    $('tlSummary').innerHTML=
+      `<div class="tl-stat"><strong>${total}</strong><span>Total</span></div>`+
+      `<div class="tl-stat pass"><strong>${pass}</strong><span>Pass</span></div>`+
+      `<div class="tl-stat warn"><strong>${warn}</strong><span>Warnings</span></div>`+
+      `<div class="tl-stat fail"><strong>${fail}</strong><span>Failures</span></div>`;
+    if(!entries.length){$('tlLog').innerHTML=`<div class="tl-empty">No entries yet. Add the first strand and the log builds here.</div>`;return;}
+    $('tlLog').innerHTML=entries.map((e,i)=>({e,i})).reverse().map(({e,i})=>{
+      const k=cls(e.issue);
+      const loc=`${esc(e.locationType)} ${esc(e.locationId||'—')}`;
+      const dist=e.distance?`${esc(e.distance)} ${esc(e.distanceUnit)}`:'no distance';
+      return`<article class="tl-card ${k}"><div class="tl-card-head"><div>`+
+        `<div class="tl-strand">Strand ${esc(e.strand)}</div>`+
+        `<div class="tl-loc">${loc} &middot; ${dist}</div></div>`+
+        `<span class="tl-pill ${k}">${esc(e.issue)}</span></div>`+
+        `<div class="tl-measures"><div class="tl-measure"><span>1310 nm</span><strong>${esc(e.nm1310||'—')}</strong></div>`+
+        `<div class="tl-measure"><span>1550 nm</span><strong>${esc(e.nm1550||'—')}</strong></div></div>`+
+        (e.notes?`<div class="tl-note">${esc(e.notes)}</div>`:'')+
+        `<button class="tl-remove" type="button" data-i="${i}">Remove</button></article>`;
+    }).join('');
+  }
+
+  function addEntry(){
+    const err=$('tlError');err.style.display='none';
+    const strand=$('tlStrand').value.trim();
+    if(!strand){err.textContent='⚠ Enter a strand number first.';err.style.display='block';$('tlStrand').focus();return;}
+    entries.push({
+      locationType:$('tlLocationType').value,
+      locationId:$('tlLocationId').value.trim(),
+      strand,
+      distance:$('tlDistance').value.trim(),
+      distanceUnit:$('tlDistanceUnit').value,
+      nm1310:$('tlNm1310').value.trim(),
+      nm1550:$('tlNm1550').value.trim(),
+      issue:effectiveIssue(),
+      notes:$('tlNotes').value.trim(),
+      timestamp:new Date().toISOString()
+    });
+    save();render();
+    const n=parseInt(strand,10);
+    if($('tlAutoNext').checked&&Number.isFinite(n))$('tlStrand').value=String(n+1);
+    /* clear only the fields that change per strand */
+    $('tlNm1310').value='';$('tlNm1550').value='';$('tlNotes').value='';
+    $('tlNm1310').focus();
+    toast(`Strand ${strand} added`);
+  }
+
+  $('tlAddBtn').addEventListener('click',addEntry);
+  $('tlClearFormBtn').addEventListener('click',()=>{
+    ['tlStrand','tlDistance','tlNm1310','tlNm1550','tlNotes','tlOther'].forEach(id=>$(id).value='');
+    selectIssue('PASS');toast('Fields cleared');
+  });
+  $('tlLog').addEventListener('click',e=>{
+    const b=e.target.closest('[data-i]');if(!b)return;
+    const i=+b.dataset.i,removed=entries[i];
+    entries.splice(i,1);save();render();
+    toast(removed?`Strand ${removed.strand} removed`:'Entry removed');
+  });
+  $('tlClearSessionBtn').addEventListener('click',()=>{
+    if(!entries.length){toast('Session is already empty');return;}
+    if(!window.confirm('Clear the entire current test session?'))return;
+    entries=[];save();render();toast('Session cleared');
+  });
+
+  function plainText(){
+    if(!entries.length)return'No OTDR Test Log entries.';
+    return entries.map(e=>{
+      const loc=`${e.locationType} ${e.locationId||''}`.trim();
+      const dist=e.distance?`${e.distance} ${e.distanceUnit}`:'No distance';
+      return[`${loc} | Strand ${e.strand} | ${dist}`,
+             `1310: ${e.nm1310||'—'} | 1550: ${e.nm1550||'—'}`,
+             `Issue: ${e.issue}`,
+             e.notes?`Notes: ${e.notes}`:null].filter(Boolean).join('\n');
+    }).join('\n\n');
+  }
+  $('tlCopyBtn').addEventListener('click',()=>{
+    const t=plainText();
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Log copied')).catch(()=>toast('Copy failed'));}
+    else{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('Log copied');}catch(e){}document.body.removeChild(a);}
+  });
+  $('tlCsvBtn').addEventListener('click',()=>{
+    if(!entries.length){toast('Nothing to export');return;}
+    const cols=['timestamp','locationType','locationId','strand','distance','distanceUnit','nm1310','nm1550','issue','notes'];
+    const q=v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`;
+    const csv=[cols.join(','),...entries.map(e=>cols.map(c=>q(e[c])).join(','))].join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=`LENS_OTDR_Test_Log_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+    toast('CSV exported');
+  });
+  $('tlStrand').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addEntry();}});
+  $('tlNm1550').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addEntry();}});
+
+  selectIssue('PASS');
+  render();
 })();
 
 if('serviceWorker' in navigator){
