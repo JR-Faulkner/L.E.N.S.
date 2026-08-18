@@ -1,33 +1,31 @@
-# Update 26 Release Notes
+# Update 27 Release Notes
 
-## L.E.N.S. v5 Shell Foundation — Mock #3 Mobile Correction
+## L.E.N.S. v5 Live Tool Bridge
 
-Update 26 now reflects the selected hybrid mobile direction: **tools first, connected work on demand**.
+Update 27 turns the approved v5 shell from a visual preview into a working field launcher.
 
-### Mobile hierarchy
+### What changed
 
-1. Corrected L.E.N.S. / Faulkner Foundry header
-2. Compact expandable **Work Bar**
-3. Six core L.E.N.S. tools immediately available in a 2 × 3 grid
-4. Recent Sessions strip
-5. Persistent bottom navigation
+- All six v5 tool cards now open the **real production tool**.
+- The selected v4 tool runs inside a contained v5 Tool Runner instead of sending the technician back through the old launcher.
+- Legacy banner/navigation/tile chrome is hidden inside the runner so the chosen utility is the first thing visible.
+- A compact runner bar provides quick **Tools** and **Home** exits.
+- Mobile bottom navigation remains available.
 
-The Work Bar expands only when the technician wants job context, handoff controls, or connected workflow information. It no longer blocks fast access to field utilities.
+### Production logic remains authoritative
 
-### Tool identity
-
-The home tool cards use the same production colors as the current tool assets: red OTDR, green Results, cyan Distance, violet Ribbon, yellow Loss, and orange ACE Fire.
+No tool logic was copied. OTDR, Results Corrector, Distance Converter, Ribbon Finder, Loss Calculator, and ACE Fire still execute from the current production document, preserving current local data, export behavior, Test Log state, and calculations.
 
 ### Preserved
 
-- Current v4 production remains untouched.
-- `lens-session` compatibility remains intact.
-- Waldo Project Number handoff remains available.
-- Current tool implementations remain unchanged until the next migration pass.
-- No replacement Faulkner Foundry icon was invented.
+- Tools-first mobile hierarchy
+- Expandable Work Bar
+- Current production tool colors
+- `lens-session` / Waldo context behavior
+- Root v4 production file unchanged
 
 ### Validation
 
-- JavaScript syntax check passed.
-- HTML parser check passed.
-- Mobile-first responsive layout verified structurally.
+- Bridge JavaScript syntax check passed.
+- v5 HTML parser check passed.
+- Six production tool IDs mapped one-for-one.
