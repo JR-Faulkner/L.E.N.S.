@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b0f">
+  <title>L.E.N.S. v5 Preview — Loss Estimator & Network Solver</title>
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="lens-v5.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="brand-banner">
+      <div class="banner-glow" aria-hidden="true"></div>
+      <div class="brand-copy">
+        <div class="brand-name">L.E.N.S.</div>
+        <div class="brand-expansion">LOSS ESTIMATOR &amp; NETWORK SOLVER</div>
+      </div>
+      <div class="banner-foundry">
+        <strong>FAULKNER</strong><span>FOUNDRY</span>
+      </div>
+      <div class="session-indicator"><span></span><b id="sessionStatus">READY</b></div>
+    </header>
+
+    <div class="desktop-shell">
+      <aside class="side-rail" aria-label="Primary navigation">
+        <button class="rail-item is-active" type="button" data-view="home" aria-current="page"><img src="../assets/icons/home.svg" alt=""><span>HOME</span></button>
+        <button class="rail-item" type="button" data-view="tools"><img src="../assets/icons/tools.svg" alt=""><span>TOOLS</span></button>
+        <button class="rail-item" type="button" data-view="workspace"><img src="../assets/icons/workspace.svg" alt=""><span>WORKSPACE</span></button>
+        <button class="rail-item" type="button" data-view="reference"><img src="../assets/icons/reference.svg" alt=""><span>REFERENCE</span></button>
+        <button class="rail-item" type="button" data-view="history"><img src="../assets/icons/history.svg" alt=""><span>HISTORY</span></button>
+        <button class="rail-item" type="button" data-view="settings"><img src="../assets/icons/settings.svg" alt=""><span>SETTINGS</span></button>
+        <div class="rail-foundry"><span>FAULKNER</span><strong>FOUNDRY</strong></div>
+      </aside>
+
+      <main class="stage">
+        <section class="view is-active" id="view-home" data-view-panel="home">
+          <button class="workbar" id="workbarToggle" type="button" aria-expanded="false" aria-controls="workbenchDrawer">
+            <div class="workbar-title"><span>WORK BAR</span><small id="workbarHint">Tap to expand work context</small></div>
+            <div class="workbar-main">
+              <span class="workbar-icon" aria-hidden="true">▣</span>
+              <div class="workbar-project">
+                <strong id="workbarProject">No active work</strong>
+                <small id="workbarMeta">Set project context when you need the connected workflow.</small>
+              </div>
+              <div class="workbar-badges"><span class="badge active" id="workbarSessionBadge">READY</span><span class="badge offline">OFFLINE READY</span></div>
+              <span class="chevron" aria-hidden="true">⌄</span>
+            </div>
+          </button>
+
+          <section class="workbench-drawer" id="workbenchDrawer" hidden>
+            <div class="drawer-head"><div><p class="eyebrow">WORKBENCH</p><h1 id="projectHeading">No active project</h1><p id="projectMeta">Set job context in Workspace when you want tools linked together.</p></div><button type="button" class="drawer-close" id="drawerClose">COLLAPSE ↑</button></div>
+            <div class="drawer-grid">
+              <article class="drawer-card context-card">
+                <h2>CURRENT CONTEXT</h2>
+                <dl class="context-list">
+                  <div><dt>Project</dt><dd id="ctxProject">—</dd></div>
+                  <div><dt>Cable</dt><dd id="ctxCable">—</dd></div>
+                  <div><dt>Span</dt><dd id="ctxSpan">—</dd></div>
+                  <div><dt>Fiber</dt><dd id="ctxFiber">—</dd></div>
+                  <div><dt>Structure</dt><dd id="ctxStructure">—</dd></div>
+                </dl>
+              </article>
+              <article class="drawer-card drawer-actions">
+                <h2>QUICK HANDOFF</h2>
+                <button type="button" id="sendWaldoBtn"><span>◈</span><div><strong>Send to Waldo</strong><small>Use current project context</small></div><b>›</b></button>
+                <button type="button" data-view-jump="workspace"><span>✎</span><div><strong>Edit Work Context</strong><small>Project, cable, span, fiber, structure</small></div><b>›</b></button>
+              </article>
+            </div>
+          </section>
+
+          <section class="tools-hero" aria-labelledby="toolsHeading">
+            <div class="section-bar"><div><p class="eyebrow">TOOLS</p><h1 id="toolsHeading">Field utilities, one tap away.</h1></div><button class="icon-button" type="button" data-view-jump="tools" aria-label="View all tools">▦</button></div>
+            <div class="tool-grid quick-grid">
+              <button class="tool-card tool-otdr" type="button" data-tool-action="otdr">
+                <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M4 27h12l7-18 9 32 8-25 6 11h14"/></svg></span><span class="tool-copy"><strong>OTDR<br>Note Maker</strong><small>Create notes & test logs</small></span><span class="tool-arrow">›</span>
+              </button>
+              <button class="tool-card tool-results" type="button" data-tool-action="results">
+                <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M32 7l20 7v15c0 13-8 22-20 28-12-6-20-15-20-28V14z"/><path d="M20 31l8 8 16-18"/></svg></span><span class="tool-copy"><strong>Results<br>Corrector</strong><small>Analyze & correct results</small></span><span class="tool-arrow">›</span>
+              </button>
+              <button class="tool-card tool-distance" type="button" data-tool-action="distance">
+                <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><g transform="rotate(-35 32 32)"><rect x="12" y="22" width="40" height="20" rx="3"/><path d="M18 22v8m7-8v5m7-5v8m7-8v5m7-5v8"/></g></svg></span><span class="tool-copy"><strong>Distance<br>Converter</strong><small>Fast field conversions</small></span><span class="tool-arrow">›</span>
+              </button>
+              <button class="tool-card tool-ribbon" type="button" data-tool-action="ribbon">
+                <span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M8 42c14 0 13-25 27-25 13 0 14-12 25-12"/><path d="M6 50c16 0 18-25 32-25 13 0 13-12 22-12"/><path d="M4 58c18 0 20-25 36-25 12 0 13-12 20-12"/></svg></span><span class="tool-copy"><strong>Fiber Ribbon<br>Finder</strong><small>Ribbon, position & color</small></span><span class="tool-arrow">›</span>
+              </button>
+              <button class="tool-card tool-loss" type="button" data-tool-action="loss">
+                <span class="tool-icon fill-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M38 5L16 34h16l-7 25 27-35H36z"/></svg></span><span class="tool-copy"><strong>Fiber Loss<br>Calculator</strong><small>Link-loss estimates</small></span><span class="tool-arrow">›</span>
+              </button>
+              <button class="tool-card tool-fire" type="button" data-tool-action="fire">
+                <span class="tool-icon fill-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M34 5c11 14 15 23 11 32-2-6-6-10-11-13 3 10-2 16-7 21-2-7-6-11-10-15-6 14-4 24 7 30-10-4-16-12-16-23 0-13 8-25 18-34 0 10 4 16 8 21 3-6 4-12 0-19z"/></svg></span><span class="tool-copy"><strong>ACE<br>Fire Tool</strong><small>ACE field workflow</small></span><span class="tool-arrow">›</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="recent-strip" aria-labelledby="recentHeading">
+            <div class="recent-head"><h2 id="recentHeading">RECENT SESSIONS</h2><button type="button" data-view-jump="history">VIEW ALL</button></div>
+            <div class="recent-scroller" id="recentSessions">
+              <button class="recent-card current" type="button" id="currentSessionCard"><span class="recent-icon">↶</span><span><strong id="recentProject">No active session</strong><small id="recentMeta">Your active job will appear here.</small></span></button>
+              <button class="recent-card demo" type="button" disabled><span class="recent-icon">•</span><span><strong>Recent projects</strong><small>History migration is next.</small></span></button>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="view-tools" data-view-panel="tools">
+          <div class="page-heading"><p class="eyebrow">TOOL BELT</p><h1>All Field Utilities</h1><p>Same six Foundry tools, preserved as distinct utilities.</p></div>
+          <div class="tool-grid full-grid"></div>
+        </section>
+
+        <section class="view" id="view-workspace" data-view-panel="workspace">
+          <div class="page-heading"><p class="eyebrow">WORKSPACE</p><h1>Active Job Context</h1><p>Optional when you need L.E.N.S. working as one connected job session.</p></div>
+          <article class="workspace-panel">
+            <div class="workspace-form">
+              <label>Project Code<input id="wsProject" autocomplete="off" placeholder="e.g. A05-4172"></label>
+              <label>Cable ID<input id="wsCable" autocomplete="off" placeholder="e.g. FR08"></label>
+              <label>Span<input id="wsSpan" autocomplete="off" placeholder="e.g. 124–126"></label>
+              <label>Fiber<input id="wsFiber" autocomplete="off" placeholder="e.g. 125"></label>
+              <label>Structure<input id="wsStructure" autocomplete="off" placeholder="e.g. PFP-4 / T14"></label>
+            </div>
+            <div class="form-actions"><button class="primary-button" id="saveWorkspaceBtn" type="button">Save Work Context</button><button class="secondary-button" id="clearWorkspaceBtn" type="button">Clear</button></div>
+          </article>
+        </section>
+
+        <section class="view" id="view-reference" data-view-panel="reference"><div class="page-heading"><p class="eyebrow">REFERENCE</p><h1>Fiber Reference</h1><p>Current v4 reference material remains intact while the shell migrates.</p></div><article class="workspace-panel"><div class="fiber-strip" id="fiberStrip"></div></article></section>
+        <section class="view" id="view-history" data-view-panel="history"><div class="page-heading"><p class="eyebrow">HISTORY</p><h1>Session History</h1><p>Existing v4 history will surface here during the next migration pass.</p></div><article class="workspace-panel empty-panel">No v5-native session history yet. Current v4 history remains untouched.</article></section>
+        <section class="view" id="view-settings" data-view-panel="settings"><div class="page-heading"><p class="eyebrow">SETTINGS</p><h1>Field Preferences</h1><p>Current settings are preserved until their v5 migration is complete.</p></div><article class="workspace-panel status-list"><div><span>Theme</span><strong>DARK / INDUSTRIAL</strong></div><div><span>Tools</span><strong>FIRST</strong></div><div><span>Workbench</span><strong>ON DEMAND</strong></div><div><span>v4 Data</span><strong>PRESERVED</strong></div></article></section>
+      </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+      <button class="is-active" type="button" data-view="home"><img src="../assets/icons/home.svg" alt=""><span>Home</span></button>
+      <button type="button" data-view="tools"><img src="../assets/icons/tools.svg" alt=""><span>Tools</span></button>
+      <button type="button" data-view="workspace"><img src="../assets/icons/workspace.svg" alt=""><span>Workspace</span></button>
+      <button type="button" data-view="history"><img src="../assets/icons/history.svg" alt=""><span>History</span></button>
+      <button type="button" data-view="settings"><img src="../assets/icons/settings.svg" alt=""><span>More</span></button>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="lens-v5.js"></script>
+</body>
+</html>
