@@ -2,6 +2,40 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 27 — Live Tool Bridge
+
+### Production tool wiring
+
+- Connected all six v5 tool cards to the **real current v4 production implementations** instead of duplicate or mock tool logic.
+- Added a contained v5 Tool Runner that opens the selected production tool inside the approved v5 shell.
+- The runner strips the legacy banner, navigation rail, tile launcher, theme strip, and footer inside the embedded document so the technician lands directly in the selected tool.
+- Added one-tap **TOOLS** and **HOME** exits above the running tool while preserving the mobile bottom navigation.
+- Tool selection remains immediate from the tools-first home screen and the full Tool Belt view.
+- The bridge uses same-origin access on GitHub Pages / branch preview hosts and leaves the v4 tool source untouched.
+
+### Why this bridge exists
+
+- v4 remains the single source of truth for OTDR Note Maker, Results Corrector, Distance Converter, Fiber Ribbon Finder, Fiber Loss Calculator, and ACE Fire Tool while the v5 shell migration continues.
+- This avoids maintaining two copies of field logic during the transition.
+- Existing localStorage, exports, uploads, downloads, OTDR Test Log behavior, settings, and tool-specific calculations continue to run inside the production document.
+
+### Preserved
+
+- Update 26 visual direction: **tools first, Work Bar on demand**.
+- Current production tool colors and card identities.
+- `lens-session` job context compatibility and Waldo handoff.
+- The root v4 `index.html` is unchanged in this update.
+- The approved Faulkner Foundry icon remains deferred until the canonical asset is present.
+
+### Validation
+
+- New bridge JavaScript passes `node --check`.
+- Updated v5 HTML parses successfully.
+- All six v5 tool identifiers are mapped to the matching v4 tool IDs.
+- The bridge uses a clean iframe document for every tool launch so switching tools does not carry stale in-document UI state.
+
+---
+
 ## Update 26 — v5 Shell Foundation
 
 ### Direction correction after mobile review
