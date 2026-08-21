@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b0f">
+  <title>Tether-Tinker — L.E.N.S.</title>
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="tether-tinker.css">
+  <style>
+    .tail-path{margin-top:8px;padding:8px;border:1px solid #2d3942;border-radius:9px;background:#0d1419}.tail-path[hidden]{display:none}.tail-path__row{display:flex;align-items:center;justify-content:space-between;gap:10px}.tail-path__label{font-size:.61rem;font-weight:900;color:#c4ccd2;letter-spacing:.03em}.tail-path__buttons{display:flex;gap:6px}.tail-path__buttons .seg{min-width:58px}.embedded .tt-header{display:none}.embedded .tt-shell{padding-top:10px}.embedded .tt-intro{margin-top:0}
+  </style>
+</head>
+<body>
+  <header class="tt-header">
+    <a class="tt-back" href="index.html#tools" aria-label="Back to L.E.N.S. tools">‹ TOOLS</a>
+    <div class="tt-brand"><strong>L.E.N.S.</strong><span>LOSS ESTIMATOR &amp; NETWORK SOLVER</span></div>
+    <div class="tt-foundry">FAULKNER <b>FOUNDRY</b></div>
+  </header>
+
+  <main class="tt-shell">
+    <section class="tt-intro">
+      <div>
+        <p class="eyebrow">FIELD TOOL · UPDATE 28</p>
+        <h1>Tether-Tinker</h1>
+        <p>Terminal / tail distance solver</p>
+      </div>
+      <div class="job-pill" id="jobPill">LOCAL SESSION</div>
+    </section>
+
+    <section class="tt-panel tt-inputs" aria-labelledby="inputTitle">
+      <div class="panel-head"><div><p class="eyebrow">MEASURED PATH</p><h2 id="inputTitle">Strip out the known tether</h2></div><button class="reset-btn" id="resetBtn" type="button">RESET</button></div>
+
+      <div class="unit-row" role="group" aria-label="Distance unit">
+        <button class="seg is-active" type="button" data-unit="ft">FEET</button>
+        <button class="seg" type="button" data-unit="kft">KILOFEET</button>
+      </div>
+
+      <div class="field-grid">
+        <label class="field primary"><span>Measured distance</span><input id="measured" inputmode="decimal" type="number" min="0" step="any" placeholder="e.g. 1482"><small>Distance reported by the tester</small></label>
+        <label class="field"><span>Tester / launch cord</span><input id="cord" inputmode="decimal" type="number" min="0" step="any" placeholder="e.g. 32"><small>Known cord included in the trace</small></label>
+        <label class="field"><span>Terminal tail</span><input id="tail" inputmode="decimal" type="number" min="0" step="any" placeholder="e.g. 150"><small>Tail footage included before plant</small></label>
+      </div>
+
+      <div class="mode-grid">
+        <fieldset><legend>Plant type</legend><div class="seg-group" id="plantGroup"><button class="seg is-active" type="button" data-plant="Buried">BURIED</button><button class="seg" type="button" data-plant="Aerial">AERIAL</button><button class="seg" type="button" data-plant="Mixed">MIXED</button></div></fieldset>
+        <div>
+          <label class="field"><span>Test direction</span><select id="direction"><option value="terminal-field">Terminal → Field</option><option value="field-terminal">Field → Terminal</option></select><small>Changes only the path logic you actually need</small></label>
+          <div class="tail-path" id="tailPath" hidden>
+            <div class="tail-path__row"><span class="tail-path__label">TAIL INCLUDED IN THIS TRACE?</span><div class="tail-path__buttons"><button class="seg" type="button" data-tail-included="yes">YES</button><button class="seg is-active" type="button" data-tail-included="no">NO</button></div></div>
+          </div>
+        </div>
+      </div>
+
+      <details class="reference-box">
+        <summary>+ Compare against a known route point</summary>
+        <div class="reference-grid">
+          <label class="field"><span>Reference label</span><input id="refLabel" type="text" placeholder="e.g. HH-14 / Pole 22"></label>
+          <label class="field"><span>Reference distance from terminal</span><input id="refDistance" inputmode="decimal" type="number" min="0" step="any" placeholder="e.g. 1250"></label>
+        </div>
+      </details>
+
+      <div class="error" id="error" role="alert" hidden></div>
+      <button class="calculate" id="calculateBtn" type="button">CALCULATE TROUBLE DISTANCE</button>
+    </section>
+
+    <section class="tt-panel tt-result" id="resultPanel" hidden aria-live="polite">
+      <p class="eyebrow">ESTIMATED PLANT LOCATION</p>
+      <div class="result-distance" id="resultDistance">—</div>
+      <div class="result-secondary" id="resultSecondary"></div>
+      <p class="result-phrase" id="resultPhrase"></p>
+
+      <div class="breakdown" aria-label="Distance breakdown">
+        <div><span>MEASURED</span><strong id="bMeasured">—</strong></div><b>−</b>
+        <div><span>TEST CORD</span><strong id="bCord">—</strong></div><b>−</b>
+        <div><span>TAIL</span><strong id="bTail">—</strong></div><b>=</b>
+        <div class="answer"><span>PLANT</span><strong id="bPlant">—</strong></div>
+      </div>
+
+      <div class="reference-result" id="referenceResult" hidden></div>
+      <div class="field-note" id="fieldNote"></div>
+      <div class="caution" id="directionCaution" hidden></div>
+
+      <div class="result-actions"><button id="saveBtn" type="button">SAVE RESULT</button><button id="copyBtn" type="button">COPY</button></div>
+    </section>
+
+    <section class="tt-panel recent-panel">
+      <div class="panel-head"><div><p class="eyebrow">RECENT SESSIONS</p><h2>Saved Tether-Tinker results</h2></div><button class="reset-btn" id="clearHistoryBtn" type="button">CLEAR</button></div>
+      <div id="historyList" class="history-list"><div class="empty">No saved results yet.</div></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('embedded');</script>
+  <script src="tether-tinker.js"></script>
+</body>
+</html>

@@ -2,6 +2,49 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 28 — Tether-Tinker
+
+### New native field tool
+
+- Adds **Tether-Tinker — Terminal / Tail Distance Solver** as the seventh L.E.N.S. field utility.
+- Core field math: measured tester distance minus known tester/launch cord minus included terminal-tail footage.
+- Supports feet and kilofeet (`1 kft = 1,000 ft`).
+- Supports **Buried**, **Aerial**, and **Mixed** plant context with concise route-specific field guidance.
+- Supports Terminal → Field and Field → Terminal test direction.
+- Field → Terminal uses one inline **TAIL INCLUDED? YES / NO** control instead of assuming terminal-tail compensation.
+- First Field → Terminal use defaults to **NO** unless a prior preference exists; the last-used choice is remembered locally.
+- Terminal → Field keeps the fast path: enter the three distances and calculate with no extra prompt.
+- Optional known-route comparison can show before / at / beyond a handhole, pedestal, pole, splice point, or other terminal-origin reference.
+- Terminal-origin reference comparison is intentionally skipped in Field → Terminal mode to avoid mixing incompatible origins.
+
+### v5 workstation integration
+
+- Tether-Tinker opens inside the same v5 Tool Runner used by the original six utilities instead of leaving the shell.
+- Native v5 tools and bridged v4 production tools share the same Tools / Home exits and mobile navigation behavior.
+- Tether-Tinker saved sessions can reopen inside the Tool Runner from Recent Sessions.
+- Embedded Tether-Tinker hides its standalone header so the runner remains the single navigation layer.
+
+### Field workflow
+
+- Reads existing `lens-session` context for active project/cable/structure display.
+- Saved results are stored locally in `lens-tether-history`.
+- Recent Tether-Tinker saves are injected into the v5 **Recent Sessions** strip.
+- Copy output records whether terminal-tail footage was subtracted or intentionally excluded.
+
+### Preserved
+
+- Update 27 Tool Runner behavior remains authoritative for OTDR Note Maker, Results Corrector, Distance Converter, Fiber Ribbon Finder, Fiber Loss Calculator, and ACE Fire Tool.
+- Root v4 `index.html` remains unchanged.
+- Tools-first mobile hierarchy and expandable Work Bar remain intact.
+- `lens-session` and Waldo handoff remain intact.
+
+### Review target
+
+- Update 28 remains one numbered commit directly on top of Update 27.
+- Review focus is deliberately small: fast three-number Terminal → Field use, one-tap Field → Terminal tail inclusion, in-runner navigation, saved Recent Sessions reopen, and mobile usability.
+
+---
+
 ## Update 27 — Live Tool Bridge
 
 ### Production tool wiring
