@@ -2,6 +2,44 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 30 — Foundry Shell + Tool Re-Top
+
+### Foundry shell themes
+
+- Adds four persistent v5 workstation themes: **Foundry Ember**, **Redline**, **Circuit Lime**, and **Aqua Core**.
+- Themes change the shell accent system, banner glow, navigation state, Work Bar accents, borders, and major shell controls while preserving each field tool's individual production color.
+- Theme selection lives under More / Settings and is stored locally in `lens-theme`.
+- The current theme is reflected in the existing Settings status area.
+
+### Faulkner Foundry banner hook
+
+- Adds a compact banner asset host for the approved Faulkner Foundry anvil / mirrored-F mark.
+- The host targets `assets/branding/faulkner-foundry-mark.svg` and stays completely hidden if that canonical asset is absent.
+- No substitute, traced approximation, or recreated logo is used. The existing text lockup remains authoritative until the approved standalone mark is added to the repository.
+
+### Tool re-top and organization
+
+- Reorders Home around field workflow: **OTDR Note Maker → Tether-Tinker → Fiber Ribbon Finder → Results Corrector → Distance Converter → Fiber Loss Calculator → ACE Fire Tool**.
+- Keeps all seven Home utilities directly accessible without adding another launcher layer or extra Quick Rack scroll.
+- Groups the full Tool Belt with light task separators: **Test**, **Locate**, **Calculate**, and **Field Workflow**.
+- Category treatment is intentionally lightweight so the Tool Belt remains fast rather than becoming an accordion or menu maze.
+
+### Preserved
+
+- Update 29 Offline Library and Tether-Tinker speed preferences remain intact.
+- Tool Runner behavior and all seven tool launch routes remain intact.
+- `lens-session`, Work Bar, Waldo handoff, Recent Sessions, and root v4 production logic remain untouched.
+- No production PWA/service-worker cache version changes are made in this shell-only pass.
+
+### Review target
+
+- On iPhone, verify all four themes switch immediately and survive reload.
+- Verify Home shows the seven tools in the new workflow order with no new scrolling launcher above them.
+- Verify the full Tool Belt groups tools cleanly without slowing access.
+- Verify the banner remains clean and text-based while the approved standalone Foundry mark asset is absent.
+
+---
+
 ## Update 29 — Field Speed + Offline Library
 
 ### Tether-Tinker speed polish

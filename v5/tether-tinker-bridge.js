@@ -4,6 +4,28 @@
   const KEY = 'lens-tether-history';
   const ACCENT = '#45e0c5';
 
+  function loadUpdate30Assets(){
+    if(!document.querySelector('link[data-lens-theme-system]')){
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'theme-system.css';
+      link.dataset.lensThemeSystem = '30';
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-lens-theme-system]')){
+      const script = document.createElement('script');
+      script.src = 'theme-system.js';
+      script.dataset.lensThemeSystem = '30';
+      document.body.appendChild(script);
+    }
+    if(!document.querySelector('script[data-tool-organization]')){
+      const script = document.createElement('script');
+      script.src = 'tool-organization.js';
+      script.dataset.toolOrganization = '30';
+      document.body.appendChild(script);
+    }
+  }
+
   function icon(){
     return `<span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M11 15h15l7 9-7 9H11L4 24z"/><path d="M53 15H38l-7 9 7 9h15l7-9z"/><path d="M24 24h16"/><path d="M14 9v6M14 33v6M50 9v6M50 33v6"/></svg></span>`;
   }
@@ -55,6 +77,7 @@
     installCard(document.querySelector('.quick-grid'));
     installCard(document.querySelector('.full-grid'));
     renderRecents();
+    loadUpdate30Assets();
 
     const full = document.querySelector('.full-grid');
     if(full){
