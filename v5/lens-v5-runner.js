@@ -116,7 +116,7 @@
       return;
     }
 
-    frame.src = `../index.html?v5tool=${encodeURIComponent(tool)}&bridge=27&t=${Date.now()}`;
+    frame.src = `../legacy-v4.html?v5tool=${encodeURIComponent(tool)}&bridge=30&t=${Date.now()}`;
   }
 
   function prepareTool(){
