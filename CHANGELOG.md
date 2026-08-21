@@ -2,6 +2,59 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 31 — Heavy Command Shell Translation
+
+### Concept 05 production direction
+
+- Translates the approved **Concept 05 / Heavy Command** direction into the working v5 shell instead of replacing the proven field-tool logic.
+- Adds a heavier forged top housing, layered side chassis, live power/data channels, more dimensional panels, mechanical tool plates, and a substantially more integrated mobile Command Rail.
+- Keeps the outer hardware narrow on phone so the mechanical depth comes from layering, bevels, channels, recesses, and light rather than stealing useful screen width.
+- Preserves the existing tools-first hierarchy and compact Work Bar while giving both a more connected-machine / modular Foundry presentation.
+
+### Canonical Foundry mark
+
+- Adds `assets/branding/faulkner-foundry-mark-reference.jpg`, produced directly from the user-supplied Foundry mark reference with the original anvil / interlocked-double-F geometry preserved.
+- The top housing uses that actual reference asset as the raised primary identity mark rather than generating or redrawing an alternate FF symbol.
+- The center mobile Command Core and desktop rail use the same reference geometry with grayscale, depth, and material treatment only to create the recessed / embedded role.
+- No alternate Foundry logo geometry is introduced by the shell code.
+
+### Alive system language
+
+- Adds a compact banner vitals cluster for live Link, Sync, Local, and clock state.
+- Online / offline state reacts to the browser connection state instead of remaining decorative.
+- Adds Field Link, Data Bus, and Offline Ready indicators to the Work Bar.
+- Adds restrained ember power channels, cyan data channels, green healthy states, amber readiness / caution treatment, and red offline / fault treatment.
+- Tool cards retain their existing individual production colors and gain subtle ready LEDs and active light channels rather than being recolored into one global theme.
+
+### Command Rail + Tool Belt
+
+- Reorders the visible tool workflow as **OTDR → Tether-Tinker → Fiber Ribbon Finder → Results Corrector → Distance Converter → Fiber Loss Calculator → ACE Fire Tool**.
+- Converts the center mobile Workspace control into the Command Core using the recessed Foundry mark while retaining Workspace behavior and keeping the five-button thumb layout.
+- Gives the mobile navigation segmented mechanical plates, deeper active states, and an integrated powered-rail appearance without adding another launcher row.
+- Applies the Heavy Command material treatment to the Tool Runner header so legacy bridged tools still feel mounted inside the same shell.
+
+### PWA / Home Screen
+
+- Bumps the production cache to `lens-v31`.
+- Precaches the Heavy Command CSS / JavaScript and canonical Foundry mark reference so the translated shell participates in the same Home Screen and offline path established by Update 30.
+- Keeps `/L.E.N.S./` as the stable live and Home Screen launch URL.
+
+### Preserved
+
+- All seven tool launch routes remain intact.
+- OTDR Note Maker, Results Corrector, Distance Converter, Fiber Ribbon Finder, Fiber Loss Calculator, and ACE Fire Tool remain the proven bridged v4 implementations.
+- Tether-Tinker remains native v5 with Update 29 speed memory and saved history.
+- `lens-session`, Work Bar data, Waldo handoff, Offline Library, Recent Sessions, and Update 30 production routing remain intact.
+
+### Review target
+
+- On iPhone, verify the new top housing and side chassis feel substantially closer to Concept 05 without reducing usable tool width.
+- Verify the supplied Foundry mark reads correctly in the raised banner role and recessed center Command Core role.
+- Verify the five-button bottom rail remains easy to use with Work still occupying the center position.
+- Verify all seven tools still launch, Recent Tether results still reopen, and the live root / Home Screen entry continues to update correctly.
+
+---
+
 ## Update 30 — Production Entry + PWA Routing
 
 ### Live `main` entry

@@ -4,6 +4,22 @@
   const KEY = 'lens-tether-history';
   const ACCENT = '#45e0c5';
 
+  function loadHeavyCommandAssets(){
+    if(!document.querySelector('link[data-heavy-command]')){
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'heavy-command.css';
+      link.dataset.heavyCommand = '31';
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-heavy-command]')){
+      const script = document.createElement('script');
+      script.src = 'heavy-command.js';
+      script.dataset.heavyCommand = '31';
+      document.body.appendChild(script);
+    }
+  }
+
   function icon(){
     return `<span class="tool-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M11 15h15l7 9-7 9H11L4 24z"/><path d="M53 15H38l-7 9 7 9h15l7-9z"/><path d="M24 24h16"/><path d="M14 9v6M14 33v6M50 9v6M50 33v6"/></svg></span>`;
   }
@@ -55,6 +71,7 @@
     installCard(document.querySelector('.quick-grid'));
     installCard(document.querySelector('.full-grid'));
     renderRecents();
+    loadHeavyCommandAssets();
 
     const full = document.querySelector('.full-grid');
     if(full){

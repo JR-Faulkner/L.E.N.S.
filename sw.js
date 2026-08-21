@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lens-v30';
+const CACHE_NAME = 'lens-v31';
 const BASE = '/L.E.N.S.';
 
 const PRECACHE_URLS = [
@@ -19,7 +19,10 @@ const PRECACHE_URLS = [
   BASE + '/v5/tether-tinker.css',
   BASE + '/v5/tether-tinker.js',
   BASE + '/v5/tether-speed.js',
+  BASE + '/v5/heavy-command.css',
+  BASE + '/v5/heavy-command.js',
 
+  BASE + '/assets/branding/faulkner-foundry-mark-reference.jpg',
   BASE + '/assets/banner/LENS_banner_no_theme.webp',
   BASE + '/assets/banner/LENS_banner_no_theme_mobile.webp',
   BASE + '/assets/buttons/01_OTDR_NOTE_MAKER_normal.svg',
