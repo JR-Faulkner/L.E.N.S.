@@ -7,7 +7,8 @@
     distance: { label: 'Distance Converter', accent: '#18c9ff' },
     ribbon:   { label: 'Fiber Ribbon Finder', accent: '#a65cff' },
     loss:     { label: 'Fiber Loss Calculator', accent: '#ffc928' },
-    fire:     { label: 'ACE Fire Tool', accent: '#ff7a18' }
+    fire:     { label: 'ACE Fire Tool', accent: '#ff7a18' },
+    tether:   { label: 'Tether-Tinker', accent: '#45e0c5', native: true, src: 'tether-tinker.html' }
   };
 
   let activeTool = null;
@@ -46,12 +47,12 @@
     runner.innerHTML = `
       <div class="tool-runner__bar">
         <button class="tool-runner__back" id="toolRunnerBack" type="button">‹ TOOLS</button>
-        <div class="tool-runner__title"><small>LIVE PRODUCTION TOOL</small><strong id="toolRunnerTitle">Tool</strong></div>
+        <div class="tool-runner__title"><small>LIVE FIELD TOOL</small><strong id="toolRunnerTitle">Tool</strong></div>
         <button class="tool-runner__home" id="toolRunnerHome" type="button">HOME</button>
       </div>
       <div class="tool-runner__frame-wrap">
-        <div class="tool-runner__loading" id="toolRunnerLoading"><span>Loading production tool…</span></div>
-        <iframe class="tool-runner__frame" id="toolRunnerFrame" title="L.E.N.S. production tool" src="about:blank"></iframe>
+        <div class="tool-runner__loading" id="toolRunnerLoading"><span>Loading field tool…</span></div>
+        <iframe class="tool-runner__frame" id="toolRunnerFrame" title="L.E.N.S. field tool" src="about:blank"></iframe>
       </div>`;
     stage.appendChild(runner);
     frame = document.getElementById('toolRunnerFrame');
@@ -59,7 +60,7 @@
 
     document.getElementById('toolRunnerBack').addEventListener('click', () => closeRunner('tools'));
     document.getElementById('toolRunnerHome').addEventListener('click', () => closeRunner('home'));
-    frame.addEventListener('load', prepareLegacyTool);
+    frame.addEventListener('load', prepareTool);
   }
 
   function showOnlyRunner(){
@@ -93,7 +94,7 @@
     restoreView(destination || previousView || 'home');
   }
 
-  function openTool(tool){
+  function openTool(tool, query = ''){
     const meta = TOOL_MAP[tool];
     if(!meta) return;
     buildRunner();
@@ -107,13 +108,25 @@
     loading.hidden = false;
     showOnlyRunner();
 
-    // Same-origin on both GitHub Pages and branch preview hosts. A cache-buster
-    // ensures switching tools always starts from a clean production document.
+    if(meta.native){
+      const params = new URLSearchParams(query || '');
+      params.set('embedded','1');
+      params.set('t',String(Date.now()));
+      frame.src = `${meta.src}?${params.toString()}`;
+      return;
+    }
+
     frame.src = `../index.html?v5tool=${encodeURIComponent(tool)}&bridge=27&t=${Date.now()}`;
   }
 
-  function prepareLegacyTool(){
+  function prepareTool(){
     if(!activeTool || !frame || frame.src === 'about:blank') return;
+    const meta = TOOL_MAP[activeTool];
+    if(meta?.native){
+      loading.hidden = true;
+      return;
+    }
+
     let doc;
     try { doc = frame.contentDocument || frame.contentWindow.document; }
     catch (_) {
@@ -149,7 +162,6 @@
     }
   }
 
-  // Capture before Update 26's staged placeholder listeners fire.
   document.addEventListener('click', event => {
     const button = event.target.closest('[data-tool-action]');
     if(!button) return;
@@ -158,10 +170,9 @@
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    openTool(tool);
+    openTool(tool, button.dataset.toolQuery || '');
   }, true);
 
-  // Bottom/rail navigation should always escape the runner cleanly.
   document.addEventListener('click', event => {
     if(!runner || !runner.classList.contains('is-active')) return;
     const nav = event.target.closest('[data-view]');
