@@ -156,6 +156,14 @@
     source.querySelectorAll('.tool-card').forEach(card => target.appendChild(card.cloneNode(true)));
   }
 
+  function loadOfflineLibrary(){
+    if(document.querySelector('script[data-offline-library]')) return;
+    const script = document.createElement('script');
+    script.src = 'offline-library.js';
+    script.dataset.offlineLibrary = '29';
+    document.body.appendChild(script);
+  }
+
   document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
   document.querySelectorAll('[data-view-jump]').forEach(button => button.addEventListener('click', () => showView(button.dataset.viewJump)));
   document.querySelectorAll('[data-tool-action]').forEach(button => button.addEventListener('click', () => openLegacyTool(button.dataset.toolAction)));
@@ -176,4 +184,5 @@
   buildFiberStrip();
   refreshWorkbench();
   setWorkbench(false);
+  loadOfflineLibrary();
 })();

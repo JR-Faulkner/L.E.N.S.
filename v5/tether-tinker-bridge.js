@@ -27,7 +27,8 @@
   function fmt(v, unit){
     if(!Number.isFinite(Number(v))) return '—';
     const n = Number(v);
-    return `${n.toLocaleString(undefined,{maximumFractionDigits:1})} ${unit || 'ft'}`;
+    const digits = unit === 'kft' ? 3 : 1;
+    return `${n.toLocaleString(undefined,{maximumFractionDigits:digits})} ${unit || 'ft'}`;
   }
 
   function renderRecents(){
