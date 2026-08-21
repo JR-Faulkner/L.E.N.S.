@@ -2,6 +2,48 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 29 — Field Speed + Offline Library
+
+### Tether-Tinker speed polish
+
+- Remembers the last-used feet / kilofeet selection and Buried / Aerial / Mixed plant type.
+- Automatically captures the last three non-zero tester-cord values as one-tap recent-value chips.
+- Automatically captures the last three non-zero terminal-tail values the same way.
+- Recent values are learned from normal calculations; no separate preset form or naming workflow is added.
+- Keeps the Update 28 fast path intact: measured distance, cord, tail, calculate.
+- Field → Terminal retains the single Tail Included? Yes / No control and remembered preference.
+
+### Offline Library foundation
+
+- Adds an **Offline Library** section under More / Settings without adding another Home launcher or extra scrolling above the tools.
+- Shows live **ONLINE / OFFLINE** connection state.
+- Clearly distinguishes **BUILT IN**, **LOCAL**, and future **PACK SLOT** content so unavailable downloads are never presented as working buttons.
+- Built-in Fiber Reference can be opened directly from the library.
+- Device-local Tether-Tinker saved-result count is surfaced and can jump to History.
+- Reserves future pack slots for downloadable field-reference bundles and field documents / exports.
+- Service-worker caching and actual downloadable packs remain intentionally deferred to a later wiring pass.
+
+### Removed after phone review
+
+- The experimental three-tool Quick Rack was removed before merge review.
+- The existing Home tool grid is already fast enough on phone, and duplicating tool access added unnecessary visual weight and scroll.
+- The full seven-tool Tool Belt remains the single clear launcher model.
+
+### Preserved
+
+- Update 28 Tether-Tinker calculations, saved sessions, Recent Sessions integration, and Tool Runner behavior remain intact.
+- Root v4 `index.html` remains unchanged.
+- `lens-session`, Work Bar, Waldo handoff, and existing production tool colors remain intact.
+- No service-worker or production PWA cache version changes are made in this foundation pass.
+
+### Review target
+
+- Verify the Home tool layout remains unchanged and no Quick Rack appears.
+- Verify Tether-Tinker remembers unit / plant preferences and offers recent cord / tail chips after normal use.
+- Verify More opens the Offline Library with correct online/offline state, built-in/local labels, and future pack slots.
+
+---
+
 ## Update 28 — Tether-Tinker
 
 ### New native field tool
