@@ -1,12 +1,13 @@
 {
-  "name": "L.E.N.S. — Linked Execution & Network Services",
+  "name": "L.E.N.S. — Loss Estimator & Network Solver",
   "short_name": "L.E.N.S.",
-  "description": "Fiber optic field tools for OTDR notes, loss calculations, distance conversion, and more.",
+  "description": "Fiber optic field tools for testing, locating, calculating, documenting, and connected field workflows.",
+  "id": "/L.E.N.S./",
   "start_url": "/L.E.N.S./",
   "scope": "/L.E.N.S./",
   "display": "standalone",
-  "background_color": "#080a0e",
-  "theme_color": "#ff4b2f",
+  "background_color": "#080b0f",
+  "theme_color": "#ff7900",
   "orientation": "portrait-primary",
   "icons": [
     { "src": "assets/png/icon-72x72.png",            "sizes": "72x72",   "type": "image/png", "purpose": "any" },

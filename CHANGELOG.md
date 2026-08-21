@@ -2,6 +2,40 @@
 
 This changelog is the detailed release record for L.E.N.S. GitHub updates. Git commit messages remain intentionally terse and numbered (`Update 26`, `Update 27`, and so on).
 
+## Update 30 — Production Entry + PWA Routing
+
+### Live `main` entry
+
+- Promotes the v5 workstation shell to the production GitHub Pages entry without deleting the proven v4 tool logic.
+- Root `/L.E.N.S./` now acts as the stable production launcher and forwards into `/L.E.N.S./v5/index.html`.
+- Preserves the former root v4 application as `legacy-v4.html` so OTDR Note Maker, Results Corrector, Distance Converter, Fiber Ribbon Finder, Fiber Loss Calculator, and ACE Fire Tool continue using their existing production implementations.
+- Updates the v5 Tool Runner to embed `legacy-v4.html` instead of the root production entry, preventing a v5-to-v5 iframe loop after promotion.
+
+### Home Screen / PWA
+
+- Keeps `/L.E.N.S./` as the stable Home Screen start URL so existing shortcuts do not need a new destination.
+- Corrects the installed app name to **L.E.N.S. — Loss Estimator & Network Solver**.
+- Adds an explicit PWA app id matching the stable root URL.
+- Bumps the service-worker cache from the old `lens-v21` cache to `lens-v30`.
+- Precaches the v5 shell, Tether-Tinker, legacy v4 tool host, core icons, and existing field assets required for offline fallback.
+- Replaces cache-first runtime fetching with network-first same-origin fetching plus cached fallback, so online launches reflect the current `main` build instead of remaining trapped on stale cached HTML/JS.
+- Navigation requests fall back to the cached production entry when the connection is unavailable.
+
+### Deployment rule established
+
+- The root GitHub Pages URL and Home Screen launch path now resolve to the same production shell.
+- Future updates merged to `main` can update the v5 application in place without changing the public/Home Screen URL.
+- Root v4 logic is retained only as the hidden legacy tool host until those six tools are migrated to native v5 modules.
+
+### Review target
+
+- Verify the public root URL opens the v5 shell.
+- Verify an existing iPhone Home Screen shortcut opens the same v5 shell after the updated service worker activates.
+- Verify all six bridged legacy tools and native Tether-Tinker still launch from v5.
+- Verify a previously loaded shell can reopen with the network unavailable after the new cache has installed.
+
+---
+
 ## Update 29 — Field Speed + Offline Library
 
 ### Tether-Tinker speed polish
